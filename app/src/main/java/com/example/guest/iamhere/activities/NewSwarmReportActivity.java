@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.models.SwarmReport;
@@ -141,6 +142,8 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 city = addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea() ;
                 Log.d(TAG, city);
                 locationTextView.setText("Looks like you're in: " + city + ". We'll register your swarm there.");
+                reportSwarmButton.setVisibility(View.VISIBLE);
+
             }
             else
             {
@@ -196,20 +199,20 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         if (v == reportSwarmButton){
             size = getSize();
             accessibility = getAccessibility();
-            Log.d(TAG, size);
-            Log.d(TAG, accessibility);
+            if(size != null && accessibility != null){
+                Calendar calendar = Calendar.getInstance();
+                java.util.Date now = calendar.getTime();
+                java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
+                String timeString = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(currentTimestamp);
 
-            Calendar calendar = Calendar.getInstance();
-            java.util.Date now = calendar.getTime();
-            java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
-            String timeString = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(currentTimestamp);
-            Log.d(TAG, timeString);
-            Log.d("city in onClick", city);
 //            SwarmReport newSwarmReport(location, city, userName, userUid, size, timeString, accessibility);
-            database = FirebaseDatabase.getInstance();
+                database = FirebaseDatabase.getInstance();
 //            ref = database.getReference(city);
 
 //            ref.push().setValue(newSwarmReport);
+            } else{
+                Toast.makeText(NewSwarmReportActivity.this, "Please select size and accessability", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

@@ -14,13 +14,16 @@
         android:layout_width="368dp"
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="0dp">
+        tools:layout_editor_absoluteY="0dp"
+        android:layout_marginBottom="8dp">
 
         <TextView
             android:id="@+id/sizeLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="About how big is the swarm?" />
+            android:text="About how big is the swarm?"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
         <RadioButton
             android:id="@+id/baseball"
@@ -60,13 +63,16 @@
         android:layout_width="368dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/radioGroupSize"
-        tools:layout_editor_absoluteX="8dp">
+        tools:layout_editor_absoluteX="8dp"
+        android:layout_marginBottom="18dp">
 
         <TextView
             android:id="@+id/accessibilityLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="How accessible is the swarm?" />
+            android:text="How accessible is the swarm?"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
         <RadioButton
             android:id="@+id/reach"
@@ -102,13 +108,14 @@
             android:layout_weight="1"
             android:checked="false"
             android:text="Will require a large ladder"
-            android:theme="@style/MyRadioButton" />
+            android:theme="@style/MyRadioButton"
+            android:layout_marginBottom="18dp"/>
 
     </RadioGroup>
 
     <TextView
         android:layout_height="wrap_content"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:textSize="20sp"
         android:textStyle="bold"
         android:id="@+id/locationTextView"
@@ -133,6 +140,7 @@
         app:layout_constraintRight_toRightOf="@+id/locationTextView"
         app:layout_constraintTop_toBottomOf="@+id/locationTextView"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        android:visibility="invisible"/>
 
 </android.support.constraint.ConstraintLayout>
