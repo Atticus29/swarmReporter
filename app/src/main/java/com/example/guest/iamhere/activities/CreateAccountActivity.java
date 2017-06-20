@@ -1,5 +1,6 @@
 package com.example.guest.iamhere.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -22,6 +25,7 @@ import butterknife.ButterKnife;
 public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener {
     private FirebaseAuth mAuth;
     private String TAG = CreateAccountActivity.class.getSimpleName();
+    private ProgressDialog mAuthProgressDialog;
 
     @Bind(R.id.createInputButton) Button createInputButton;
     @Bind(R.id.nameInputTextView) TextView nameInputTextView;
@@ -36,6 +40,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         ButterKnife.bind(this);
         mAuth = FirebaseAuth.getInstance();
         createInputButton.setOnClickListener(this);
+        createAuthProgressDialog();
     }
 
     @Override
@@ -46,6 +51,8 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     }
 
     public void createAccount(){
+
+        mAuthProgressDialog.show();
         String confirmPassword = passwordConfirmInputTextView.getText().toString().trim();
         String password = passwordInputTextView.getText().toString().trim();
         String email = emailInputTextView.getText().toString().trim();
@@ -56,10 +63,12 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
+                            mAuthProgressDialog.dismiss();
                             Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
                             if (!task.isSuccessful()) {
                                 Toast.makeText(CreateAccountActivity.this, "Account creation was not successful", Toast.LENGTH_SHORT).show();
-                            } else{
+                            } else if(task.isSuccessful()){
+                                createFirebaseUserProfile(task.getResult().getUser());
                                 Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
                                 startActivity(intent);
                             }
@@ -68,6 +77,27 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         }
 
     }
+
+    private void createFirebaseUserProfile(final FirebaseUser user) {
+        String name = nameInputTextView.getText().toString().trim();
+        UserProfileChangeRequest addProfileName = new UserProfileChangeRequest.Builder()
+                .setDisplayName(name)
+                .build();
+
+        user.updateProfile(addProfileName)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+//                            Log.d(TAG, "got into successful profile update");
+//                            Log.d(TAG, user.getDisplayName());
+                        }
+                    }
+
+                });
+    }
+
     private boolean isValidEmail(String email) {
         boolean isGoodEmail =
                 (email != null && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches());
@@ -95,6 +125,13 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
             return false;
         }
         return true;
+    }
+
+    private void createAuthProgressDialog() {
+        mAuthProgressDialog = new ProgressDialog(this);
+        mAuthProgressDialog.setTitle("Loading...");
+        mAuthProgressDialog.setMessage("Authenticating with Firebase...");
+        mAuthProgressDialog.setCancelable(false);
     }
 
 }

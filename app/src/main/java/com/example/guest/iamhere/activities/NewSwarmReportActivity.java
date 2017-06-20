@@ -1,5 +1,6 @@
 package com.example.guest.iamhere.activities;
 
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,8 @@ import android.widget.RadioButton;
 
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.models.SwarmReport;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -24,6 +27,8 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private DatabaseReference ref;
     private String size;
     private String accessibility;
+    private FirebaseAuth auth;
+    private FirebaseAuth.AuthStateListener authListener;
 
     @Bind(R.id.reportSwarmButton) Button reportSwarmButton;
     @Bind(R.id.baseball) RadioButton baseball;
@@ -42,7 +47,34 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_new_swarm_report);
         ButterKnife.bind(this);
         reportSwarmButton.setOnClickListener(this);
+        auth = FirebaseAuth.getInstance();
+        authListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    String name = user.getDisplayName();
+                    String uid = user.getUid();
+                    Log.d(TAG, name);
+                    Log.d(TAG, uid);
+                }
+            }
+        };
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        auth.addAuthStateListener(authListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (authListener != null) {
+            auth.removeAuthStateListener(authListener);
+        }
     }
 
     @Override
@@ -62,7 +94,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
             database = FirebaseDatabase.getInstance();
 //            ref = database.getReference(city);
 
-//            ref.push(newSwarmReport);
+//            ref.push().setValue(newSwarmReport);
         }
     }
 
