@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">I am here</string>
+    <string name="app_name">Bivouac: a swarm reporter</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_maps_activityv2">Map</string>
     <string name="title_activity_login">Sign in</string>

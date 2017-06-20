@@ -38,15 +38,29 @@
         <activity
             android:name=".activities.MapsActivity"
             android:label="@string/title_activity_maps">
+
+        </activity>
+        <activity android:name=".activities.LoginActivity"
+            android:theme="@style/NoActionBarTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.guest.iamhere.activities.LoginGateActivity">
+            </meta-data>
+        </activity>
+        <activity android:name=".activities.CreateAccountActivity"
+            android:theme="@style/NoActionBarTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.guest.iamhere.activities.LoginGateActivity">
+            </meta-data>
+        </activity>
+        <activity android:name=".activities.LoginGateActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.LoginActivity" />
-        <activity android:name=".activities.CreateAccountActivity" />
-        <activity android:name=".activities.LoginGateActivity"></activity>
     </application>
 
 </manifest>
