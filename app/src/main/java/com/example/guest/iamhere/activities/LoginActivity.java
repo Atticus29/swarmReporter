@@ -1,5 +1,6 @@
 package com.example.guest.iamhere.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -28,12 +29,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private String TAG = LoginActivity.class.getSimpleName();
+    private ProgressDialog authProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        createAuthProgressDialog();
         loginButton.setOnClickListener(this);
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -53,6 +56,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void login(){
+        authProgressDialog.show();
         String email = emailTextView.getText().toString().trim();
         String password = passwordTextView.getText().toString().trim();
         if (email.equals("")) {
@@ -78,6 +82,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Toast.makeText(LoginActivity.this, "Authentication Failed",
                                     Toast.LENGTH_SHORT).show();
                         }else {
+                            authProgressDialog.dismiss();
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                         }
@@ -116,5 +121,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return false;
         }
         return isGoodEmail;
+    }
+
+    private void createAuthProgressDialog() {
+        authProgressDialog = new ProgressDialog(this);
+        authProgressDialog.setTitle("Loading...");
+        authProgressDialog.setMessage("Authenticating with Firebase...");
+        authProgressDialog.setCancelable(false);
     }
 }

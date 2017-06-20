@@ -55,6 +55,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private LocationRequest mLocationRequest;
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
     private String city;
+    private LatLng geoLocation;
 
     @Bind(R.id.reportSwarmButton) Button reportSwarmButton;
     @Bind(R.id.baseball) RadioButton baseball;
@@ -134,6 +135,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         double currenLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
         LatLng latLng = new LatLng(currenLatitude, currentLongitude);
+        geoLocation = latLng;
         Geocoder gcd = new Geocoder(NewSwarmReportActivity.this, Locale.getDefault());
         try{
             List<Address> addresses = gcd.getFromLocation(currenLatitude, currentLongitude, 1);
@@ -205,7 +207,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
                 String timeString = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(currentTimestamp);
 
-//            SwarmReport newSwarmReport(location, city, userName, userUid, size, timeString, accessibility);
+//            SwarmReport newSwarmReport(geoLocation, city, userName, userUid, size, timeString, accessibility);
                 database = FirebaseDatabase.getInstance();
 //            ref = database.getReference(city);
 
