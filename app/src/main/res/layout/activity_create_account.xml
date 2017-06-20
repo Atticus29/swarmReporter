@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.guest.iamhere.activities.CreateAccountActivity">
+    tools:context="com.example.guest.iamhere.activities.CreateAccountActivity"
+    android:background="@color/primary_light">
 
     <EditText
         android:id="@+id/nameInputTextView"
@@ -73,5 +74,6 @@
         android:text="Register"
         app:layout_constraintLeft_toLeftOf="@+id/passwordConfirmInputTextView"
         app:layout_constraintRight_toRightOf="@+id/passwordConfirmInputTextView"
-        app:layout_constraintTop_toBottomOf="@+id/passwordConfirmInputTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/passwordConfirmInputTextView"
+        android:background="@drawable/bivouac_button"/>
 </android.support.constraint.ConstraintLayout>
