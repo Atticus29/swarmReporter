@@ -1,5 +1,6 @@
 package com.example.guest.iamhere.activities;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        loginButton.setOnClickListener(this);
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -57,18 +59,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             emailTextView.setError("Please enter your email");
             return;
         }
+        if(!isValidEmail(email)){
+            emailTextView.setError("Please enter valid email address");
+            return;
+        }
         if (password.equals("")) {
             passwordTextView.setError("Password cannot be blank");
             return;
         }
-        mAuth.createUserWithEmailAndPassword(email, password)
+        mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+
                         if (!task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this, "Sign in was not successful", Toast.LENGTH_SHORT).show();
+                            Log.w(TAG, "signInWithEmail:failed", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication Failed",
+                                    Toast.LENGTH_SHORT).show();
+                        }else {
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
                         }
+
+                        // ...
                     }
                 });
     }
@@ -92,5 +106,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (v == loginButton){
             login();
         }
+    }
+
+    private boolean isValidEmail(String email) {
+        boolean isGoodEmail =
+                (email != null && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches());
+        if (!isGoodEmail) {
+            emailTextView.setError("Please enter a valid email address");
+            return false;
+        }
+        return isGoodEmail;
     }
 }

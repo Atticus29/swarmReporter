@@ -42,8 +42,6 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         if(v == createInputButton){
             createAccount();
-            Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
-            startActivity(intent);
         }
     }
 
@@ -61,6 +59,9 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                             Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
                             if (!task.isSuccessful()) {
                                 Toast.makeText(CreateAccountActivity.this, "Account creation was not successful", Toast.LENGTH_SHORT).show();
+                            } else{
+                                Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
+                                startActivity(intent);
                             }
                         }
                     });
