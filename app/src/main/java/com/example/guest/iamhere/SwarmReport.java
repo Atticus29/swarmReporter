@@ -4,7 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.security.Timestamp;
 
-public class HiveReport {
+public class SwarmReport {
     private LatLng location;
     private String city;
     private String reporterName;
@@ -16,7 +16,7 @@ public class HiveReport {
     private boolean wasRetrived;
     private String accessibility;
 
-    public HiveReport(LatLng location, String city, String reporterName, String reporterId, String size, Timestamp reportTimestamp, String accessibility) {
+    public SwarmReport(LatLng location, String city, String reporterName, String reporterId, String size, Timestamp reportTimestamp, String accessibility) {
         this.location = location;
         this.city = city;
         this.reporterName = reporterName;
