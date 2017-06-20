@@ -1,7 +1,9 @@
-package com.example.guest.iamhere;
+package com.example.guest.iamhere.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.example.guest.iamhere.R;
 
 public class CreateAccountActivity extends AppCompatActivity {
 

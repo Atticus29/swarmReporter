@@ -1,4 +1,4 @@
-package com.example.guest.iamhere;
+package com.example.guest.iamhere.models;
 
 import com.google.android.gms.maps.model.LatLng;
 
