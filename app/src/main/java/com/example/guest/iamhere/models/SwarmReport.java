@@ -12,11 +12,11 @@ public class SwarmReport {
     private String size;
     private boolean isClaimed;
     private String claimedBy;
-    private Timestamp reportTimestamp;
+    private String reportTimestamp;
     private boolean wasRetrived;
     private String accessibility;
 
-    public SwarmReport(LatLng location, String city, String reporterName, String reporterId, String size, Timestamp reportTimestamp, String accessibility) {
+    public SwarmReport(LatLng location, String city, String reporterName, String reporterId, String size, String reportTimestamp, String accessibility) {
         this.location = location;
         this.city = city;
         this.reporterName = reporterName;
@@ -54,7 +54,7 @@ public class SwarmReport {
         return claimedBy;
     }
 
-    public Timestamp getReportTimestamp() {
+    public String getReportTimestamp() {
         return reportTimestamp;
     }
 
