@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.models.SwarmReport;
@@ -63,6 +64,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     @Bind(R.id.ladder) RadioButton ladder;
     @Bind(R.id.reach) RadioButton reach;
     @Bind(R.id.hasLadder) RadioButton hasLadder;
+    @Bind(R.id.locationTextView) TextView locationTextView;
 
 
     @Override
@@ -138,6 +140,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
             {
                 city = addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea() ;
                 Log.d(TAG, city);
+                locationTextView.setText("Looks like you're in: " + city + ". We'll register your swarm there.");
             }
             else
             {
