@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity
     private LatLng geoLocation;
     private DatabaseReference mSwarmReportReference;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
+    private Double currenLatitude;
+    private Double currentLongitude;
 
     @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
 
@@ -113,7 +115,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void logout() {
-        Log.d(TAG, "got to log out");
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(com.example.guest.iamhere.activities.MainActivity.this, LoginGateActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -173,11 +174,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void handleNewLocation(Location location){
-        Log.d("hi", location.toString());
-        double currenLatitude = location.getLatitude();
-        double currentLongitude = location.getLongitude();
-        LatLng latLng = new LatLng(currenLatitude, currentLongitude);
-        geoLocation = latLng;
+        currenLatitude = location.getLatitude();
+        currentLongitude = location.getLongitude();
+
         Geocoder gcd = new Geocoder(MainActivity.this, Locale.getDefault());
         try{
             List<Address> addresses = gcd.getFromLocation(currenLatitude, currentLongitude, 1);
@@ -185,8 +184,9 @@ public class MainActivity extends AppCompatActivity
             {
                 city = addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea() ;
                 mSwarmReportReference = FirebaseDatabase.getInstance().getReference(city);
-                setUpFirebaseAdapter();
-
+                if(currenLatitude != null && currentLongitude !=null){
+                    setUpFirebaseAdapter();
+                }
             }
             else
             {
@@ -206,7 +206,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             protected void populateViewHolder(FirebaseClaimViewHolder viewHolder,
                                               SwarmReport model, int position) {
+                viewHolder.bindClaimerLatLong(currenLatitude, currentLongitude);
                 viewHolder.bindSwarmReport(model);
+//                Log.d("before bind", Double.toString(currenLatitude));
+//                Log.d("before bind", Double.toString(currentLongitude));
+
             }
         };
         claimRecyclerView.setHasFixedSize(true);

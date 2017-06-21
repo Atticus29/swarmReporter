@@ -19,6 +19,8 @@ import java.text.DecimalFormat;
 public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements View.OnClickListener {
     private static final int MAX_WIDTH = 200;
     private static final int MAX_HEIGHT = 200;
+    private Double claimerLatitude;
+    private Double claimerLongitude;
 
     View mView;
     Context mContext;
@@ -37,12 +39,15 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         Button claimSwarmButton = (Button) mView.findViewById(R.id.claimSwarmButton);
 
         timeStampTextView.setText("Reported " + swarmReport.getReportTimestamp());
-        Log.d("lat", Double.toString(swarmReport.getLatitude()));
-        Log.d("long", Double.toString(swarmReport.getLongitude()));
-        distanceTextView.setText("Located " + calculateDistanceAsString(3.0,swarmReport.getLatitude(), 3.0, swarmReport.getLongitude(),0.0, 0.0) + "meters away");
+        //TODO get current location lat and long and put here
+        distanceTextView.setText("Located " + calculateDistanceAsString(claimerLatitude, swarmReport.getLatitude(), claimerLongitude, swarmReport.getLongitude(),0.0, 0.0) + " meters away");
         sizeTextView.setText("Size: The size of a " + swarmReport.getSize());
         accessibilityTextView.setText("Accessibility: " + swarmReport.getAccessibility());
         claimSwarmButton.setOnClickListener(this); //not sure whether this will work here
+    }
+    public void bindClaimerLatLong(Double latitude, Double longitude){
+        claimerLatitude = latitude;
+        claimerLongitude = longitude;
     }
 
     @Override
@@ -53,21 +58,26 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     }
 
     public String calculateDistanceAsString(Double currentLatitude, Double claimLatitude, Double currentLongitude, Double claimLongitude, Double elevation1, Double elevation2){
+        Log.d("cuurentLat", Double.toString(currentLatitude));
+        Log.d("currentLong", Double.toString(currentLongitude));
+        Log.d("reportedLat", Double.toString(claimLatitude));
+        Log.d("reportedLong", Double.toString(claimLongitude));
+
 
         //TODO you can update with elevation later
 
-        Double distanceInMeters = 0.0;
+        Double distanceInMeters = new Double(3.14);
         final int R = 6371; // Radius of the earth
 
-        double latDistance = Math.toRadians(claimLatitude - currentLatitude);
-        double lonDistance = Math.toRadians(claimLongitude - currentLongitude);
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+        Double latDistance = Math.toRadians(claimLatitude - currentLatitude);
+        Double lonDistance = Math.toRadians(claimLongitude - currentLongitude);
+        Double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
                 + Math.cos(Math.toRadians(currentLatitude)) * Math.cos(Math.toRadians(claimLatitude))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to meters
+        Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        Double distance = R * c * 1000; // convert to meters
 
-        double height = elevation1 - elevation2;
+        Double height = elevation1 - elevation2;
 
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
 
