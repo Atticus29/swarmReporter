@@ -18,6 +18,8 @@ public class SwarmReport {
     private String claimantName;
     private String claimantId;
 
+    public SwarmReport(){}
+
     public SwarmReport(LatLng location, String city, String reporterName, String reporterId, String size, String reportTimestamp, String accessibility) {
         this.location = location;
         this.city = city;
