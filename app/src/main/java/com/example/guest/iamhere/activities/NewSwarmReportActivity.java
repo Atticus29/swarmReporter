@@ -56,6 +56,8 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
     private String city;
     private LatLng geoLocation;
+    private String userName;
+    private String userId;
 
     @Bind(R.id.reportSwarmButton) Button reportSwarmButton;
     @Bind(R.id.baseball) RadioButton baseball;
@@ -81,10 +83,10 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
-                    String name = user.getDisplayName();
-                    String uid = user.getUid();
-                    Log.d(TAG, name);
-                    Log.d(TAG, uid);
+                    userName = user.getDisplayName();
+                    userId = user.getUid();
+                } else{
+
                 }
             }
         };
@@ -207,11 +209,11 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
                 String timeString = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(currentTimestamp);
 
-//            SwarmReport newSwarmReport(geoLocation, city, userName, userUid, size, timeString, accessibility);
+            SwarmReport newSwarmReport = new SwarmReport(geoLocation, city, userName, userId, size, timeString, accessibility);
                 database = FirebaseDatabase.getInstance();
-//            ref = database.getReference(city);
+            ref = database.getReference(city);
 
-//            ref.push().setValue(newSwarmReport);
+            ref.push().setValue(newSwarmReport);
             } else{
                 Toast.makeText(NewSwarmReportActivity.this, "Please select size and accessability", Toast.LENGTH_SHORT).show();
             }

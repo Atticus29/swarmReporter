@@ -26,6 +26,14 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     private FirebaseAuth mAuth;
     private String TAG = CreateAccountActivity.class.getSimpleName();
     private ProgressDialog mAuthProgressDialog;
+    private FirebaseAuth.AuthStateListener authStateListener;
+
+    private String userName;
+    private String confirmPassword;
+    private String email;
+    private String password;
+
+
 
     @Bind(R.id.createInputButton) Button createInputButton;
     @Bind(R.id.nameInputTextView) TextView nameInputTextView;
@@ -38,6 +46,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
         ButterKnife.bind(this);
+        createAuthStateListener();
         mAuth = FirebaseAuth.getInstance();
         createInputButton.setOnClickListener(this);
         createAuthProgressDialog();
@@ -53,12 +62,12 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     public void createAccount(){
 
         mAuthProgressDialog.show();
-        String confirmPassword = passwordConfirmInputTextView.getText().toString().trim();
-        String password = passwordInputTextView.getText().toString().trim();
-        String email = emailInputTextView.getText().toString().trim();
-        String name = nameInputTextView.getText().toString().trim();
+        confirmPassword = passwordConfirmInputTextView.getText().toString().trim();
+        password = passwordInputTextView.getText().toString().trim();
+        email = emailInputTextView.getText().toString().trim();
+        userName = nameInputTextView.getText().toString().trim();
 
-        if(isValidEmail(email) && isValidName(name) && isValidPassword(password, confirmPassword)){
+        if(isValidEmail(email) && isValidName(userName) && isValidPassword(password, confirmPassword)){
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -68,9 +77,8 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                             if (!task.isSuccessful()) {
                                 Toast.makeText(CreateAccountActivity.this, "Account creation was not successful", Toast.LENGTH_SHORT).show();
                             } else if(task.isSuccessful()){
+                                Log.d("userNameBefCreFBUser", userName);
                                 createFirebaseUserProfile(task.getResult().getUser());
-                                Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
-                                startActivity(intent);
                             }
                         }
                     });
@@ -79,9 +87,8 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     }
 
     private void createFirebaseUserProfile(final FirebaseUser user) {
-        String name = nameInputTextView.getText().toString().trim();
         UserProfileChangeRequest addProfileName = new UserProfileChangeRequest.Builder()
-                .setDisplayName(name)
+                .setDisplayName(userName)
                 .build();
 
         user.updateProfile(addProfileName)
@@ -90,8 +97,13 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
+                            Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+//                            Log.d("NameInsideOnComplete", userName);
 //                            Log.d(TAG, "got into successful profile update");
-//                            Log.d(TAG, user.getDisplayName());
+//                            Log.d("user", user.getEmail());
                         }
                     }
 
@@ -132,6 +144,17 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         mAuthProgressDialog.setTitle("Loading...");
         mAuthProgressDialog.setMessage("Authenticating with Firebase...");
         mAuthProgressDialog.setCancelable(false);
+    }
+
+    public void createAuthStateListener(){
+        authStateListener = new FirebaseAuth.AuthStateListener(){
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth){
+                final FirebaseUser user = firebaseAuth.getCurrentUser();
+                if(user != null){
+                }
+            }
+        };
     }
 
 }

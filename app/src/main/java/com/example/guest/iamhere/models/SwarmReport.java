@@ -15,6 +15,8 @@ public class SwarmReport {
     private String reportTimestamp;
     private boolean wasRetrived;
     private String accessibility;
+    private String claimantName;
+    private String claimantId;
 
     public SwarmReport(LatLng location, String city, String reporterName, String reporterId, String size, String reportTimestamp, String accessibility) {
         this.location = location;
@@ -24,6 +26,14 @@ public class SwarmReport {
         this.size = size;
         this.reportTimestamp = reportTimestamp;
         this.accessibility = accessibility;
+    }
+
+    public void setClaimantName(String claimantName) {
+        this.claimantName = claimantName;
+    }
+
+    public void setClaimantId(String claimantId) {
+        this.claimantId = claimantId;
     }
 
     public LatLng getLocation() {
