@@ -40,16 +40,16 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         claimSwarmButton.setOnClickListener(this); //not sure whether this will work here
     }
 
-    public Double calculateDistance(LatLng claimerLocation, LatLng reporterLocation){
-        Double distanceInMeters = 0.0;
-        //...
-        return distanceInMeters;
-    }
-
     @Override
     public void onClick(View v) {
 //        if(v == claimSwarmButton){
 //
 //        }
+    }
+
+    public Double calculateDistance(Double currenLatitude, Double currentLongituden, Double claimLatitude, Double claimLongitude){
+        Double distanceInMeters = 0.0;
+        //...
+        return distanceInMeters;
     }
 }

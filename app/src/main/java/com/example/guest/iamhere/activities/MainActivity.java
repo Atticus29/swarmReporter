@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -50,6 +51,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+
     private String TAG = MainActivity.class.getSimpleName();
     private GoogleApiClient mGoogleApiClient;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -208,8 +210,12 @@ public class MainActivity extends AppCompatActivity
             }
         };
         claimRecyclerView.setHasFixedSize(true);
-        claimRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        claimRecyclerView.setLayoutManager(linearLayoutManager);
         claimRecyclerView.setAdapter(mFirebaseAdapter);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(claimRecyclerView.getContext(),
+                linearLayoutManager.getOrientation());
+        claimRecyclerView.addItemDecoration(dividerItemDecoration);
     }
 
     @Override
@@ -257,4 +263,5 @@ public class MainActivity extends AppCompatActivity
     public void onLocationChanged(Location location) {
         handleNewLocation(location);
     }
+
 }

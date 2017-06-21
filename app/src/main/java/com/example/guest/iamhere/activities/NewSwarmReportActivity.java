@@ -1,6 +1,7 @@
 package com.example.guest.iamhere.activities;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -58,6 +59,8 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private LatLng geoLocation;
     private String userName;
     private String userId;
+    private double currenLatitude;
+    private double currentLongitude;
 
     @Bind(R.id.reportSwarmButton) Button reportSwarmButton;
     @Bind(R.id.baseball) RadioButton baseball;
@@ -134,8 +137,8 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
 
     private void handleNewLocation(Location location){
         Log.d("hi", location.toString());
-        double currenLatitude = location.getLatitude();
-        double currentLongitude = location.getLongitude();
+        currenLatitude = location.getLatitude();
+        currentLongitude = location.getLongitude();
         LatLng latLng = new LatLng(currenLatitude, currentLongitude);
         geoLocation = latLng;
         Geocoder gcd = new Geocoder(NewSwarmReportActivity.this, Locale.getDefault());
@@ -209,11 +212,13 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
                 String timeString = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(currentTimestamp);
 
-            SwarmReport newSwarmReport = new SwarmReport(geoLocation, city, userName, userId, size, timeString, accessibility);
+            SwarmReport newSwarmReport = new SwarmReport(currenLatitude, currentLongitude, city, userName, userId, size, timeString, accessibility);
                 database = FirebaseDatabase.getInstance();
             ref = database.getReference(city);
 
             ref.push().setValue(newSwarmReport);
+                Intent intent = new Intent(NewSwarmReportActivity.this, MainActivity.class);
+                startActivity(intent);
             } else{
                 Toast.makeText(NewSwarmReportActivity.this, "Please select size and accessability", Toast.LENGTH_SHORT).show();
             }

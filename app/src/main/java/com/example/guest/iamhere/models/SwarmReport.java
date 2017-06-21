@@ -5,7 +5,8 @@ import com.google.android.gms.maps.model.LatLng;
 import java.security.Timestamp;
 
 public class SwarmReport {
-    private LatLng location;
+    private Double latitude;
+    private Double longitude;
     private String city;
     private String reporterName;
     private String reporterId;
@@ -20,8 +21,9 @@ public class SwarmReport {
 
     public SwarmReport(){}
 
-    public SwarmReport(LatLng location, String city, String reporterName, String reporterId, String size, String reportTimestamp, String accessibility) {
-        this.location = location;
+    public SwarmReport(Double latitude, Double longitude, String city, String reporterName, String reporterId, String size, String reportTimestamp, String accessibility) {
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.city = city;
         this.reporterName = reporterName;
         this.reporterId = reporterId;
@@ -38,8 +40,12 @@ public class SwarmReport {
         this.claimantId = claimantId;
     }
 
-    public LatLng getLocation() {
-        return location;
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
     }
 
     public String getCity() {
