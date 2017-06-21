@@ -42,6 +42,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import java.io.IOException;
 import java.util.List;
@@ -59,8 +60,8 @@ public class MainActivity extends AppCompatActivity
     private LocationRequest mLocationRequest;
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
     private String city;
-    private LatLng geoLocation;
-    private DatabaseReference mSwarmReportReference;
+    private Query swarmReportQuery;
+//    private DatabaseReference mSwarmReportReference;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
     private Double currenLatitude;
     private Double currentLongitude;
@@ -201,8 +202,12 @@ public class MainActivity extends AppCompatActivity
             if (addresses.size() > 0)
             {
                 city = addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea() ;
-                mSwarmReportReference = FirebaseDatabase.getInstance().getReference(city);
+
                 if(currenLatitude != null && currentLongitude !=null){
+                    swarmReportQuery = FirebaseDatabase.getInstance()
+                            .getReference(city)
+                            .orderByChild("claimed")
+                            .equalTo(false);
                     setUpFirebaseAdapter();
                 }
             }
@@ -219,7 +224,7 @@ public class MainActivity extends AppCompatActivity
     private void setUpFirebaseAdapter() {
         mFirebaseAdapter = new FirebaseRecyclerAdapter<SwarmReport, FirebaseClaimViewHolder>
                 (SwarmReport.class, R.layout.claim_item, FirebaseClaimViewHolder.class,
-                        mSwarmReportReference) {
+                        swarmReportQuery) {
 
             @Override
             protected void populateViewHolder(FirebaseClaimViewHolder viewHolder,
