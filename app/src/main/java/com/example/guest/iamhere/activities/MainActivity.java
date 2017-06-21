@@ -39,6 +39,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -63,6 +64,10 @@ public class MainActivity extends AppCompatActivity
     private FirebaseRecyclerAdapter mFirebaseAdapter;
     private Double currenLatitude;
     private Double currentLongitude;
+    private String userName;
+    private String userId;
+    private FirebaseAuth auth;
+    private FirebaseAuth.AuthStateListener authListener;
 
     @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
 
@@ -92,6 +97,20 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        auth = FirebaseAuth.getInstance();
+        authListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    userName = user.getDisplayName();
+                    userId = user.getUid();
+                } else {
+
+                }
+            }
+        };
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -125,7 +144,6 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.action_logout) {
@@ -207,10 +225,9 @@ public class MainActivity extends AppCompatActivity
             protected void populateViewHolder(FirebaseClaimViewHolder viewHolder,
                                               SwarmReport model, int position) {
                 viewHolder.bindClaimerLatLong(currenLatitude, currentLongitude);
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                viewHolder.bindCurrentUserNameAndId(user.getDisplayName(), user.getUid());
                 viewHolder.bindSwarmReport(model);
-//                Log.d("before bind", Double.toString(currenLatitude));
-//                Log.d("before bind", Double.toString(currentLongitude));
-
             }
         };
         claimRecyclerView.setHasFixedSize(true);

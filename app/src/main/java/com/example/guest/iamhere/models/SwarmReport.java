@@ -10,9 +10,9 @@ public class SwarmReport {
     private String city;
     private String reporterName;
     private String reporterId;
+    private String reportId;
     private String size;
     private boolean isClaimed;
-    private String claimedBy;
     private String reportTimestamp;
     private boolean wasRetrived;
     private String accessibility;
@@ -30,6 +30,22 @@ public class SwarmReport {
         this.size = size;
         this.reportTimestamp = reportTimestamp;
         this.accessibility = accessibility;
+    }
+
+    public void setReportId(String reportId) {
+        this.reportId = reportId;
+    }
+
+    public String getReportId() {
+        return reportId;
+    }
+
+    public String getClaimantName() {
+        return claimantName;
+    }
+
+    public String getClaimantId() {
+        return claimantId;
     }
 
     public void setClaimantName(String claimantName) {
@@ -68,9 +84,6 @@ public class SwarmReport {
         return isClaimed;
     }
 
-    public String getClaimedBy() {
-        return claimedBy;
-    }
 
     public String getReportTimestamp() {
         return reportTimestamp;
@@ -88,9 +101,6 @@ public class SwarmReport {
         isClaimed = claimed;
     }
 
-    public void setClaimedBy(String claimedBy) {
-        this.claimedBy = claimedBy;
-    }
 
     public void setWasRetrived(boolean wasRetrived) {
         this.wasRetrived = wasRetrived;

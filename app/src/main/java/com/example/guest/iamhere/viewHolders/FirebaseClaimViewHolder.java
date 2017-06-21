@@ -9,29 +9,30 @@ import android.widget.TextView;
 
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.models.SwarmReport;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
-
-import java.text.DecimalFormat;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements View.OnClickListener {
-    private static final int MAX_WIDTH = 200;
-    private static final int MAX_HEIGHT = 200;
+    private String TAG = FirebaseClaimViewHolder.class.getSimpleName();
     private Double claimerLatitude;
     private Double claimerLongitude;
+    private SwarmReport currentSwarmReport;
+    private String userName;
+    private String userId;
 
     View mView;
     Context mContext;
+    Button claimButton;
 
     public FirebaseClaimViewHolder(View itemView) {
         super(itemView);
         this.mView = itemView;
         this.mContext = itemView.getContext();
+        claimButton = (Button) itemView.findViewById(R.id.claimSwarmButton);
     }
 
     public void bindSwarmReport(SwarmReport swarmReport){
+        currentSwarmReport = swarmReport;
         TextView timeStampTextView = (TextView) mView.findViewById(R.id.timeStampTextView);
         TextView distanceTextView = (TextView) mView.findViewById(R.id.distanceTextView);
         TextView sizeTextView = (TextView) mView.findViewById(R.id.sizeTextView);
@@ -40,7 +41,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
 
         timeStampTextView.setText("Reported " + swarmReport.getReportTimestamp());
         //TODO get current location lat and long and put here
-        distanceTextView.setText("Located " + calculateDistanceAsString(claimerLatitude, swarmReport.getLatitude(), claimerLongitude, swarmReport.getLongitude(),0.0, 0.0) + " meters away");
+        distanceTextView.setText("Located " + calculateDistanceAsString(claimerLatitude, swarmReport.getLatitude(), claimerLongitude, swarmReport.getLongitude(),0.0, 0.0) + " meters away in " + swarmReport.getCity());
         sizeTextView.setText("Size: The size of a " + swarmReport.getSize());
         accessibilityTextView.setText("Accessibility: " + swarmReport.getAccessibility());
         claimSwarmButton.setOnClickListener(this); //not sure whether this will work here
@@ -50,20 +51,33 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         claimerLongitude = longitude;
     }
 
+    public void bindCurrentUserNameAndId(String passedUserName, String passedUserId){
+        userName = passedUserName;
+        userId = passedUserId;
+    }
+
     @Override
     public void onClick(View v) {
-//        if(v == claimSwarmButton){
-//
-//        }
+        if(v == claimButton){
+            DatabaseReference ref = FirebaseDatabase.getInstance()
+                    .getReference(currentSwarmReport.getCity())
+                    .child(currentSwarmReport.getReportId())
+                    .child("claimed");
+            ref.setValue(true);
+            DatabaseReference claimantNameRef = FirebaseDatabase.getInstance()
+                    .getReference(currentSwarmReport.getCity())
+                    .child(currentSwarmReport.getReportId())
+                    .child("claimantName");
+            claimantNameRef.setValue(userName);
+            DatabaseReference claimantIdRef = FirebaseDatabase.getInstance()
+                    .getReference(currentSwarmReport.getCity())
+                    .child(currentSwarmReport.getReportId())
+                    .child("claimantId");
+            claimantIdRef.setValue(userId);
+        }
     }
 
     public String calculateDistanceAsString(Double currentLatitude, Double claimLatitude, Double currentLongitude, Double claimLongitude, Double elevation1, Double elevation2){
-        Log.d("cuurentLat", Double.toString(currentLatitude));
-        Log.d("currentLong", Double.toString(currentLongitude));
-        Log.d("reportedLat", Double.toString(claimLatitude));
-        Log.d("reportedLong", Double.toString(claimLongitude));
-
-
         //TODO you can update with elevation later
 
         Double distanceInMeters = new Double(3.14);

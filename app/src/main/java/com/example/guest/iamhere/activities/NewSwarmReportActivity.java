@@ -56,22 +56,31 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private LocationRequest mLocationRequest;
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
     private String city;
-    private LatLng geoLocation;
     private String userName;
     private String userId;
     private Double currenLatitude;
     private Double currentLongitude;
 
-    @Bind(R.id.reportSwarmButton) Button reportSwarmButton;
-    @Bind(R.id.baseball) RadioButton baseball;
-    @Bind(R.id.football) RadioButton football;
-    @Bind(R.id.basketball) RadioButton basketball;
-    @Bind(R.id.beachball) RadioButton beachball;
-    @Bind(R.id.tallLadder) RadioButton tallLadder;
-    @Bind(R.id.ladder) RadioButton ladder;
-    @Bind(R.id.reach) RadioButton reach;
-    @Bind(R.id.hasLadder) RadioButton hasLadder;
-    @Bind(R.id.locationTextView) TextView locationTextView;
+    @Bind(R.id.reportSwarmButton)
+    Button reportSwarmButton;
+    @Bind(R.id.baseball)
+    RadioButton baseball;
+    @Bind(R.id.football)
+    RadioButton football;
+    @Bind(R.id.basketball)
+    RadioButton basketball;
+    @Bind(R.id.beachball)
+    RadioButton beachball;
+    @Bind(R.id.tallLadder)
+    RadioButton tallLadder;
+    @Bind(R.id.ladder)
+    RadioButton ladder;
+    @Bind(R.id.reach)
+    RadioButton reach;
+    @Bind(R.id.hasLadder)
+    RadioButton hasLadder;
+    @Bind(R.id.locationTextView)
+    TextView locationTextView;
 
 
     @Override
@@ -88,7 +97,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 if (user != null) {
                     userName = user.getDisplayName();
                     userId = user.getUid();
-                } else{
+                } else {
 
                 }
             }
@@ -108,26 +117,26 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
             return;
         }
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if(location == null){
+        if (location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        }else {
+        } else {
             handleNewLocation(location);
         }
     }
 
     @Override
-    public void onRequestPermissionsResult (int requestCode, String permissions[], int[] grantResults){
-        switch(requestCode){
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
-                if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                    if(location == null){
+                    if (location == null) {
                         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-                    }else {
+                    } else {
                         handleNewLocation(location);
                     }
                 }
@@ -135,24 +144,21 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         }
     }
 
-    private void handleNewLocation(Location location){
+    private void handleNewLocation(Location location) {
         currenLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
         Geocoder gcd = new Geocoder(NewSwarmReportActivity.this, Locale.getDefault());
-        try{
+        try {
             List<Address> addresses = gcd.getFromLocation(currenLatitude, currentLongitude, 1);
-            if (addresses.size() > 0)
-            {
-                city = addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea() ;
+            if (addresses.size() > 0) {
+                city = addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea();
                 Log.d(TAG, city);
                 locationTextView.setText("Looks like you're in: " + city + ". We'll register your swarm there.");
                 reportSwarmButton.setVisibility(View.VISIBLE);
-            }
-            else
-            {
+            } else {
                 city = "unknown";
             }
-        } catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -166,13 +172,13 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        if(connectionResult.hasResolution()){
-            try{
+        if (connectionResult.hasResolution()) {
+            try {
                 connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-            } catch(IntentSender.SendIntentException e){
+            } catch (IntentSender.SendIntentException e) {
                 e.printStackTrace();
             }
-        } else{
+        } else {
             Log.d(TAG, "Location services failed with code " + connectionResult.getErrorCode());
         }
     }
@@ -191,7 +197,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         if (authListener != null) {
             auth.removeAuthStateListener(authListener);
         }
-        if(mGoogleApiClient.isConnected()){
+        if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
@@ -199,52 +205,55 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
 
     @Override
     public void onClick(View v) {
-        if (v == reportSwarmButton){
+        if (v == reportSwarmButton) {
             size = getSize();
             accessibility = getAccessibility();
-            if(size != null && accessibility != null){
+            if (size != null && accessibility != null) {
                 Calendar calendar = Calendar.getInstance();
                 java.util.Date now = calendar.getTime();
                 java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
                 String timeString = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(currentTimestamp);
 
-            SwarmReport newSwarmReport = new SwarmReport(currenLatitude, currentLongitude, city, userName, userId, size, timeString, accessibility);
+                SwarmReport newSwarmReport = new SwarmReport(currenLatitude, currentLongitude, city, userName, userId, size, timeString, accessibility);
                 database = FirebaseDatabase.getInstance();
-            ref = database.getReference(city);
+                ref = database.getReference(city);
+                DatabaseReference pushRef = ref.push();
+                String pushId = pushRef.getKey();
+                newSwarmReport.setReportId(pushId);
+                pushRef.setValue(newSwarmReport);
 
-            ref.push().setValue(newSwarmReport);
                 Intent intent = new Intent(NewSwarmReportActivity.this, MainActivity.class);
                 startActivity(intent);
-            } else{
+            } else {
                 Toast.makeText(NewSwarmReportActivity.this, "Please select size and accessability", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    public String getSize(){
+    public String getSize() {
         String size = null;
-        if(baseball.isChecked()){
+        if (baseball.isChecked()) {
             size = "baseball";
-        } else if (football.isChecked()){
+        } else if (football.isChecked()) {
             size = "football";
-        } else if(basketball.isChecked()){
+        } else if (basketball.isChecked()) {
             size = "basketball";
-        } else if(beachball.isChecked()){
+        } else if (beachball.isChecked()) {
             size = "beachball";
         }
         return size;
     }
 
-    public String getAccessibility(){
+    public String getAccessibility() {
         String accessibility = null;
-        if(reach.isChecked()){
+        if (reach.isChecked()) {
             accessibility = "reach";
-        } else if (ladder.isChecked()){
+        } else if (ladder.isChecked()) {
             accessibility = "ladder";
 
-        } else if(hasLadder.isChecked()){
+        } else if (hasLadder.isChecked()) {
             accessibility = "hasLadder";
-        } else if(tallLadder.isChecked()){
+        } else if (tallLadder.isChecked()) {
             accessibility = "tallLadder";
         }
         return accessibility;
