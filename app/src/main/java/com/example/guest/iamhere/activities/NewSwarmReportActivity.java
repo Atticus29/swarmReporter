@@ -59,8 +59,8 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private LatLng geoLocation;
     private String userName;
     private String userId;
-    private double currenLatitude;
-    private double currentLongitude;
+    private Double currenLatitude;
+    private Double currentLongitude;
 
     @Bind(R.id.reportSwarmButton) Button reportSwarmButton;
     @Bind(R.id.baseball) RadioButton baseball;
@@ -136,11 +136,8 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     }
 
     private void handleNewLocation(Location location){
-        Log.d("hi", location.toString());
         currenLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
-        LatLng latLng = new LatLng(currenLatitude, currentLongitude);
-        geoLocation = latLng;
         Geocoder gcd = new Geocoder(NewSwarmReportActivity.this, Locale.getDefault());
         try{
             List<Address> addresses = gcd.getFromLocation(currenLatitude, currentLongitude, 1);
@@ -150,7 +147,6 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 Log.d(TAG, city);
                 locationTextView.setText("Looks like you're in: " + city + ". We'll register your swarm there.");
                 reportSwarmButton.setVisibility(View.VISIBLE);
-
             }
             else
             {
