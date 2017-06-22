@@ -15,50 +15,22 @@ The problem is that currently, swarm lists are not decentralized and are quite c
 
 Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers nearby.
 
-## User stories
-- [ ] A user can log in/authenticate
-- [ ] A user can report a swarm
-- [ ] A responding user can see the report and find out how far away it is from their location/address.
-- [ ] A responder can “claim” a swarm, at which point it is no longer visible to other users.
+## What users of the app can do:
+- [x] A user can log in/authenticate
+- [x] A user can report a swarm
+- [x] Users can see swarm reports in their city
+- [x] A responding user can see the report and find out how far away it is from their location upon opening the app.
+- [x] A responder can “claim” a swarm, at which point it is no longer visible to other users.
+- [x] Reports and responses are persisted on a database.
+- [x] Reporter reports essential details about the swarm (does it require a ladder? Approximate size of swarm (baseball vs. basketball))
+
+
+## Future features:
+- [ ] Users can see swarm reports within a certain radius
+- [ ] A responding user can see the report and find out how far away it is from their location/address, updated in real time
+- [ ] Users are notified when a new swarm is reported in their area
 - [ ] The reporting user can see who claimed the swarm and how far away they are.
-- [ ] Reports and responses are persisted on a database.
-- [ ] Reporter reports essential details about the swarm (does it require a ladder? Approximate size of swarm (baseball vs. basketball))
 - [ ] Users can post a picture of the swarm
-## Planning
-
-### Master Checklist
-
-
-### Models
-- [ ] Claim
-
-
-### Forms
-- [ ] Create a claim
-- [ ] Create account
-
-### Activities
-- [ ] LoginActivity
-- [ ] MainActivity
-
-### Adapters
-- [ ]
-
-### API
-- [ ] Twitter (to Tweet results of completed experiments)
-
-## Specs/
-| Behavior                   | Input Example     | Output Example    |
-| -------------------------- | -----------------:| -----------------:|
-|User can enter experiment details|User enters experiment name, treatment 1 name, treatment 2 name, effect size|experiment details recorded|
-
-### Set Up
-
-* Clone repository from GitHub: Navigate to your computer's terminal and type, `git clone https://github.com/Atticus29/bivuoac.git`
-* Open Android Studio (if not already installed, [begin install process here](https://developer.android.com/studio/index.html))
-* Click run in the top option bar (looks like a, "play" icon)
-
-### Future Functionality
 - [ ] A claimed swarm re-appears as available if it is not physically retrieved by a certain amount of time
 	- [ ] Contact information between reporter and responder is exchanged
 	- [ ] Ratings/feedback for the responders can be provided
@@ -69,6 +41,55 @@ Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers
 	- [ ] Reporters and responders can cancel a report/claim
 	- [ ] Reporters can decline a claim
 	- [ ] Reporters can see responder’s geographical progress towards them on a map
+
+## Planning
+
+### Useful tutorials
+
+#### Potential
+* [GeoFire](https://github.com/firebase/geofire-java)
+
+#### Actual
+* [Google location service tutorial from treehouse](http://blog.teamtreehouse.com/beginners-guide-location-android)
+  * You may have to use Run-time permissions, which are not covered in the above tutorial
+
+### Master Checklist
+
+- [ ] Strip API key info. from commit history
+
+
+### Models
+- [x] SwarmReport
+
+
+### Forms
+- [x] Create a claim
+- [x] Create account
+- [x] Log in
+
+### Activities
+- [x] LoginActivity
+- [x] Landing activity
+- [x] Create an account activity
+- [x] Report swarm activity
+- [x] MainActivity (user see swarm reports in their city)
+
+### Adapters
+- [x] FirebaseViewHolder
+
+### API
+- [x] Google services
+
+## Specs/
+| Behavior                   | Input Example     | Output Example    |
+| -------------------------- | -----------------:| -----------------:|
+
+
+### Set Up
+
+* Clone repository from GitHub: Navigate to your computer's terminal and type, `git clone https://github.com/Atticus29/bivuoac.git`
+* Open Android Studio (if not already installed, [begin install process here](https://developer.android.com/studio/index.html))
+* Click run in the top option bar (looks like a, "play" icon)
 
 # License
 
@@ -102,6 +123,3 @@ You will need the following things properly installed on your computer.
 
 * [Git](https://git-scm.com/)
 * [Android Studio](https://developer.android.com/studio/index.html)
-
-## Dependencies
-* None yet
