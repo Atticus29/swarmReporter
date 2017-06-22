@@ -6,18 +6,19 @@ import android.os.IBinder;
 import android.support.design.widget.TabLayout;
 import android.util.Log;
 
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-public class CustomMessagingService extends Service {
+public class CustomMessagingService extends FirebaseMessagingService {
     private String TAG = CustomMessagingService.class.getSimpleName();
     public CustomMessagingService() {
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+//    @Override
+//    public IBinder onBind(Intent intent) {
+//        // TODO: Return the communication channel to the service.
+//        throw new UnsupportedOperationException("Not yet implemented");
+//    }
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
