@@ -3,17 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="260dp"
     android:background="@color/primary"
     android:orientation="vertical">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/timeStampTextView"
-            android:layout_width="368dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
@@ -21,6 +21,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:text="Reported: "
+            android:textSize="23sp"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -28,13 +29,14 @@
 
         <TextView
             android:id="@+id/distanceTextView"
-            android:layout_width="0dp"
-            android:layout_height="17dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:textSize="23sp"
             android:text="Distance from your current location: __ m"
             app:layout_constraintLeft_toLeftOf="@+id/timeStampTextView"
             app:layout_constraintRight_toRightOf="@+id/timeStampTextView"
@@ -42,13 +44,14 @@
 
         <TextView
             android:id="@+id/sizeTextView"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:textSize="23sp"
             android:text="Size: The size of a __"
             app:layout_constraintLeft_toLeftOf="@+id/distanceTextView"
             app:layout_constraintRight_toRightOf="@+id/distanceTextView"
@@ -56,13 +59,14 @@
 
         <TextView
             android:id="@+id/accessibilityTextView"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:textSize="23sp"
             android:text="Accessibility: __"
             app:layout_constraintLeft_toLeftOf="@+id/sizeTextView"
             app:layout_constraintRight_toRightOf="@+id/sizeTextView"
@@ -70,7 +74,7 @@
 
         <Button
             android:id="@+id/claimSwarmButton"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
