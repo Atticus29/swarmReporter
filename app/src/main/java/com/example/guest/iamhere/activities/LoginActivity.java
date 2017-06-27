@@ -100,6 +100,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }else {
 
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.putExtra("userName", task.getResult().getUser().getDisplayName());
                             startActivity(intent);
                         }
                     }

@@ -81,6 +81,8 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        String passedUserName = getIntent().getStringExtra("userName");
+        greetingTextView.setText("Welcome, " + passedUserName);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -110,7 +112,6 @@ public class MainActivity extends AppCompatActivity
                     Log.d("state change", "got here");
                     userName = user.getDisplayName();
                     userId = user.getUid();
-                    greetingTextView.setText("Welcome, " + userName);
                 } else {
 
                 }
