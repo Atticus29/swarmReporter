@@ -14,8 +14,7 @@
         android:layout_width="368dp"
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="0dp"
-        android:layout_marginBottom="8dp">
+        tools:layout_editor_absoluteY="0dp">
 
         <TextView
             android:id="@+id/sizeLabel"
@@ -63,8 +62,7 @@
         android:layout_width="368dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/radioGroupSize"
-        tools:layout_editor_absoluteX="8dp"
-        android:layout_marginBottom="18dp">
+        tools:layout_editor_absoluteX="8dp">
 
         <TextView
             android:id="@+id/accessibilityLabel"
@@ -115,7 +113,7 @@
 
     <TextView
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:textSize="20sp"
         android:textStyle="bold"
         android:id="@+id/locationTextView"
@@ -126,21 +124,53 @@
 
     </TextView>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/locationTextView"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="@+id/radioGroupAccessibility"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/radioGroupAccessibility" />
+
+    <Button
+        android:id="@+id/addImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bivouac_button"
+        android:text=" Take a picture"
+        android:padding="8dp"
+        android:visibility="invisible"
+        android:drawableLeft="@drawable/ic_menu_camera"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="@+id/radioGroupAccessibility"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/radioGroupAccessibility"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/locationTextView" />
+
     <Button
         android:id="@+id/reportSwarmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="16dp"
         android:background="@drawable/bivouac_button"
         android:padding="8dp"
         android:text="Report Swarm"
         app:layout_constraintLeft_toLeftOf="@+id/locationTextView"
         app:layout_constraintRight_toRightOf="@+id/locationTextView"
-        app:layout_constraintTop_toBottomOf="@+id/locationTextView"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:visibility="invisible"/>
+        android:visibility="invisible"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/addImageButton"
+        app:layout_constraintVertical_bias="0.0" />
 
 </android.support.constraint.ConstraintLayout>

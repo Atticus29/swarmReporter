@@ -1,8 +1,12 @@
 package com.example.guest.iamhere.viewHolders;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
@@ -26,6 +30,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     private SwarmReport currentSwarmReport;
     private String userName;
     private String userId;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     View mView;
     Context mContext;
@@ -37,7 +42,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         this.mView = itemView;
         this.mContext = itemView.getContext();
         claimButton = (Button) itemView.findViewById(R.id.claimSwarmButton);
-        swarmImage = (ImageView) mView.findViewById(R.id.swarmImage);
+//        swarmImage = (ImageView) mView.findViewById(R.id.swarmImage);
     }
 
     public void bindSwarmReport(SwarmReport swarmReport){
@@ -58,8 +63,6 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         accessibilityTextView.setText("Accessibility: " + swarmReport.getAccessibility());
 
         ImageView swarmImage = (ImageView) mView.findViewById(R.id.swarmImage);
-        swarmImage.setOnClickListener(this);
-        Log.d("image string is", swarmReport.getImageString());
         dropImageIntoView(swarmReport.getImageString(), mContext, swarmImage);
     }
     public void bindClaimerLatLong(Double latitude, Double longitude){
@@ -112,8 +115,6 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                     .child(currentSwarmReport.getReportId())
                     .child("claimantId");
             claimantIdRef.setValue(userId);
-        } else if(v == swarmImage){
-            Log.d(TAG, "onClick: cameraImage clicked");
         }
     }
 
