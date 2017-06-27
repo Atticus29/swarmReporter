@@ -37,7 +37,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         this.mView = itemView;
         this.mContext = itemView.getContext();
         claimButton = (Button) itemView.findViewById(R.id.claimSwarmButton);
-        ImageView swarmImage = (ImageView) mView.findViewById(R.id.swarmImage);
+        swarmImage = (ImageView) mView.findViewById(R.id.swarmImage);
     }
 
     public void bindSwarmReport(SwarmReport swarmReport){
@@ -113,7 +113,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                     .child("claimantId");
             claimantIdRef.setValue(userId);
         } else if(v == swarmImage){
-
+            Log.d(TAG, "onClick: cameraImage clicked");
         }
     }
 
