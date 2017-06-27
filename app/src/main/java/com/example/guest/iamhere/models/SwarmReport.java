@@ -31,7 +31,39 @@ public class SwarmReport {
         this.size = size;
         this.reportTimestamp = reportTimestamp;
         this.accessibility = accessibility;
-        this.imageString = "https://openclipart.org/image/2400px/svg_to_png/244452/Originuum---Vetor---Plano---Camera-Fotografica---1.0.0.png";
+        this.imageString = "https://coxshoney.com/wp-content/uploads/bee_swarm_man.jpg";
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setReporterName(String reporterName) {
+        this.reporterName = reporterName;
+    }
+
+    public void setReporterId(String reporterId) {
+        this.reporterId = reporterId;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public void setReportTimestamp(String reportTimestamp) {
+        this.reportTimestamp = reportTimestamp;
+    }
+
+    public void setAccessibility(String accessibility) {
+        this.accessibility = accessibility;
     }
 
     public void setImageString(String imageString) {

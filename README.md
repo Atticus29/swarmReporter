@@ -6,6 +6,8 @@ An Android app. for connecting bee swarms to beekeepers.
 ## By: Mark Fisher
 
 ## Known issues
+- [ ] Crashes on phone when you try to log out from email Login or google login
+
 
 ## Description
 
