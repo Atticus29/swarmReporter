@@ -59,6 +59,7 @@ Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers
 * Click run in the top option bar (looks like a, "play" icon)
 
 ### Future Functionality
+- [ ] A user is alerted if a username already exists
 - [ ] A claimed swarm re-appears as available if it is not physically retrieved by a certain amount of time
 	- [ ] Contact information between reporter and responder is exchanged
 	- [ ] Ratings/feedback for the responders can be provided

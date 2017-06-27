@@ -33,7 +33,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Bind(R.id.passwordTextView) TextView passwordTextView;
     @Bind(R.id.loginButton) Button loginButton;
     @Bind(R.id.google_sign_in_button) SignInButton signInButton;
-    @Bind(R.id.statusTextView) TextView statusTextView;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -161,7 +160,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void updateUI(boolean signedIn) {
         if (signedIn) {
         } else {
-            statusTextView.setText("Signed Out");
+
         }
     }
 

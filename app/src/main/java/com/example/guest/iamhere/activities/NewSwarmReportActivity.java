@@ -60,27 +60,18 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private String userId;
     private Double currenLatitude;
     private Double currentLongitude;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
-    @Bind(R.id.reportSwarmButton)
-    Button reportSwarmButton;
-    @Bind(R.id.baseball)
-    RadioButton baseball;
-    @Bind(R.id.football)
-    RadioButton football;
-    @Bind(R.id.basketball)
-    RadioButton basketball;
-    @Bind(R.id.beachball)
-    RadioButton beachball;
-    @Bind(R.id.tallLadder)
-    RadioButton tallLadder;
-    @Bind(R.id.ladder)
-    RadioButton ladder;
-    @Bind(R.id.reach)
-    RadioButton reach;
-    @Bind(R.id.hasLadder)
-    RadioButton hasLadder;
-    @Bind(R.id.locationTextView)
-    TextView locationTextView;
+    @Bind(R.id.reportSwarmButton) Button reportSwarmButton;
+    @Bind(R.id.baseball) RadioButton baseball;
+    @Bind(R.id.football) RadioButton football;
+    @Bind(R.id.basketball) RadioButton basketball;
+    @Bind(R.id.beachball) RadioButton beachball;
+    @Bind(R.id.tallLadder) RadioButton tallLadder;
+    @Bind(R.id.ladder) RadioButton ladder;
+    @Bind(R.id.reach) RadioButton reach;
+    @Bind(R.id.hasLadder) RadioButton hasLadder;
+    @Bind(R.id.locationTextView) TextView locationTextView;
 
 
     @Override

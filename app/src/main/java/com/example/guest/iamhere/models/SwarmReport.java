@@ -18,6 +18,7 @@ public class SwarmReport {
     private String accessibility;
     private String claimantName;
     private String claimantId;
+    private String imageString;
 
     public SwarmReport(){}
 
@@ -30,6 +31,15 @@ public class SwarmReport {
         this.size = size;
         this.reportTimestamp = reportTimestamp;
         this.accessibility = accessibility;
+        this.imageString = "https://www.spreadshirt.com/image-server/v1/designs/12601656,width=178,height=178/take-a-picture-it-will-last-longer.png";
+    }
+
+    public void setImageString(String imageString) {
+        this.imageString = imageString;
+    }
+
+    public String getImageString() {
+        return imageString;
     }
 
     public void setReportId(String reportId) {
