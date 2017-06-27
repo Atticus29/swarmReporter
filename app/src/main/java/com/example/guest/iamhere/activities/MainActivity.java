@@ -52,6 +52,8 @@ import java.util.Locale;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static java.security.AccessController.getContext;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -82,7 +84,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         String passedUserName = getIntent().getStringExtra("userName");
-        greetingTextView.setText("Welcome, " + passedUserName);
+        greetingTextView.setText("Unclaimed swarms near, " + passedUserName + ":");
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -246,6 +248,7 @@ public class MainActivity extends AppCompatActivity
         claimRecyclerView.setAdapter(mFirebaseAdapter);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(claimRecyclerView.getContext(),
                 linearLayoutManager.getOrientation());
+        dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
         claimRecyclerView.addItemDecoration(dividerItemDecoration);
     }
 
