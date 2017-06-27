@@ -31,7 +31,7 @@ public class SwarmReport {
         this.size = size;
         this.reportTimestamp = reportTimestamp;
         this.accessibility = accessibility;
-        this.imageString = "https://www.spreadshirt.com/image-server/v1/designs/12601656,width=178,height=178/take-a-picture-it-will-last-longer.png";
+        this.imageString = "https://openclipart.org/image/2400px/svg_to_png/244452/Originuum---Vetor---Plano---Camera-Fotografica---1.0.0.png";
     }
 
     public void setImageString(String imageString) {
