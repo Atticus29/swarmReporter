@@ -57,9 +57,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+//                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
+//                    Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
             }
         };
@@ -164,13 +164,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void updateUI(boolean signedIn) {
         if (signedIn) {
-            findViewById(R.id.google_sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
+//            findViewById(R.id.google_sign_in_button).setVisibility(View.GONE);
+//            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
             statusTextView.setText("Signed Out");
 
-            findViewById(R.id.google_sign_in_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
+//            findViewById(R.id.google_sign_in_button).setVisibility(View.VISIBLE);
+//            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
         }
     }
 

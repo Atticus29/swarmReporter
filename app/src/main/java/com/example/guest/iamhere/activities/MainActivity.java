@@ -27,6 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.models.SwarmReport;
@@ -61,7 +62,6 @@ public class MainActivity extends AppCompatActivity
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
     private String city;
     private Query swarmReportQuery;
-//    private DatabaseReference mSwarmReportReference;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
     private Double currenLatitude;
     private Double currentLongitude;
@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth.AuthStateListener authListener;
 
     @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
+    @Bind(R.id.greetingTextView) TextView greetingTextView;
 
 
     @Override
@@ -103,10 +104,13 @@ public class MainActivity extends AppCompatActivity
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                Log.d("authStateChangedCheck", "does this even happen?");
+                FirebaseUser user = auth.getCurrentUser();
                 if (user != null) {
+                    Log.d("state change", "got here");
                     userName = user.getDisplayName();
                     userId = user.getUid();
+                    greetingTextView.setText("Welcome, " + userName);
                 } else {
 
                 }
