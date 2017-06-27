@@ -1,16 +1,23 @@
 package com.example.guest.iamhere.viewHolders;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.models.SwarmReport;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
 
 public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements View.OnClickListener {
     private String TAG = FirebaseClaimViewHolder.class.getSimpleName();
@@ -23,12 +30,14 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     View mView;
     Context mContext;
     Button claimButton;
+    ImageView swarmImage;
 
     public FirebaseClaimViewHolder(View itemView) {
         super(itemView);
         this.mView = itemView;
         this.mContext = itemView.getContext();
         claimButton = (Button) itemView.findViewById(R.id.claimSwarmButton);
+        ImageView swarmImage = (ImageView) mView.findViewById(R.id.swarmImage);
     }
 
     public void bindSwarmReport(SwarmReport swarmReport){
@@ -38,13 +47,20 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         TextView sizeTextView = (TextView) mView.findViewById(R.id.sizeTextView);
         TextView accessibilityTextView = (TextView) mView.findViewById(R.id.accessibilityTextView);
         Button claimSwarmButton = (Button) mView.findViewById(R.id.claimSwarmButton);
+        claimSwarmButton.setOnClickListener(this);
 
         timeStampTextView.setText("Reported " + swarmReport.getReportTimestamp());
+
         //TODO get current location lat and long and put here
+
         distanceTextView.setText("Located " + calculateDistanceAsString(claimerLatitude, swarmReport.getLatitude(), claimerLongitude, swarmReport.getLongitude(),0.0, 0.0) + " meters away in " + swarmReport.getCity());
         sizeTextView.setText("Size: The size of a " + swarmReport.getSize());
         accessibilityTextView.setText("Accessibility: " + swarmReport.getAccessibility());
-        claimSwarmButton.setOnClickListener(this); //not sure whether this will work here
+
+        ImageView swarmImage = (ImageView) mView.findViewById(R.id.swarmImage);
+        swarmImage.setOnClickListener(this);
+        Log.d("image string is", swarmReport.getImageString());
+        dropImageIntoView(swarmReport.getImageString(), mContext, swarmImage);
     }
     public void bindClaimerLatLong(Double latitude, Double longitude){
         claimerLatitude = latitude;
@@ -54,6 +70,28 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     public void bindCurrentUserNameAndId(String passedUserName, String passedUserId){
         userName = passedUserName;
         userId = passedUserId;
+    }
+
+    public void dropImageIntoView(String imageURL, Context context, ImageView imageView){
+        if(!imageURL.contains("http")){
+            try{
+                Bitmap imageBitmap = decodeFromFirebaseBase64(imageURL);
+                imageView.setImageBitmap(imageBitmap);
+            } catch(IOException e){
+                e.printStackTrace();
+            }
+        } else{
+            Picasso.with(context)
+                    .load(imageURL)
+                    .resize(125, 125)
+                    .centerCrop()
+                    .into(imageView);
+        }
+    }
+
+    public static Bitmap decodeFromFirebaseBase64(String image) throws IOException {
+        byte[] decodedByteArray = android.util.Base64.decode(image, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
     }
 
     @Override
@@ -74,6 +112,8 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                     .child(currentSwarmReport.getReportId())
                     .child("claimantId");
             claimantIdRef.setValue(userId);
+        } else if(v == swarmImage){
+
         }
     }
 

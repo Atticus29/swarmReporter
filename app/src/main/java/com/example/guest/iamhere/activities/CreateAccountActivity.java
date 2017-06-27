@@ -12,12 +12,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.guest.iamhere.R;
+import com.example.guest.iamhere.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,6 +35,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     private String confirmPassword;
     private String email;
     private String password;
+    private String phoneNumber;
 
 
 
@@ -40,6 +44,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     @Bind(R.id.emailInputTextView) TextView emailInputTextView;
     @Bind(R.id.passwordInputTextView) TextView passwordInputTextView;
     @Bind(R.id.passwordConfirmInputTextView) TextView passwordConfirmInputTextView;
+    @Bind(R.id.phoneNumberTextView) TextView phoneNumberTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +71,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         password = passwordInputTextView.getText().toString().trim();
         email = emailInputTextView.getText().toString().trim();
         userName = nameInputTextView.getText().toString().trim();
+        phoneNumber = phoneNumberTextView.getText().toString().trim();
 
         if(isValidEmail(email) && isValidName(userName) && isValidPassword(password, confirmPassword)){
             mAuth.createUserWithEmailAndPassword(email, password)
@@ -73,12 +79,20 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             mAuthProgressDialog.dismiss();
-                            Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
                             if (!task.isSuccessful()) {
                                 Toast.makeText(CreateAccountActivity.this, "Account creation was not successful", Toast.LENGTH_SHORT).show();
                             } else if(task.isSuccessful()){
-                                Log.d("userNameBefCreFBUser", userName);
                                 createFirebaseUserProfile(task.getResult().getUser());
+                                String pushId = task.getResult().getUser().getUid();
+                                User currentUser = new User(email, userName, phoneNumber);
+                                Log.d("phone number", currentUser.getPhoneNumber());
+                                //TODO after you know this works, see if you can resolve the pushId issue
+                                FirebaseDatabase db = FirebaseDatabase.getInstance();
+                                DatabaseReference ref = db
+                                        .getReference("users");
+//                                        .child(pushId);
+                                ref.push().setValue(currentUser);
+
                             }
                         }
                     });
@@ -98,6 +112,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
+                            intent.putExtra("userName", userName);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                             finish();

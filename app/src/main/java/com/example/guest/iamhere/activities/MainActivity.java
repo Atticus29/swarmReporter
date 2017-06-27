@@ -27,6 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.models.SwarmReport;
@@ -51,6 +52,8 @@ import java.util.Locale;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static java.security.AccessController.getContext;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -61,7 +64,6 @@ public class MainActivity extends AppCompatActivity
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
     private String city;
     private Query swarmReportQuery;
-//    private DatabaseReference mSwarmReportReference;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
     private Double currenLatitude;
     private Double currentLongitude;
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth.AuthStateListener authListener;
 
     @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
+    @Bind(R.id.greetingTextView) TextView greetingTextView;
 
 
     @Override
@@ -80,6 +83,8 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        String passedUserName = getIntent().getStringExtra("userName");
+        greetingTextView.setText("Unclaimed swarms near, " + passedUserName + ":");
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -103,8 +108,10 @@ public class MainActivity extends AppCompatActivity
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                Log.d("authStateChangedCheck", "does this even happen?");
+                FirebaseUser user = auth.getCurrentUser();
                 if (user != null) {
+                    Log.d("state change", "got here");
                     userName = user.getDisplayName();
                     userId = user.getUid();
                 } else {
@@ -241,6 +248,7 @@ public class MainActivity extends AppCompatActivity
         claimRecyclerView.setAdapter(mFirebaseAdapter);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(claimRecyclerView.getContext(),
                 linearLayoutManager.getOrientation());
+        dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
         claimRecyclerView.addItemDecoration(dividerItemDecoration);
     }
 

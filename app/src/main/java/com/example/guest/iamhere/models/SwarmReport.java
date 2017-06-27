@@ -18,6 +18,7 @@ public class SwarmReport {
     private String accessibility;
     private String claimantName;
     private String claimantId;
+    private String imageString;
 
     public SwarmReport(){}
 
@@ -30,6 +31,15 @@ public class SwarmReport {
         this.size = size;
         this.reportTimestamp = reportTimestamp;
         this.accessibility = accessibility;
+        this.imageString = "https://openclipart.org/image/2400px/svg_to_png/244452/Originuum---Vetor---Plano---Camera-Fotografica---1.0.0.png";
+    }
+
+    public void setImageString(String imageString) {
+        this.imageString = imageString;
+    }
+
+    public String getImageString() {
+        return imageString;
     }
 
     public void setReportId(String reportId) {
