@@ -57,9 +57,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-//                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
-//                    Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
             }
         };
@@ -104,8 +102,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                         }
-
-                        // ...
                     }
                 });
     }
@@ -152,25 +148,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             GoogleSignInAccount acct = result.getSignInAccount();
-            statusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             updateUI(true);
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.putExtra("userName", acct.getDisplayName());
             startActivity(intent);
         } else {
-            // Signed out, show unauthenticated UI.
             updateUI(false);
         }
     }
 
     private void updateUI(boolean signedIn) {
         if (signedIn) {
-//            findViewById(R.id.google_sign_in_button).setVisibility(View.GONE);
-//            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
             statusTextView.setText("Signed Out");
-
-//            findViewById(R.id.google_sign_in_button).setVisibility(View.VISIBLE);
-//            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
         }
     }
 
