@@ -92,14 +92,14 @@ public class MainActivity extends AppCompatActivity
         greetingTextView.setText("Unclaimed swarms near " + passedUserName + ":");
 //        claimRecyclerView.setVisibility(View.GONE);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -114,10 +114,8 @@ public class MainActivity extends AppCompatActivity
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                Log.d("authStateChangedCheck", "does this even happen?");
                 FirebaseUser user = auth.getCurrentUser();
                 if (user != null) {
-                    Log.d("state change", "got here");
                     userName = user.getDisplayName();
                     userId = user.getUid();
                 } else {
