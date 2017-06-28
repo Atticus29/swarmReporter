@@ -263,7 +263,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mFirebaseAdapter.cleanup();
+        if(mFirebaseAdapter != null){
+            mFirebaseAdapter.cleanup();
+        }
+
     }
 
     @Override
