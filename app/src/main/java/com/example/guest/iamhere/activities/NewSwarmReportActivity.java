@@ -248,6 +248,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
             }
 
                 Intent intent = new Intent(NewSwarmReportActivity.this, MainActivity.class);
+            intent.putExtra("userName", userName);
                 startActivity(intent);
             } else {
                 Toast.makeText(NewSwarmReportActivity.this, "Please select size and accessability", Toast.LENGTH_SHORT).show();
@@ -268,11 +269,6 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
         newSwarmReport.setImageString(imageEncoded);
-//        DatabaseReference ref = FirebaseDatabase.getInstance()
-//                .getReference(city)
-//                .child(newSwarmReport.getReportId())
-//                .child("imageString");
-//        ref.setValue(imageEncoded);
     }
 
     public String getSize() {

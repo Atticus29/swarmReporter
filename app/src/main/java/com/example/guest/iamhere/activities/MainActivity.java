@@ -89,7 +89,12 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         String passedUserName = getIntent().getStringExtra("userName");
-        greetingTextView.setText("Unclaimed swarms near " + passedUserName + ":");
+        if(passedUserName != null){
+            greetingTextView.setText("Unclaimed swarms near " + passedUserName + ":");
+        } else{
+            greetingTextView.setText("");
+        }
+
 //        claimRecyclerView.setVisibility(View.GONE);
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
