@@ -29,6 +29,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.guest.iamhere.R;
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity
 
     @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
     @Bind(R.id.greetingTextView) TextView greetingTextView;
+    @Bind(R.id.progressBarForRecyclerView) ProgressBar progressBarForRecyclerView;
 
 
     @Override
@@ -88,6 +90,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         String passedUserName = getIntent().getStringExtra("userName");
         greetingTextView.setText("Unclaimed swarms near " + passedUserName + ":");
+//        claimRecyclerView.setVisibility(View.GONE);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -255,6 +258,8 @@ public class MainActivity extends AppCompatActivity
                 linearLayoutManager.getOrientation());
         dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
         claimRecyclerView.addItemDecoration(dividerItemDecoration);
+        progressBarForRecyclerView.setVisibility(View.GONE);
+//        claimRecyclerView.setVisibility(View.VISIBLE);
     }
 
     @Override
