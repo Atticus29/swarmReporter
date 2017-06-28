@@ -63,6 +63,9 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         accessibilityTextView.setText("Accessibility: " + swarmReport.getAccessibility());
 
         ImageView swarmImage = (ImageView) mView.findViewById(R.id.swarmImage);
+        if(swarmReport.getImageString() == null){
+            swarmReport.setImageString("https://coxshoney.com/wp-content/uploads/bee_swarm_man.jpg");
+        }
         dropImageIntoView(swarmReport.getImageString(), mContext, swarmImage);
     }
     public void bindClaimerLatLong(Double latitude, Double longitude){
@@ -76,19 +79,21 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     }
 
     public void dropImageIntoView(String imageURL, Context context, ImageView imageView){
-        if(!imageURL.contains("http")){
-            try{
-                Bitmap imageBitmap = decodeFromFirebaseBase64(imageURL);
-                imageView.setImageBitmap(imageBitmap);
-            } catch(IOException e){
-                e.printStackTrace();
+        if(imageURL != null){
+            if(!imageURL.contains("http")){
+                try{
+                    Bitmap imageBitmap = decodeFromFirebaseBase64(imageURL);
+                    imageView.setImageBitmap(imageBitmap);
+                } catch(IOException e){
+                    e.printStackTrace();
+                }
+            } else{
+                Picasso.with(context)
+                        .load(imageURL)
+                        .resize(125, 125)
+                        .centerCrop()
+                        .into(imageView);
             }
-        } else{
-            Picasso.with(context)
-                    .load(imageURL)
-                    .resize(125, 125)
-                    .centerCrop()
-                    .into(imageView);
         }
     }
 
