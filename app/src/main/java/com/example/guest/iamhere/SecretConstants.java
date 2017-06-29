@@ -6,4 +6,5 @@ package com.example.guest.iamhere;
 
 public class SecretConstants {
     public static final String googleApiKey = "AIzaSyDfMV7ER0MExgrl4eFyOTTcKXxBxHPJoZU";
+    public static final String testKey = "ooo so secret";
 }
