@@ -18,6 +18,13 @@ The problem is that currently, swarm lists are not decentralized and are quite c
 Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers nearby.
 
 ## User stories
+- [ ] A user is alerted if a username already exists
+- [ ] Greedy users are prevented from claiming more swarms
+- [ ] A claimed swarm re-appears as available if it is not physically retrieved by a certain amount of time
+	- [ ] Contact information between reporter and responder is exchanged
+	- [ ] Swarm reporters pay swarm responders a very small sum of money for retrieving the swarm.
+	- [ ] Reporters and responders can cancel a report/claim
+	- [ ] Reporters can decline a claim
 - [ ] A user can log in/authenticate
 - [ ] A user can report a swarm
 - [ ] A responding user can see the report and find out how far away it is from their location/address.
@@ -66,17 +73,11 @@ Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers
 * Click run in the top option bar (looks like a, "play" icon)
 
 ### Future Functionality
-- [ ] A user is alerted if a username already exists
-- [ ] A claimed swarm re-appears as available if it is not physically retrieved by a certain amount of time
-	- [ ] Contact information between reporter and responder is exchanged
+	- [ ] Reporters can see responder’s geographical progress towards them on a map
 	- [ ] Ratings/feedback for the responders can be provided
 	- [ ] Ratings/feedback for the reporters can be provided
 	- [ ] Rating/feedback data is persisted on a database
 	- [ ] Ratings can influence e.g. the radius or frequency with which swarms are reported to a particular user
-	- [ ] Swarm reporters pay swarm responders a very small sum of money for retrieving the swarm.
-	- [ ] Reporters and responders can cancel a report/claim
-	- [ ] Reporters can decline a claim
-	- [ ] Reporters can see responder’s geographical progress towards them on a map
 
 # License
 
