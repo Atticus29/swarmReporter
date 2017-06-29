@@ -44,17 +44,14 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     View mView;
     Context mContext;
     Button claimButton;
-    MapView mapView;
+    ImageView mapImageView;
 
     public FirebaseClaimViewHolder(View itemView) {
         super(itemView);
         this.mView = itemView;
         this.mContext = itemView.getContext();
         claimButton = (Button) itemView.findViewById(R.id.claimSwarmButton);
-        mapView = (MapView) itemView.findViewById(R.id.mapView);
-        mapView.onCreate(null);
-        mapView.getMapAsync(this);
-
+        mapImageView = (ImageView) itemView.findViewById(R.id.mapView);
     }
 
     public void bindSwarmReport(SwarmReport swarmReport){
@@ -79,6 +76,8 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             swarmReport.setImageString("https://coxshoney.com/wp-content/uploads/bee_swarm_man.jpg");
         }
         dropImageIntoView(swarmReport.getImageString(), mContext, swarmImage);
+
+        //TODO create the url for static map and drop into the mapImageView
     }
     public void bindClaimerLatLong(Double latitude, Double longitude){
         claimerLatitude = latitude;
