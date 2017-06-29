@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.guest.iamhere.R;
+import com.example.guest.iamhere.SecretConstants;
 import com.example.guest.iamhere.models.SwarmReport;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -51,7 +52,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         this.mView = itemView;
         this.mContext = itemView.getContext();
         claimButton = (Button) itemView.findViewById(R.id.claimSwarmButton);
-        mapImageView = (ImageView) itemView.findViewById(R.id.mapView);
+        mapImageView = (ImageView) itemView.findViewById(R.id.mapImageView);
     }
 
     public void bindSwarmReport(SwarmReport swarmReport){
@@ -77,7 +78,10 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         }
         dropImageIntoView(swarmReport.getImageString(), mContext, swarmImage);
 
-        //TODO create the url for static map and drop into the mapImageView
+        String testUrl = "https://maps.googleapis.com/maps/api/staticmap?size=400x400&key=" + SecretConstants.STATIC_MAP_API_KEY + "&markers=size:mid%7Ccolor:red%7C45.520613, -122.677544&visible=45.5927,-122.721%7C45.520613, -122.677544&markers=size:mid%7Ccolor:yellow%7Clabel:S%7C45.5927,-122.721";
+
+//        String testUrl = "https://maps.googleapis.com/maps/api/staticmap?size=400x400&key=" + SecretConstants.STATIC_MAP_API_KEY + "&markers=size:mid%7Ccolor:red%7C" + Double.toString(claimerLatitude) +"," + Double.toString(claimerLongitude) + "&visible=" + Double.toString(claimerLatitude) +"," + Double.toString(claimerLongitude) + "%7C" + Double.toString(swarmReport.getLatitude()) +"," + Double.toString(swarmReport.getLongitude()) + " &markers=size:mid%7Ccolor:yellow%7Clabel:S%7C" + Double.toString(swarmReport.getLatitude()) +"," + Double.toString(swarmReport.getLongitude());
+        dropImageIntoView(testUrl, mContext, mapImageView);
     }
     public void bindClaimerLatLong(Double latitude, Double longitude){
         claimerLatitude = latitude;
@@ -101,7 +105,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             } else{
                 Picasso.with(context)
                         .load(imageURL)
-                        .resize(125, 125)
+                        .resize(300, 300)
                         .centerCrop()
                         .into(imageView);
             }
