@@ -226,7 +226,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
             newSwarmReport.setSize(size);
             newSwarmReport.setAccessibility(accessibility);
             newSwarmReport.setReportTimestamp(timeString);
-            if(newSwarmReport.getImageString() == null){
+            if (newSwarmReport.getImageString() == null) {
                 newSwarmReport.setImageString("https://coxshoney.com/wp-content/uploads/bee_swarm_man.jpg");
             }
             database = FirebaseDatabase.getInstance();
@@ -235,24 +235,23 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
             String pushId = pushRef.getKey();
             newSwarmReport.setReportId(pushId);
         }
-        if(v == addImageButton){
+        if (v == addImageButton) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if(intent.resolveActivity(v.getContext().getPackageManager()) != null){
+            if (intent.resolveActivity(v.getContext().getPackageManager()) != null) {
                 startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
             }
         } else if (v == reportSwarmButton) {
-            if(newSwarmReport.getReportId() != null){
-                pushRef.setValue(newSwarmReport);
-            } else{
-
-            }
-
+            if (newSwarmReport.getSize() != null | newSwarmReport.getAccessibility() != null) {
+                if (newSwarmReport.getReportId() != null) {
+                    pushRef.setValue(newSwarmReport);
+                }
                 Intent intent = new Intent(NewSwarmReportActivity.this, MainActivity.class);
-            intent.putExtra("userName", userName);
+                intent.putExtra("userName", userName);
                 startActivity(intent);
             } else {
                 Toast.makeText(NewSwarmReportActivity.this, "Please select size and accessability", Toast.LENGTH_SHORT).show();
             }
+        }
     }
 
     @Override
