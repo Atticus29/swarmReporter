@@ -14,74 +14,89 @@
 
         <ImageView
             android:id="@+id/swarmImage"
-            android:layout_width="125dp"
+            android:layout_width="0dp"
             android:layout_height="125dp"
             app:srcCompat="@drawable/bee"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="8dp"
+            android:layout_marginLeft="34dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:clickable="true"
+            android:layout_marginStart="34dp"
+            android:layout_marginEnd="34dp"
+            app:layout_constraintRight_toLeftOf="@+id/guideline"
+            android:layout_marginRight="34dp"
+            tools:layout_constraintRight_creator="1"
+            tools:layout_constraintLeft_creator="1" />
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            tools:layout_constraintRight_creator="1"
+            tools:layout_constraintLeft_creator="1"
             android:layout_marginRight="8dp"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginLeft="8dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:clickable="true"/>
+            app:layout_constraintLeft_toLeftOf="@+id/guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/swarmImage"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginBottom="8dp" />
 
         <TextView
             android:id="@+id/timeStampTextView"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="8dp"
             android:text="Reported: "
             android:textSize="23sp"
             app:layout_constraintTop_toBottomOf="@+id/swarmImage"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            tools:layout_editor_absoluteY="16dp" />
+            tools:layout_constraintRight_creator="1"
+            tools:layout_constraintLeft_creator="1" />
 
         <TextView
             android:id="@+id/distanceTextView"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:textSize="23sp"
             android:text="Distance from your current location: __ m"
             app:layout_constraintLeft_toLeftOf="@+id/timeStampTextView"
             app:layout_constraintRight_toRightOf="@+id/timeStampTextView"
             app:layout_constraintTop_toBottomOf="@+id/timeStampTextView"
-            app:layout_constraintHorizontal_bias="0.0" />
+            app:layout_constraintHorizontal_bias="0.0"
+            tools:layout_constraintRight_creator="1"
+            tools:layout_constraintLeft_creator="1" />
 
         <TextView
             android:id="@+id/sizeTextView"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:textSize="23sp"
             android:text="Size: The size of a __"
             app:layout_constraintLeft_toLeftOf="@+id/distanceTextView"
             app:layout_constraintRight_toRightOf="@+id/distanceTextView"
-            app:layout_constraintTop_toBottomOf="@+id/distanceTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/distanceTextView"
+            tools:layout_constraintRight_creator="1"
+            tools:layout_constraintLeft_creator="1" />
 
         <TextView
             android:id="@+id/accessibilityTextView"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:textSize="23sp"
             android:text="Accessibility: __"
             app:layout_constraintLeft_toLeftOf="@+id/sizeTextView"
             app:layout_constraintRight_toRightOf="@+id/sizeTextView"
-            app:layout_constraintTop_toBottomOf="@+id/sizeTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/sizeTextView"
+            tools:layout_constraintRight_creator="1"
+            tools:layout_constraintLeft_creator="1" />
 
         <Button
             android:id="@+id/claimSwarmButton"
@@ -104,6 +119,7 @@
             app:layout_constraintGuide_begin="192dp"
             tools:layout_editor_absoluteX="192dp"
             tools:layout_editor_absoluteY="81dp" />
+
     </android.support.constraint.ConstraintLayout>
 
 </LinearLayout>
