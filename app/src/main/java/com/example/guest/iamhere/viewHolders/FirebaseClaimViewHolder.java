@@ -118,16 +118,34 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     @Override
     public void onClick(View v) {
         if(v == claimButton){
+            currentSwarmReport.setClaimed(true);
+            DatabaseReference claimerRef = FirebaseDatabase.getInstance()
+                    .getReference("users")
+                    .child(userId)
+                    .child("claimedSwarms")
+                    .child(currentSwarmReport.getReportId());
+            claimerRef.setValue(currentSwarmReport);
+
+            DatabaseReference updateReportedSwarmsRef = FirebaseDatabase.getInstance()
+                    .getReference("users")
+                    .child(currentSwarmReport.getReporterId())
+                    .child("reportedSwarms")
+                    .child(currentSwarmReport.getReportId())
+                    .child("claimed");
+            updateReportedSwarmsRef.setValue(true);
+
             DatabaseReference ref = FirebaseDatabase.getInstance()
                     .getReference(currentSwarmReport.getCity())
                     .child(currentSwarmReport.getReportId())
                     .child("claimed");
             ref.setValue(true);
+
             DatabaseReference claimantNameRef = FirebaseDatabase.getInstance()
                     .getReference(currentSwarmReport.getCity())
                     .child(currentSwarmReport.getReportId())
                     .child("claimantName");
             claimantNameRef.setValue(userName);
+
             DatabaseReference claimantIdRef = FirebaseDatabase.getInstance()
                     .getReference(currentSwarmReport.getCity())
                     .child(currentSwarmReport.getReportId())

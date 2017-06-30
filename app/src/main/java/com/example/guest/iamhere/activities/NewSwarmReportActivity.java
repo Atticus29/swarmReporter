@@ -224,6 +224,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
             newSwarmReport.setReporterName(userName);
             newSwarmReport.setReporterId(userId);
             newSwarmReport.setSize(size);
+            newSwarmReport.setClaimed(false);
             newSwarmReport.setAccessibility(accessibility);
             newSwarmReport.setReportTimestamp(timeString);
             if (newSwarmReport.getImageString() == null) {
@@ -244,6 +245,13 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
             if (newSwarmReport.getSize() != null | newSwarmReport.getAccessibility() != null) {
                 if (newSwarmReport.getReportId() != null) {
                     pushRef.setValue(newSwarmReport);
+                    DatabaseReference reporterRef = FirebaseDatabase.getInstance()
+                            .getReference()
+                            .child("users")
+                            .child(userId)
+                            .child("reportedSwarms")
+                            .child(newSwarmReport.getReportId());
+                    reporterRef.setValue(newSwarmReport);
                 }
                 Intent intent = new Intent(NewSwarmReportActivity.this, MainActivity.class);
                 intent.putExtra("userName", userName);

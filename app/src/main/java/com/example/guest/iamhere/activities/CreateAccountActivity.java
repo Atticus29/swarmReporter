@@ -85,13 +85,11 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                                 createFirebaseUserProfile(task.getResult().getUser());
                                 String pushId = task.getResult().getUser().getUid();
                                 User currentUser = new User(email, userName, phoneNumber);
-                                Log.d("phone number", currentUser.getPhoneNumber());
-                                //TODO after you know this works, see if you can resolve the pushId issue
                                 FirebaseDatabase db = FirebaseDatabase.getInstance();
                                 DatabaseReference ref = db
-                                        .getReference("users");
-//                                        .child(pushId);
-                                ref.push().setValue(currentUser);
+                                        .getReference("users")
+                                        .child(pushId);
+                                ref.setValue(currentUser);
 
                             }
                         }
