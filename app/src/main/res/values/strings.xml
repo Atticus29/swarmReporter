@@ -1,10 +1,8 @@
 <resources>
-    <string name="app_name">Bivouac: a swarm reporter</string>
+    <string name="app_name">SwarmReporter</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_maps_activityv2">Map</string>
     <string name="title_activity_login">Sign in</string>
-
-    <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
     <string name="action_sign_in">Sign in or register</string>
@@ -16,10 +14,9 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="signed_in_fmt">Signed in as: %s</string>
     <string name="title_activity_main">MainActivity</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
 </resources>

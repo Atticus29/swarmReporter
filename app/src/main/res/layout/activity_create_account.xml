@@ -42,13 +42,16 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
-        android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Enter your password"
         android:inputType="textPassword"
         app:layout_constraintLeft_toLeftOf="@+id/emailInputTextView"
         app:layout_constraintRight_toRightOf="@+id/emailInputTextView"
-        app:layout_constraintTop_toBottomOf="@+id/emailInputTextView" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/phoneNumberTextView"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/passwordConfirmInputTextView"
@@ -56,13 +59,14 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="5dp"
         android:ems="10"
         android:hint="Confirm password"
         android:inputType="textPassword"
         app:layout_constraintLeft_toLeftOf="@+id/passwordInputTextView"
         app:layout_constraintRight_toRightOf="@+id/passwordInputTextView"
-        app:layout_constraintTop_toBottomOf="@+id/passwordInputTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/passwordInputTextView"
+        app:layout_constraintHorizontal_bias="0.0" />
 
     <Button
         android:id="@+id/createInputButton"
@@ -70,10 +74,25 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="31dp"
         android:text="Register"
         app:layout_constraintLeft_toLeftOf="@+id/passwordConfirmInputTextView"
         app:layout_constraintRight_toRightOf="@+id/passwordConfirmInputTextView"
         app:layout_constraintTop_toBottomOf="@+id/passwordConfirmInputTextView"
         android:background="@drawable/bivouac_button"/>
+
+    <EditText
+        android:id="@+id/phoneNumberTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="(optional) Enter your phone number"
+        android:inputType="phone"
+        android:layout_marginTop="7dp"
+        app:layout_constraintTop_toBottomOf="@+id/emailInputTextView"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/emailInputTextView"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/emailInputTextView" />
+
 </android.support.constraint.ConstraintLayout>

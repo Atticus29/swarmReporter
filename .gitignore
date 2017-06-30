@@ -8,3 +8,4 @@
 /captures
 .externalNativeBuild
 /app/google-services.json
+/app/src/main/java/com/example/guest/iamhere/SecretConstants.java

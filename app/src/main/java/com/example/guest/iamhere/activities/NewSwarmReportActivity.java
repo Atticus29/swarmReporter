@@ -1,20 +1,25 @@
 package com.example.guest.iamhere.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +39,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -60,35 +66,33 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private String userId;
     private Double currenLatitude;
     private Double currentLongitude;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private SwarmReport newSwarmReport = new SwarmReport();
+    private DatabaseReference pushRef;
 
-    @Bind(R.id.reportSwarmButton)
-    Button reportSwarmButton;
-    @Bind(R.id.baseball)
-    RadioButton baseball;
-    @Bind(R.id.football)
-    RadioButton football;
-    @Bind(R.id.basketball)
-    RadioButton basketball;
-    @Bind(R.id.beachball)
-    RadioButton beachball;
-    @Bind(R.id.tallLadder)
-    RadioButton tallLadder;
-    @Bind(R.id.ladder)
-    RadioButton ladder;
-    @Bind(R.id.reach)
-    RadioButton reach;
-    @Bind(R.id.hasLadder)
-    RadioButton hasLadder;
-    @Bind(R.id.locationTextView)
-    TextView locationTextView;
+    @Bind(R.id.reportSwarmButton) Button reportSwarmButton;
+    @Bind(R.id.baseball) RadioButton baseball;
+    @Bind(R.id.football) RadioButton football;
+    @Bind(R.id.basketball) RadioButton basketball;
+    @Bind(R.id.beachball) RadioButton beachball;
+    @Bind(R.id.tallLadder) RadioButton tallLadder;
+    @Bind(R.id.ladder) RadioButton ladder;
+    @Bind(R.id.reach) RadioButton reach;
+    @Bind(R.id.hasLadder) RadioButton hasLadder;
+    @Bind(R.id.locationTextView) TextView locationTextView;
+    @Bind(R.id.addImageButton) Button addImageButton;
+    @Bind(R.id.progressBar) ProgressBar progressBar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_swarm_report);
+
         ButterKnife.bind(this);
         reportSwarmButton.setOnClickListener(this);
+        addImageButton.setOnClickListener(this);
+
         auth = FirebaseAuth.getInstance();
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -154,7 +158,9 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 city = addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea();
                 Log.d(TAG, city);
                 locationTextView.setText("Looks like you're in: " + city + ". We'll register your swarm there.");
+                progressBar.setVisibility(View.GONE);
                 reportSwarmButton.setVisibility(View.VISIBLE);
+                addImageButton.setVisibility(View.VISIBLE);
             } else {
                 city = "unknown";
             }
@@ -205,29 +211,63 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
 
     @Override
     public void onClick(View v) {
-        if (v == reportSwarmButton) {
-            size = getSize();
-            accessibility = getAccessibility();
-            if (size != null && accessibility != null) {
-                Calendar calendar = Calendar.getInstance();
-                java.util.Date now = calendar.getTime();
-                java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
-                String timeString = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(currentTimestamp);
-
-                SwarmReport newSwarmReport = new SwarmReport(currenLatitude, currentLongitude, city, userName, userId, size, timeString, accessibility);
-                database = FirebaseDatabase.getInstance();
-                ref = database.getReference(city);
-                DatabaseReference pushRef = ref.push();
-                String pushId = pushRef.getKey();
-                newSwarmReport.setReportId(pushId);
-                pushRef.setValue(newSwarmReport);
-
+        Calendar calendar = Calendar.getInstance();
+        java.util.Date now = calendar.getTime();
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
+        String timeString = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(currentTimestamp);
+        size = getSize();
+        accessibility = getAccessibility();
+        if (size != null && accessibility != null) {
+            newSwarmReport.setLatitude(currenLatitude);
+            newSwarmReport.setLongitude(currentLongitude);
+            newSwarmReport.setCity(city);
+            newSwarmReport.setReporterName(userName);
+            newSwarmReport.setReporterId(userId);
+            newSwarmReport.setSize(size);
+            newSwarmReport.setAccessibility(accessibility);
+            newSwarmReport.setReportTimestamp(timeString);
+            if (newSwarmReport.getImageString() == null) {
+                newSwarmReport.setImageString("https://coxshoney.com/wp-content/uploads/bee_swarm_man.jpg");
+            }
+            database = FirebaseDatabase.getInstance();
+            ref = database.getReference(city);
+            pushRef = ref.push();
+            String pushId = pushRef.getKey();
+            newSwarmReport.setReportId(pushId);
+        }
+        if (v == addImageButton) {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (intent.resolveActivity(v.getContext().getPackageManager()) != null) {
+                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+            }
+        } else if (v == reportSwarmButton) {
+            if (newSwarmReport.getSize() != null | newSwarmReport.getAccessibility() != null) {
+                if (newSwarmReport.getReportId() != null) {
+                    pushRef.setValue(newSwarmReport);
+                }
                 Intent intent = new Intent(NewSwarmReportActivity.this, MainActivity.class);
+                intent.putExtra("userName", userName);
                 startActivity(intent);
             } else {
                 Toast.makeText(NewSwarmReportActivity.this, "Please select size and accessability", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == this.RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            encodeBitmapAndSaveToFirebase(imageBitmap);
+        }
+    }
+
+    public void encodeBitmapAndSaveToFirebase(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+        newSwarmReport.setImageString(imageEncoded);
     }
 
     public String getSize() {
