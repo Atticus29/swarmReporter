@@ -17,49 +17,84 @@ The problem is that currently, swarm lists are not decentralized and are quite c
 
 Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers nearby.
 
-## User stories
-- [ ] A user is alerted if a username already exists
-- [ ] Greedy users are prevented from claiming more swarms
+## What users of the app can do:
+- [x] A user can log in/authenticate
+- [x] A user can report a swarm
+- [x] Users can see swarm reports in their city
+- [x] A responding user can see the report and find out how far away it is from their location upon opening the app.
+- [x] A responder can “claim” a swarm, at which point it is no longer visible to other users.
+- [x] Reports and responses are persisted on a database.
+- [x] Reporter reports essential details about the swarm (does it require a ladder? Approximate size of swarm (baseball vs. basketball))
+- [x] Users can post a picture of the swarm
+- [ ] A user is alerted if the email address already exists
+- [ ] Users can see swarms they've claimed but not retrieved on a separate page
+- [ ] Users can see swarms they've reported by have not been retrieved
+- [ ] Claims are removed from the database once the claimer confirms that the swarm was retrieved
+- [ ] Users can swipe down on the screen to refresh the location
+- [ ] Users are prevented from retrieving more than one swarm a week
+- [ ] A claimed swarm re-appears as available if it is not physically retrieved in 6 hours
+- [ ] Contact information between reporter and responder is exchanged
+- [ ] Users can see swarm reports within a certain radius
+- [ ] A responding user can see the report and find out how far away it is from their location/address, updated in real time
+- [ ] Users are notified when a new swarm is reported in their area
+- [ ] The reporting user can see who claimed the swarm and how far away they were when they claimed it.
+- [ ] Contact information between reporter and responder can be exchanged if both sides want that
+
+## Future features:
 - [ ] A claimed swarm re-appears as available if it is not physically retrieved by a certain amount of time
-	- [ ] Contact information between reporter and responder is exchanged
-	- [ ] Swarm reporters pay swarm responders a very small sum of money for retrieving the swarm.
-	- [ ] Reporters and responders can cancel a report/claim
-	- [ ] Reporters can decline a claim
-- [ ] A user can log in/authenticate
-- [ ] A user can report a swarm
-- [ ] A responding user can see the report and find out how far away it is from their location/address.
-- [ ] A responder can “claim” a swarm, at which point it is no longer visible to other users.
-- [ ] The reporting user can see who claimed the swarm and how far away they are.
-- [ ] Reports and responses are persisted on a database.
-- [ ] Reporter reports essential details about the swarm (does it require a ladder? Approximate size of swarm (baseball vs. basketball))
-- [ ] Users can post a picture of the swarm
+- [ ] Swarm responders pay swarm reporters a very small sum of money for retrieving the swarm (this will incentivize the reporters to adopt)
+- [ ] Reporters and responders can cancel a report/claim
+- [ ] Reporters can decline a claim
+
+## Distant future features:
+- [ ] Reporters can see responder’s geographical progress towards them on a map
+- [ ] Ratings/feedback for the responders can be provided
+- [ ] Ratings/feedback for the reporters can be provided
+- [ ] Rating/feedback data is persisted on a database
+- [ ] Ratings can influence e.g. the radius or frequency with which swarms are reported to a particular user
+
 ## Planning
+
+### Useful tutorials
+
+#### Potential
+* [GeoFire](https://github.com/firebase/geofire-java)
+
+#### Actual
+* [Google location service tutorial from treehouse](http://blog.teamtreehouse.com/beginners-guide-location-android)
+  * You may have to use Run-time permissions, which are not covered in the above tutorial
 
 ### Master Checklist
 
+- [ ] Strip API key info. from commit history
+
 
 ### Models
-- [ ] Claim
+- [x] SwarmReport
 
 
 ### Forms
-- [ ] Create a claim
-- [ ] Create account
+- [x] Create a claim
+- [x] Create account
+- [x] Log in
 
 ### Activities
-- [ ] LoginActivity
-- [ ] MainActivity
+- [x] LoginActivity
+- [x] Landing activity
+- [x] Create an account activity
+- [x] Report swarm activity
+- [x] MainActivity (user see swarm reports in their city)
 
 ### Adapters
-- [ ]
+- [x] FirebaseViewHolder
 
 ### API
-- [ ] Twitter (to Tweet results of completed experiments)
+- [x] Google services
 
 ## Specs/
 | Behavior                   | Input Example     | Output Example    |
 | -------------------------- | -----------------:| -----------------:|
-|User can enter experiment details|User enters experiment name, treatment 1 name, treatment 2 name, effect size|experiment details recorded|
+
 
 ### Set Up
 
@@ -71,13 +106,6 @@ Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers
    * `public static final String STATIC_MAP_API_KEY = "youStaticMapApiKeyHere";`
   * You can obtain the latter by following [these instructions](https://developers.google.com/maps/documentation/static-maps/intro)
 * Click run in the top option bar (looks like a, "play" icon)
-
-### Future Functionality
-	- [ ] Reporters can see responder’s geographical progress towards them on a map
-	- [ ] Ratings/feedback for the responders can be provided
-	- [ ] Ratings/feedback for the reporters can be provided
-	- [ ] Rating/feedback data is persisted on a database
-	- [ ] Ratings can influence e.g. the radius or frequency with which swarms are reported to a particular user
 
 # License
 
@@ -111,6 +139,3 @@ You will need the following things properly installed on your computer.
 
 * [Git](https://git-scm.com/)
 * [Android Studio](https://developer.android.com/studio/index.html)
-
-## Dependencies
-* None yet

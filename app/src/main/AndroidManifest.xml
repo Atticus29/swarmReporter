@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.guest.iamhere">
-
-    <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality. 
-    -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
+    <service android:name=".MyFirebaseMessagingService">
+        <intent-filter>
+            <action android:name="com.google.firebase.MESSAGING_EVENT" />
+        </intent-filter>
+    </service>
+    <service android:name=".MyFirebaseInstanceIDService">
+        <intent-filter>
+            <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+        </intent-filter>
+    </service>
+    <service
+        android:name=".services.CustomMessagingService"
+        android:enabled="true"
+        android:exported="true">
+    </service>
+
     <application
         android:allowBackup="true"
-        android:icon="@drawable/bee"
+        android:icon="@drawable/beetransparent"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -53,11 +61,20 @@
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.NewSwarmReportActivity">
+        <activity
+            android:name=".activities.NewSwarmReportActivity"
+            android:value="com.example.guest.iamhere.activities.MainActivity" >
+            <meta-data
+                android:name="com.google.firebase.messaging.default_notification_icon"
+                android:resource="@drawable/ic_priority_high_black_24dp" />
+            <meta-data
+                android:name="com.google.firebase.messaging.default_notification_color"
+                android:resource="@color/colorAccent" />
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.guest.iamhere.activities.MainActivity" />
         </activity>
+
     </application>
 
 </manifest>
