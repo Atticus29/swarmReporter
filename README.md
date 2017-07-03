@@ -100,10 +100,12 @@ Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers
 * Clone repository from GitHub: Navigate to your computer's terminal and type, `git clone https://github.com/Atticus29/bivuoac.git`
 * Open Android Studio (if not already installed, [begin install process here](https://developer.android.com/studio/index.html))
 * Create a file called "/app/src/main/java/com/example/guest/iamhere/SecretConstants.java"
-  * Populate this file with two String variables:
+  * Populate this file with the following String variables:
 	  * `public static final String googleApiKey = "youGoogleApiKeyHere";`
    * `public static final String STATIC_MAP_API_KEY = "youStaticMapApiKeyHere";`
   * You can obtain the latter by following [these instructions](https://developers.google.com/maps/documentation/static-maps/intro)
+  * `public static final String BASE_GEOCODE_URL = "http://maps.google.com/maps/api/geocode/json?address=";`
+  * `public static final String GEOCODE_SENSOR = "&sensor=true";`
 * Click run in the top option bar (looks like a, "play" icon)
 
 # License

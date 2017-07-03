@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.models.SwarmReport;
+import com.example.guest.iamhere.services.GeoCodingService;
 import com.example.guest.iamhere.viewHolders.FirebaseClaimViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
@@ -48,13 +49,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 import static java.security.AccessController.getContext;
 
@@ -95,16 +103,7 @@ public class MainActivity extends AppCompatActivity
             greetingTextView.setText("");
         }
 
-//        claimRecyclerView.setVisibility(View.GONE);
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        setUpBlankAdapter();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -182,6 +181,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        Log.d("connected", "got into onConnected");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
             return;
@@ -189,13 +189,16 @@ public class MainActivity extends AppCompatActivity
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if(location == null){
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            Log.d("locationNull", "location null");
         }else {
+            Log.d("locationNull", "location not null");
             handleNewLocation(location);
         }
     }
 
     @Override
     public void onRequestPermissionsResult (int requestCode, String permissions[], int[] grantResults){
+        Log.d("requestPermission", "permissionResults");
         switch(requestCode){
             case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
                 if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
@@ -211,6 +214,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void handleNewLocation(Location location){
+        Log.d("newLocation", "got to new location");
         currenLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
 
@@ -222,46 +226,88 @@ public class MainActivity extends AppCompatActivity
                 city = addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea() ;
 
                 if(currenLatitude != null && currentLongitude !=null){
-                    swarmReportQuery = FirebaseDatabase.getInstance()
-                            .getReference(city)
-                            .orderByChild("claimed")
-                            .equalTo(false);
-                    setUpFirebaseAdapter();
+                    Log.d("latLong", "Got lat and long");
+                    setUpFirebaseAdapter(city);
                 }
             }
             else
             {
                 city = "unknown";
+                Log.d("CityUnknown", "couldnt' get an address from the location");
             }
         } catch(IOException e){
+            Log.d("exception", "getFromLocation didn't work");
             e.printStackTrace();
+            getCityFromHttpCall();
+
         }
 
     }
 
-    private void setUpFirebaseAdapter() {
-        mFirebaseAdapter = new FirebaseRecyclerAdapter<SwarmReport, FirebaseClaimViewHolder>
-                (SwarmReport.class, R.layout.claim_item, FirebaseClaimViewHolder.class,
-                        swarmReportQuery) {
+    public void getCityFromHttpCall() {
+        if (currenLatitude != null && currentLongitude != null) {
+            final GeoCodingService geoCodingService = new GeoCodingService();
+            geoCodingService.getCity(Double.toString(currenLatitude), Double.toString(currentLongitude), new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
+                }
 
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    try{
+                        String jsonData = response.body().string();
+                        Log.d("jsonData", jsonData);
+                        if(response.isSuccessful()){
+                            city = GeoCodingService.processResults(response);
+                            setUpFirebaseAdapter(city);
+                        }
+                    } catch (IOException e){
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+        }
+    }
+
+
+    private void setUpFirebaseAdapter(final String city) {
+        this.runOnUiThread(new Runnable() { //TODO maybe get rid of this
             @Override
-            protected void populateViewHolder(FirebaseClaimViewHolder viewHolder,
-                                              SwarmReport model, int position) {
-                viewHolder.bindClaimerLatLong(currenLatitude, currentLongitude);
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                viewHolder.bindCurrentUserNameAndId(user.getDisplayName(), user.getUid());
-                viewHolder.bindSwarmReport(model);
+            public void run() {
+                swarmReportQuery = FirebaseDatabase.getInstance()
+                        .getReference(city)
+                        .orderByChild("claimed")
+                        .equalTo(false);
+                mFirebaseAdapter = new FirebaseRecyclerAdapter<SwarmReport, FirebaseClaimViewHolder>
+                        (SwarmReport.class, R.layout.claim_item, FirebaseClaimViewHolder.class,
+                                swarmReportQuery) {
+
+                    @Override
+                    protected void populateViewHolder(FirebaseClaimViewHolder viewHolder,
+                                                      SwarmReport model, int position) {
+                        viewHolder.bindClaimerLatLong(currenLatitude, currentLongitude);
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        viewHolder.bindCurrentUserNameAndId(user.getDisplayName(), user.getUid());
+                        viewHolder.bindSwarmReport(model);
+                    }
+                };
+                setUpBlankAdapter();
+                DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(claimRecyclerView.getContext(),
+                        new LinearLayoutManager(MainActivity.this).getOrientation());
+                dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
+                progressBarForRecyclerView.setVisibility(View.GONE);
+                claimRecyclerView.addItemDecoration(dividerItemDecoration);
             }
-        };
+        });
+    }
+
+    private void setUpBlankAdapter(){
         claimRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
         claimRecyclerView.setLayoutManager(linearLayoutManager);
         claimRecyclerView.setAdapter(mFirebaseAdapter);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(claimRecyclerView.getContext(),
-                linearLayoutManager.getOrientation());
-        dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
-        claimRecyclerView.addItemDecoration(dividerItemDecoration);
-        progressBarForRecyclerView.setVisibility(View.GONE);
         claimRecyclerView.setVisibility(View.VISIBLE);
     }
 
@@ -311,6 +357,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.d("locationChange", "location changed");
         handleNewLocation(location);
     }
 
