@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity
         dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
         claimRecyclerView.addItemDecoration(dividerItemDecoration);
         progressBarForRecyclerView.setVisibility(View.GONE);
-//        claimRecyclerView.setVisibility(View.VISIBLE);
+        claimRecyclerView.setVisibility(View.VISIBLE);
     }
 
     @Override

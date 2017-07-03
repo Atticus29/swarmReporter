@@ -80,7 +80,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             mAuthProgressDialog.dismiss();
                             if (!task.isSuccessful()) {
-                                Toast.makeText(CreateAccountActivity.this, "Account creation was not successful", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(CreateAccountActivity.this, "Account creation was not successful. Account may already exist.", Toast.LENGTH_SHORT).show();
                             } else if(task.isSuccessful()){
                                 createFirebaseUserProfile(task.getResult().getUser());
                                 String pushId = task.getResult().getUser().getUid();

@@ -1,13 +1,12 @@
 # Bivuoac
 An Android app. for connecting bee swarms to beekeepers.
 
-## 19- June, 2017
+## 19 June - 28 July, 2017
 
 ## By: Mark Fisher
 
 ## Known issues
-- [ ] Crashes on phone when you try to log out from email Login or google login
-
+- [ ] Doesn't load on phones or bad wifi (a threading issue?)
 
 ## Description
 
@@ -26,7 +25,7 @@ Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers
 - [x] Reports and responses are persisted on a database.
 - [x] Reporter reports essential details about the swarm (does it require a ladder? Approximate size of swarm (baseball vs. basketball))
 - [x] Users can post a picture of the swarm
-- [ ] A user is alerted if the email address already exists
+- [x] A user is alerted if the email address already exists
 - [ ] Users can see swarms they've claimed but not retrieved on a separate page
 - [ ] Users can see swarms they've reported by have not been retrieved
 - [ ] Claims are removed from the database once the claimer confirms that the swarm was retrieved
