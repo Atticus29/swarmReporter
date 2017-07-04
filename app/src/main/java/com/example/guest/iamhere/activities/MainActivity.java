@@ -259,13 +259,17 @@ public class MainActivity extends AppCompatActivity
                         String jsonData = response.body().string();
                         Log.d("jsonData", jsonData);
                         if(response.isSuccessful()){
-                            city = GeoCodingService.processResults(response);
-                            setUpFirebaseAdapter(city);
+                            city = GeoCodingService.processResults(jsonData);
                         }
                     } catch (IOException e){
                         e.printStackTrace();
+                        Log.d("oof", "IO exception");
+                        city = "all";
+                    } catch (JSONException e) {
+                        Log.d("yikes", "JSON exception");
+                        city = "all";
                     }
-
+                    setUpFirebaseAdapter(city);
                 }
             });
         }

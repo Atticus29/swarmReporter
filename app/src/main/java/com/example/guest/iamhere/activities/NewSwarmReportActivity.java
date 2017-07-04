@@ -252,12 +252,17 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                             .child("reportedSwarms")
                             .child(newSwarmReport.getReportId());
                     reporterRef.setValue(newSwarmReport);
+                    DatabaseReference allRef = FirebaseDatabase.getInstance()
+                            .getReference()
+                            .child("all")
+                            .child(newSwarmReport.getReportId());
+                    allRef.setValue(newSwarmReport);
                 }
                 Intent intent = new Intent(NewSwarmReportActivity.this, MainActivity.class);
                 intent.putExtra("userName", userName);
                 startActivity(intent);
             } else {
-                Toast.makeText(NewSwarmReportActivity.this, "Please select size and accessability", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NewSwarmReportActivity.this, "Please select size and accessibility", Toast.LENGTH_SHORT).show();
             }
         }
     }
