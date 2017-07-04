@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity
                 if (user != null) {
                     userName = user.getDisplayName();
                     userId = user.getUid();
+                    Log.d("auth state changed", "hi there");
                 } else {
 
                 }
@@ -134,7 +135,7 @@ public class MainActivity extends AppCompatActivity
                 .addApi(LocationServices.API)
                 .build();
         mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
                 .setInterval(10 * 1000)
                 .setFastestInterval(1 * 1000);
     }
@@ -181,31 +182,34 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.d("connected", "got into onConnected");
+        Log.d("personal", "got into onConnected");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
             return;
         }
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if(location == null){
+            Log.d("personal", "location null");
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-            Log.d("locationNull", "location null");
         }else {
-            Log.d("locationNull", "location not null");
+            Log.d("personal", "location not null");
             handleNewLocation(location);
         }
     }
 
     @Override
     public void onRequestPermissionsResult (int requestCode, String permissions[], int[] grantResults){
-        Log.d("requestPermission", "permissionResults");
+        Log.d("personal", "got into permissionResults");
         switch(requestCode){
             case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
                 if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Log.d("personal", "permission was granted");
                     Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                     if(location == null){
+                        Log.d("personal", "location is null inside permission");
                         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
                     }else {
+                        Log.d("personal", "about to call new location");
                         handleNewLocation(location);
                     }
                 }
@@ -214,7 +218,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void handleNewLocation(Location location){
-        Log.d("newLocation", "got to new location");
+        Log.d("personal", "got to new location");
         currenLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
 
@@ -226,17 +230,17 @@ public class MainActivity extends AppCompatActivity
                 city = addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea() ;
 
                 if(currenLatitude != null && currentLongitude !=null){
-                    Log.d("latLong", "Got lat and long");
+                    Log.d("personal", "Got lat and long");
                     setUpFirebaseAdapter(city);
                 }
             }
             else
             {
                 city = "unknown";
-                Log.d("CityUnknown", "couldnt' get an address from the location");
+                Log.d("personal", "couldnt' get an address from the location");
             }
         } catch(IOException e){
-            Log.d("exception", "getFromLocation didn't work");
+            Log.d("personal", "getFromLocation didn't work");
             e.printStackTrace();
             getCityFromHttpCall();
 
@@ -257,16 +261,16 @@ public class MainActivity extends AppCompatActivity
                 public void onResponse(Call call, Response response) throws IOException {
                     try{
                         String jsonData = response.body().string();
-                        Log.d("jsonData", jsonData);
+                        Log.d("personal", jsonData);
                         if(response.isSuccessful()){
                             city = GeoCodingService.processResults(jsonData);
                         }
                     } catch (IOException e){
                         e.printStackTrace();
-                        Log.d("oof", "IO exception");
+                        Log.d("personal", "IO exception");
                         city = "all";
                     } catch (JSONException e) {
-                        Log.d("yikes", "JSON exception");
+                        Log.d("personal", "JSON exception");
                         city = "all";
                     }
                     setUpFirebaseAdapter(city);
@@ -298,6 +302,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 };
                 setUpBlankAdapter();
+                Log.d("personal", "got past it");
                 DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(claimRecyclerView.getContext(),
                         new LinearLayoutManager(MainActivity.this).getOrientation());
                 dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
@@ -308,11 +313,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setUpBlankAdapter(){
+        Log.d("personal", "got here setUpBlankAdapater");
         claimRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
         claimRecyclerView.setLayoutManager(linearLayoutManager);
         claimRecyclerView.setAdapter(mFirebaseAdapter);
         claimRecyclerView.setVisibility(View.VISIBLE);
+        Log.d("personal", "setUpBlankAdapter done with function");
     }
 
     @Override
@@ -326,7 +333,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.d(TAG, "Location services suspended. Please reconnect");
+        Log.d("personal", "Location services suspended. Please reconnect");
 
     }
 
@@ -339,7 +346,7 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
         } else{
-            Log.d(TAG, "Location services failed with code " + connectionResult.getErrorCode());
+            Log.d("personal", "Location services failed with code " + connectionResult.getErrorCode());
         }
     }
 
@@ -361,7 +368,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d("locationChange", "location changed");
+        Log.d("personal", "location changed");
         handleNewLocation(location);
     }
 

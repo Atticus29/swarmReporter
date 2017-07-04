@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/android_google_location_walkthrough.iml" filepath="$PROJECT_DIR$/android_google_location_walkthrough.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/bivouac.iml" filepath="$PROJECT_DIR$/bivouac.iml" />
       <module fileurl="file://$PROJECT_DIR$/swarmReporter.iml" filepath="$PROJECT_DIR$/swarmReporter.iml" />
     </modules>

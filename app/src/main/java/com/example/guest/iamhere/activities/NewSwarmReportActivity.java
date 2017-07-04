@@ -156,7 +156,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
             List<Address> addresses = gcd.getFromLocation(currenLatitude, currentLongitude, 1);
             if (addresses.size() > 0) {
                 city = addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea();
-                Log.d(TAG, city);
+                Log.d("cityNewSwarm", city);
                 locationTextView.setText("Looks like you're in: " + city + ". We'll register your swarm there.");
                 progressBar.setVisibility(View.GONE);
                 reportSwarmButton.setVisibility(View.VISIBLE);

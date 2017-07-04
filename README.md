@@ -105,7 +105,7 @@ Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers
    * `public static final String STATIC_MAP_API_KEY = "youStaticMapApiKeyHere";`
   * You can obtain the latter by following [these instructions](https://developers.google.com/maps/documentation/static-maps/intro)
   * `public static final String BASE_GEOCODE_URL = "http://maps.google.com/maps/api/geocode/json?address=";`
-  * `public static final String GEOCODE_SENSOR = "&sensor=true";`
+  * `public static final String GEOCODE_ADDRESS = "address";`
 * Click run in the top option bar (looks like a, "play" icon)
 
 # License
