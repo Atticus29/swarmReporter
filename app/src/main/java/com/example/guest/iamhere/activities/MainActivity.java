@@ -221,6 +221,8 @@ public class MainActivity extends AppCompatActivity
         Log.d("personal", "got to new location");
         currenLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
+        Log.d("personal", "lat is " + Double.toString(currenLatitude) + " and longitude is " + Double.toString(currentLongitude));
+        Log.d("personal", "geo coder present? " + Boolean.toString(Geocoder.isPresent()));
 
         Geocoder gcd = new Geocoder(MainActivity.this, Locale.getDefault());
         try{
@@ -259,21 +261,19 @@ public class MainActivity extends AppCompatActivity
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
-                    try{
-                        String jsonData = response.body().string();
-                        Log.d("personal", jsonData);
-                        if(response.isSuccessful()){
-                            city = GeoCodingService.processResults(jsonData);
-                        }
-                    } catch (IOException e){
-                        e.printStackTrace();
-                        Log.d("personal", "IO exception");
-                        city = "all";
+                    try {
+                        GeoCodingService.processResults(response);
                     } catch (JSONException e) {
-                        Log.d("personal", "JSON exception");
-                        city = "all";
+                        e.printStackTrace();
                     }
-                    setUpFirebaseAdapter(city);
+
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setUpFirebaseAdapter(city);
+                        }
+                    });
+
                 }
             });
         }

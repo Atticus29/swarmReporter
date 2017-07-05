@@ -31,10 +31,10 @@ public class GeoCodingService {
         call.enqueue(callback);
     }
 
-    public static String processResults(String responseString) throws JSONException {
+    public static String processResults(Response response) throws JSONException, IOException {
         String returnVal = "test";
         Log.d("successfulResponse", "got in0");
-        JSONObject geoJSON = new JSONObject(responseString);
+        JSONObject geoJSON = new JSONObject(response.body().string());
         Log.d("successfulResponse", "got in1");
         Log.d("geoJSON as string", geoJSON.toString());
         JSONObject resultsJSON = geoJSON.getJSONObject("results");
