@@ -158,6 +158,24 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                     .child(currentSwarmReport.getReportId())
                     .child("claimantId");
             claimantIdRef.setValue(userId);
+
+            DatabaseReference allClaimantClaimedRef = FirebaseDatabase.getInstance()
+                    .getReference("all")
+                    .child(currentSwarmReport.getReportId())
+                    .child("claimed");
+            allClaimantClaimedRef.setValue(true);
+
+            DatabaseReference allClaimantNameRef = FirebaseDatabase.getInstance()
+                    .getReference("all")
+                    .child(currentSwarmReport.getReportId())
+                    .child("claimantName");
+            allClaimantNameRef.setValue(userName);
+
+            DatabaseReference allClaimantIdRef = FirebaseDatabase.getInstance()
+                    .getReference("all")
+                    .child(currentSwarmReport.getReportId())
+                    .child("claimantId");
+            allClaimantIdRef.setValue(userId);
         }
         if(v == mapImageView){
             Log.d("personal", "mapImageView clicked");

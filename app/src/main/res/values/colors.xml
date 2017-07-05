@@ -8,12 +8,12 @@
 
     <color name="primary_light">#FFECB3</color>
 
-    <color name="colorAccent">#9E9E9E</color>
-    <color name="accent">#9E9E9E</color>
+    <color name="colorAccent">#886a00</color>
+    <color name="accent">#886a00</color>
 
-    <color name="primary_text">#212121</color>
+    <color name="primary_text">#4b1a00</color>
 
-    <color name="secondary_text">#757575</color>
+    <color name="secondary_text">#813800</color>
 
     <color name="icons">#212121</color>
 

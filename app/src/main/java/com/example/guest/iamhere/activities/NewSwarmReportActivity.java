@@ -36,6 +36,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -90,10 +91,17 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_new_swarm_report);
 
         ButterKnife.bind(this);
+
+//        userName = getIntent().getStringExtra("userName");
+//        Log.d("personal", "userName upon extraction from intent is " + userName);
+//        userId = getIntent().getStringExtra("userId");
+
         reportSwarmButton.setOnClickListener(this);
         addImageButton.setOnClickListener(this);
 
         auth = FirebaseAuth.getInstance();
+//        String test = auth.getCurrentUser().getDisplayName();
+//        Log.d("personal", "test is " + test);
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -101,8 +109,16 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 Log.d("personal", "user happens in NewSwarmReport");
                 if (user != null) {
                     Log.d("personal", "onAuthStateChanged happens in NewSwarmReport and user isn't null");
-                    userName = user.getDisplayName();
-                    userId = user.getUid();
+                    for (UserInfo userInfo : user.getProviderData()) {
+                        if (userName == null && userInfo.getDisplayName() != null) {
+                            userName = userInfo.getDisplayName();
+                            Log.d("personal", "onAuthStateChanged userName is " + userName);
+                        }
+                        if (userId == null && userInfo.getUid() != null) {
+                            userId = userInfo.getUid();
+                            Log.d("personal", "onAuthStateChanged userId is " + userId);
+                        }
+                    }
                 } else {
 
                 }
@@ -115,7 +131,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 .build();
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10 * 1000)
+                .setInterval(30 * 1000)
                 .setFastestInterval(1 * 1000);
 
     }
@@ -160,9 +176,14 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 city = addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea();
                 Log.d("cityNewSwarm", city);
                 locationTextView.setText("Looks like you're in: " + city + ". We'll register your swarm there.");
-                progressBar.setVisibility(View.GONE);
-                reportSwarmButton.setVisibility(View.VISIBLE);
-                addImageButton.setVisibility(View.VISIBLE);
+                if(userId != null && userName != null){
+                    progressBar.setVisibility(View.GONE);
+                    reportSwarmButton.setVisibility(View.VISIBLE);
+                    addImageButton.setVisibility(View.VISIBLE);
+                } else{
+                    Log.d("personal", "userId or userName is null!");
+                }
+
             } else {
                 city = "unknown";
             }

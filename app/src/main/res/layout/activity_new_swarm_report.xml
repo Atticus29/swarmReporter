@@ -29,6 +29,7 @@
                 android:id="@+id/sizeLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/primary_text"
                 android:text="About how big is the swarm?"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -38,6 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="false"
+                android:textColor="@color/secondary_text"
                 android:text="Baseball"
                 android:theme="@style/MyRadioButton" />
 
@@ -46,11 +48,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="false"
+                android:textColor="@color/secondary_text"
                 android:text="Football"
                 android:theme="@style/MyRadioButton" />
 
             <RadioButton
                 android:id="@+id/basketball"
+                android:textColor="@color/secondary_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="false"
@@ -59,6 +63,7 @@
 
             <RadioButton
                 android:id="@+id/beachball"
+                android:textColor="@color/secondary_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="false"
@@ -79,12 +84,14 @@
                 android:layout_height="wrap_content"
                 android:text="How accessible is the swarm?"
                 android:textSize="20sp"
+                android:textColor="@color/primary_text"
                 android:textStyle="bold" />
 
             <RadioButton
                 android:id="@+id/reach"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
                 android:layout_weight="1"
                 android:checked="false"
                 android:text="Within unassisted reach"
@@ -95,6 +102,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/secondary_text"
                 android:checked="false"
                 android:text="Will require a small ladder, which I can provide"
                 android:theme="@style/MyRadioButton" />
@@ -104,6 +112,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/secondary_text"
                 android:checked="false"
                 android:text="Will require a small ladder"
                 android:theme="@style/MyRadioButton" />
@@ -114,6 +123,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="18dp"
                 android:layout_weight="1"
+                android:textColor="@color/secondary_text"
                 android:checked="false"
                 android:text="Will require a large ladder"
                 android:theme="@style/MyRadioButton" />
@@ -128,6 +138,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
+            android:textColor="@color/primary_text"
             android:gravity="center"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -166,6 +177,7 @@
             android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/reportSwarmButton"
             app:layout_constraintLeft_toLeftOf="parent"
+            android:textColor="@color/primary_text"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/locationTextView" />
 
@@ -182,6 +194,7 @@
             android:background="@drawable/bivouac_button"
             android:padding="8dp"
             android:text="Report Swarm"
+            android:textColor="@color/primary_text"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.502"

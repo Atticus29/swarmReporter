@@ -189,6 +189,8 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.action_newReport){
             Intent intent = new Intent(MainActivity.this, NewSwarmReportActivity.class);
+            intent.putExtra("userName", userName);
+            intent.putExtra("userId", userId);
             startActivity(intent);
         }
 
