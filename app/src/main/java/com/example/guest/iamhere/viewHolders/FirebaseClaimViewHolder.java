@@ -57,7 +57,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     public void bindSwarmReport(SwarmReport swarmReport){
         currentSwarmReport = swarmReport;
         TextView timeStampTextView = (TextView) mView.findViewById(R.id.timeStampTextView);
-        TextView distanceTextView = (TextView) mView.findViewById(R.id.distanceTextView);
+        TextView distanceTextView = (TextView) mView.findViewById(R.id.claimantTextView);
         TextView sizeTextView = (TextView) mView.findViewById(R.id.sizeTextView);
         TextView accessibilityTextView = (TextView) mView.findViewById(R.id.accessibilityTextView);
         Button claimSwarmButton = (Button) mView.findViewById(R.id.claimSwarmButton);
