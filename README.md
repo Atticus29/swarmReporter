@@ -6,7 +6,8 @@ An Android app. for connecting bee swarms to beekeepers.
 ## By: Mark Fisher
 
 ## Known issues
-- [ ] Doesn't load on phones or bad wifi (a threading issue?)
+- [ ] If logged in with google, doesn't display on phone
+- [ ] If logged in with google, creating a new report messes up because it can't get the user
 
 ## Description
 

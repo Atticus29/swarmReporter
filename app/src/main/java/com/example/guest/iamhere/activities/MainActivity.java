@@ -29,6 +29,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -48,6 +49,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -96,6 +98,7 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         String passedUserName = getIntent().getStringExtra("userName");
         if(passedUserName != null){
             greetingTextView.setText("Unclaimed swarms near " + passedUserName + ":");
@@ -112,6 +115,19 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View hView = navigationView.getHeaderView(0);
+        ImageView profileImageView = (ImageView) hView.findViewById(R.id.profileImageView);
+        String passedUserProfileURL = getIntent().getStringExtra("photoUrl");
+        if(passedUserProfileURL != null){
+            Log.d("personal", "passedUserProfileURL is " + passedUserProfileURL);
+            Picasso.with(hView.getContext())
+                    .load(passedUserProfileURL)
+                    .resize(300, 300)
+                    .centerCrop()
+                    .into(profileImageView);
+        } else{
+
+        }
         navigationView.setNavigationItemSelectedListener(this);
 
         auth = FirebaseAuth.getInstance();

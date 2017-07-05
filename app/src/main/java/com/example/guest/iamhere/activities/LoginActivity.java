@@ -152,6 +152,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             updateUI(true);
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.putExtra("userName", acct.getDisplayName());
+            intent.putExtra("photoUrl", acct.getPhotoUrl());
             startActivity(intent);
         } else {
             updateUI(false);

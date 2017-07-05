@@ -98,7 +98,9 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                Log.d("personal", "user happens in NewSwarmReport");
                 if (user != null) {
+                    Log.d("personal", "onAuthStateChanged happens in NewSwarmReport and user isn't null");
                     userName = user.getDisplayName();
                     userId = user.getUid();
                 } else {
@@ -244,6 +246,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         } else if (v == reportSwarmButton) {
             if (newSwarmReport.getSize() != null | newSwarmReport.getAccessibility() != null) {
                 if (newSwarmReport.getReportId() != null) {
+                    Log.d("personal", "userId is " + userId);
                     pushRef.setValue(newSwarmReport);
                     DatabaseReference reporterRef = FirebaseDatabase.getInstance()
                             .getReference()

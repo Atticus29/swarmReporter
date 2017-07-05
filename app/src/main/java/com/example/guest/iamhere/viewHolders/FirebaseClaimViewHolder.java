@@ -92,6 +92,8 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     }
 
     public void dropImageIntoView(String imageURL, Context context, ImageView imageView){
+        Log.d("personal", "got into dropImageIntoView");
+        Log.d("personal", "imageURL is " + imageURL);
         if(imageURL != null){
             if(!imageURL.contains("http")){
                 try{
