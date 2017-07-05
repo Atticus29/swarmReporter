@@ -268,6 +268,7 @@ public class MainActivity extends AppCompatActivity
 
     public void getCityFromHttpCall() {
         if (currenLatitude != null && currentLongitude != null) {
+            city = "all";
             final GeoCodingService geoCodingService = new GeoCodingService();
             geoCodingService.getCity(Double.toString(currenLatitude), Double.toString(currentLongitude), new Callback() {
                 @Override
@@ -318,12 +319,12 @@ public class MainActivity extends AppCompatActivity
                     }
                 };
                 setUpBlankAdapter();
-                Log.d("personal", "got past it");
+                Log.d("personal", "got past setUpBlankAdapter");
                 DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(claimRecyclerView.getContext(),
                         new LinearLayoutManager(MainActivity.this).getOrientation());
                 dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
-                progressBarForRecyclerView.setVisibility(View.GONE);
                 claimRecyclerView.addItemDecoration(dividerItemDecoration);
+                progressBarForRecyclerView.setVisibility(View.GONE);
             }
         });
     }

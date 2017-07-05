@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.SecretConstants;
+import com.example.guest.iamhere.activities.MapsActivity;
 import com.example.guest.iamhere.models.SwarmReport;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,6 +44,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     private String userName;
     private String userId;
     private GoogleMap mMap;
+    private String staticMapURL;
 
     View mView;
     Context mContext;
@@ -65,6 +67,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         TextView accessibilityTextView = (TextView) mView.findViewById(R.id.accessibilityTextView);
         Button claimSwarmButton = (Button) mView.findViewById(R.id.claimSwarmButton);
         claimSwarmButton.setOnClickListener(this);
+        mapImageView.setOnClickListener(this);
 
         timeStampTextView.setText("Reported on: " + swarmReport.getReportTimestamp());
 
@@ -80,8 +83,8 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         }
         dropImageIntoView(swarmReport.getImageString(), mContext, swarmImage);
 
-        String testUrl = "https://maps.googleapis.com/maps/api/staticmap?size=400x400&key=" + SecretConstants.STATIC_MAP_API_KEY + "&markers=size:mid%7Ccolor:red%7C" + Double.toString(claimerLatitude) +"," + Double.toString(claimerLongitude) + "&visible=" + Double.toString(claimerLatitude) +"," + Double.toString(claimerLongitude) + "%7C" + Double.toString(swarmReport.getLatitude()) +"," + Double.toString(swarmReport.getLongitude()) + " &markers=size:mid%7Ccolor:yellow%7Clabel:S%7C" + Double.toString(swarmReport.getLatitude()) +"," + Double.toString(swarmReport.getLongitude());
-        dropImageIntoView(testUrl, mContext, mapImageView);
+        staticMapURL = "https://maps.googleapis.com/maps/api/staticmap?size=400x400&key=" + SecretConstants.STATIC_MAP_API_KEY + "&markers=size:mid%7Ccolor:red%7C" + Double.toString(claimerLatitude) +"," + Double.toString(claimerLongitude) + "&visible=" + Double.toString(claimerLatitude) +"," + Double.toString(claimerLongitude) + "%7C" + Double.toString(swarmReport.getLatitude()) +"," + Double.toString(swarmReport.getLongitude()) + " &markers=size:mid%7Ccolor:yellow%7Clabel:S%7C" + Double.toString(swarmReport.getLatitude()) +"," + Double.toString(swarmReport.getLongitude());
+        dropImageIntoView(staticMapURL, mContext, mapImageView);
     }
     public void bindClaimerLatLong(Double latitude, Double longitude){
         claimerLatitude = latitude;
@@ -155,6 +158,12 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                     .child(currentSwarmReport.getReportId())
                     .child("claimantId");
             claimantIdRef.setValue(userId);
+        }
+        if(v == mapImageView){
+            Log.d("personal", "mapImageView clicked");
+            Intent intent = new Intent(mContext, MapsActivity.class);
+            intent.putExtra("mapURL", staticMapURL);
+            mContext.startActivity(intent);
         }
     }
 
