@@ -192,7 +192,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             distanceInMeters = Math.sqrt(distance);
             distanceInMiles = convertToMiles(distanceInMeters);
         }
-        return String.format("%.0f", distanceInMeters);
+        return String.format("%.0f", distanceInMiles);
     }
 
     public Double convertToMiles(Double distanceInMeters){
