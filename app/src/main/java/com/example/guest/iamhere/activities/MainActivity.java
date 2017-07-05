@@ -57,6 +57,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -249,7 +250,9 @@ public class MainActivity extends AppCompatActivity
 
                 if(currenLatitude != null && currentLongitude !=null){
                     Log.d("personal", "Got lat and long");
-                    setUpFirebaseAdapter(city);
+                    ArrayList<String> children = new ArrayList<String>();
+                    children.add(city);
+                    setUpFirebaseAdapter(children);
                 }
             }
             else
@@ -287,7 +290,9 @@ public class MainActivity extends AppCompatActivity
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            setUpFirebaseAdapter(city);
+                            ArrayList<String> children = new ArrayList<String>();
+                            children.add(city);
+                            setUpFirebaseAdapter(children);
                         }
                     });
 
@@ -297,12 +302,15 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void setUpFirebaseAdapter(final String city) {
+    private void setUpFirebaseAdapter(final ArrayList<String> children) {
         this.runOnUiThread(new Runnable() { //TODO maybe get rid of this
             @Override
             public void run() {
-                swarmReportQuery = FirebaseDatabase.getInstance()
-                        .getReference(city)
+                swarmReportQuery = FirebaseDatabase.getInstance().getReference(children.get(0));
+                for(int i =1; i<children.size(); i++){
+                    swarmReportQuery = swarmReportQuery.getRef().child(children.get(i));
+                }
+                swarmReportQuery = swarmReportQuery
                         .orderByChild("claimed")
                         .equalTo(false);
                 mFirebaseAdapter = new FirebaseRecyclerAdapter<SwarmReport, FirebaseClaimViewHolder>
