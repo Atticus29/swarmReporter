@@ -1,12 +1,9 @@
 package com.example.guest.iamhere.viewHolders;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
@@ -17,15 +14,13 @@ import android.widget.TextView;
 
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.SecretConstants;
-import com.example.guest.iamhere.activities.MapsActivity;
+import com.example.guest.iamhere.activities.MapActivity;
 import com.example.guest.iamhere.models.SwarmReport;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DatabaseReference;
@@ -179,7 +174,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         }
         if(v == mapImageView){
             Log.d("personal", "mapImageView clicked");
-            Intent intent = new Intent(mContext, MapsActivity.class);
+            Intent intent = new Intent(mContext, MapActivity.class);
             intent.putExtra("mapURL", staticMapURL);
             mContext.startActivity(intent);
         }
