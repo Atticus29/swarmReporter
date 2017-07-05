@@ -11,6 +11,14 @@
             android:id="@+id/action_newReport"
             android:title="Report A Swarm"
             android:icon="@drawable/ic_report_problem_black_24dp" />
+        <item
+            android:id="@+id/action_myClaims"
+            android:title="View My Claimed Swarms"
+            />
+        <item
+            android:id="@+id/action_myReportedSwarms"
+            android:title="View My Reported Swarms"
+            />
     </group>
 
 </menu>

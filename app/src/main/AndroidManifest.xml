@@ -23,7 +23,7 @@
     <service
         android:name=".services.CustomMessagingService"
         android:enabled="true"
-        android:exported="true"></service>
+        android:exported="true" />
 
     <application
         android:allowBackup="true"
@@ -75,6 +75,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.guest.iamhere.activities.MainActivity" />
         </activity>
+        <activity android:name=".activities.MyClaimedSwarmsActivity" />
+        <activity android:name=".activities.MyReportedSwarmsActivity"></activity>
     </application>
 
 </manifest>

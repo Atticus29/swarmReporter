@@ -46,6 +46,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -84,8 +85,11 @@ public class MainActivity extends AppCompatActivity
     private Double currentLongitude;
     private String userName;
     private String userId;
+    private String passedUserProfileURL;
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
+    private View hView;
+    private NavigationView navigationView;
 
     @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
     @Bind(R.id.greetingTextView) TextView greetingTextView;
@@ -115,33 +119,39 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View hView = navigationView.getHeaderView(0);
-        ImageView profileImageView = (ImageView) hView.findViewById(R.id.profileImageView);
-        String passedUserProfileURL = getIntent().getStringExtra("photoUrl");
-        if(passedUserProfileURL != null){
-            Log.d("personal", "passedUserProfileURL is " + passedUserProfileURL);
-            Picasso.with(hView.getContext())
-                    .load(passedUserProfileURL)
-                    .resize(300, 300)
-                    .centerCrop()
-                    .into(profileImageView);
-        } else{
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        hView = navigationView.getHeaderView(0);
 
-        }
         navigationView.setNavigationItemSelectedListener(this);
 
         auth = FirebaseAuth.getInstance();
+        Log.d("personal", "is auth null? " + Boolean.toString(auth == null));
+
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = auth.getCurrentUser();
-                if (user != null) {
-                    userName = user.getDisplayName();
-                    userId = user.getUid();
-                    Log.d("auth state changed", "hi there");
-                } else {
-
+                for (UserInfo userInfo : user.getProviderData()) {
+                    Log.d("personal", "is userInfo null? " + Boolean.toString(userInfo == null));
+                    if (passedUserProfileURL == null && userInfo.getPhotoUrl() != null) {
+                        Log.d("personal", "things are null and not null");
+                        passedUserProfileURL = userInfo.getPhotoUrl().toString();
+                        Log.d("personal", "photoUrl is " + passedUserProfileURL);
+                        ImageView profileImageView = (ImageView) hView.findViewById(R.id.profileImageView);
+                        Picasso.with(hView.getContext())
+                                .load(passedUserProfileURL)
+                                .resize(300, 300)
+                                .centerCrop()
+                                .into(profileImageView);
+                    }
+                    if (userId == null && userInfo.getUid() != null) {
+                        userId = userInfo.getUid();
+                        Log.d("personal", "userId is " + userId);
+                    }
+                    if (userName == null && userInfo.getDisplayName() != null) {
+                        userName = userInfo.getDisplayName();
+                        Log.d("personal", "userName is " + userName);
+                    }
                 }
             }
         };
@@ -189,6 +199,20 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.action_newReport){
             Intent intent = new Intent(MainActivity.this, NewSwarmReportActivity.class);
+            intent.putExtra("userName", userName);
+            intent.putExtra("userId", userId);
+            startActivity(intent);
+        }
+
+        if(id == R.id.action_myClaims){
+            Intent intent = new Intent(MainActivity.this, MyClaimedSwarmsActivity.class);
+            intent.putExtra("userName", userName);
+            intent.putExtra("userId", userId);
+            startActivity(intent);
+        }
+
+        if(id == R.id.action_myReportedSwarms){
+            Intent intent = new Intent(MainActivity.this, MyReportedSwarmsActivity.class);
             intent.putExtra("userName", userName);
             intent.putExtra("userId", userId);
             startActivity(intent);

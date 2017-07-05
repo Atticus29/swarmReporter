@@ -100,8 +100,6 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         addImageButton.setOnClickListener(this);
 
         auth = FirebaseAuth.getInstance();
-//        String test = auth.getCurrentUser().getDisplayName();
-//        Log.d("personal", "test is " + test);
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
