@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
     android:background="@color/primary"
     android:orientation="vertical">
 
@@ -15,26 +16,25 @@
         <ImageView
             android:id="@+id/swarmImage"
             android:layout_width="0dp"
-            android:layout_height="300dp"
-            app:srcCompat="@drawable/bee"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginLeft="34dp"
-            app:layout_constraintLeft_toLeftOf="parent"
             android:clickable="true"
-            android:layout_marginStart="34dp"
-            android:layout_marginEnd="34dp"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/guideline"
-            android:layout_marginRight="34dp"
-            tools:layout_constraintRight_creator="1"
-            tools:layout_constraintLeft_creator="1" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/bee"
+            tools:layout_constraintLeft_creator="1"
+            tools:layout_constraintRight_creator="1" />
 
         <TextView
             android:id="@+id/timeStampTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Reported: "
-            android:textSize="23sp"
+            android:textSize="20sp"
+            android:textColor="@color/primary_text"
             app:layout_constraintTop_toBottomOf="@+id/swarmImage"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -47,7 +47,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textSize="23sp"
+            android:textColor="@color/primary_text"
+            android:textSize="20sp"
             android:text="Distance from your current location: __ m"
             app:layout_constraintLeft_toLeftOf="@+id/timeStampTextView"
             app:layout_constraintRight_toRightOf="@+id/timeStampTextView"
@@ -61,7 +62,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textSize="23sp"
+            android:textColor="@color/primary_text"
+            android:textSize="20sp"
             android:text="Size: The size of a __"
             app:layout_constraintLeft_toLeftOf="@+id/distanceTextView"
             app:layout_constraintRight_toRightOf="@+id/distanceTextView"
@@ -74,7 +76,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textSize="23sp"
+            android:textColor="@color/primary_text"
+            android:textSize="20sp"
             android:text="Accessibility: __"
             app:layout_constraintLeft_toLeftOf="@+id/sizeTextView"
             app:layout_constraintRight_toRightOf="@+id/sizeTextView"
@@ -93,7 +96,8 @@
             android:text="Claim"
             app:layout_constraintLeft_toLeftOf="@+id/accessibilityTextView"
             app:layout_constraintRight_toLeftOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/accessibilityTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/accessibilityTextView"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline"
@@ -108,16 +112,17 @@
             android:id="@+id/mapImageView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:srcCompat="@drawable/bee"
             android:layout_marginLeft="8dp"
-            app:layout_constraintLeft_toLeftOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/swarmImage"
-            android:layout_marginBottom="0dp"
+            app:layout_constraintLeft_toLeftOf="@+id/guideline"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.492"
-            android:layout_marginRight="8dp"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:srcCompat="@drawable/bee"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
 
     </android.support.constraint.ConstraintLayout>
 

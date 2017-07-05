@@ -32,6 +32,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements View.OnClickListener, OnMapReadyCallback {
     private String TAG = FirebaseClaimViewHolder.class.getSimpleName();
@@ -64,11 +66,11 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         Button claimSwarmButton = (Button) mView.findViewById(R.id.claimSwarmButton);
         claimSwarmButton.setOnClickListener(this);
 
-        timeStampTextView.setText("Reported " + swarmReport.getReportTimestamp());
+        timeStampTextView.setText("Reported on: " + swarmReport.getReportTimestamp());
 
         //TODO get current location lat and long and put here
 
-        distanceTextView.setText("Located " + calculateDistanceAsString(claimerLatitude, swarmReport.getLatitude(), claimerLongitude, swarmReport.getLongitude(),0.0, 0.0) + " meters away in " + swarmReport.getCity());
+        distanceTextView.setText("Located " + calculateDistanceAsString(claimerLatitude, swarmReport.getLatitude(), claimerLongitude, swarmReport.getLongitude(),0.0, 0.0) + " miles away in " + swarmReport.getCity());
         sizeTextView.setText("Size: The size of a " + swarmReport.getSize());
         accessibilityTextView.setText("Accessibility: " + swarmReport.getAccessibility());
 
@@ -160,6 +162,8 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         //TODO you can update with elevation later
 
         Double distanceInMeters = new Double(3.14);
+        Double distanceInMiles = new Double(3.14);
+
         final int R = 6371; // Radius of the earth
 
         Double latDistance = Math.toRadians(claimLatitude - currentLatitude);
@@ -177,8 +181,20 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
 
         if((Double) Math.sqrt(distance) != null){
             distanceInMeters = Math.sqrt(distance);
+            distanceInMiles = convertToMiles(distanceInMeters);
         }
         return String.format("%.0f", distanceInMeters);
+    }
+
+    public Double convertToMiles(Double distanceInMeters){
+        return round(distanceInMeters*0.000621371192,2);
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
     @Override

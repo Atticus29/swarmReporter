@@ -145,13 +145,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
-        Log.d("statusCode", Integer.toString(result.getStatus().getStatusCode()));
-        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+        Log.d("personal", "status code " + Integer.toString(result.getStatus().getStatusCode()));
+        Log.d("personal", "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             GoogleSignInAccount acct = result.getSignInAccount();
             updateUI(true);
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.putExtra("userName", acct.getDisplayName());
+            Log.d("personal", "photo URL is " + acct.getPhotoUrl());
             intent.putExtra("photoUrl", acct.getPhotoUrl());
             startActivity(intent);
         } else {
