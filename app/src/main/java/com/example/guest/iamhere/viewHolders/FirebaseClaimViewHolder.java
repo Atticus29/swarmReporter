@@ -54,6 +54,42 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         mapImageView = (ImageView) itemView.findViewById(R.id.mapImageView);
     }
 
+    public void bindSwarmReportForMyReportedSwarms(SwarmReport swarmReport){
+
+    }
+
+    public void bindSwarmReportForMyClaims(SwarmReport swarmReport){
+        Button cancelMyClaimButton = (Button) mView.findViewById(R.id.cancelMyClaimButton);
+        cancelMyClaimButton.setOnClickListener(this);
+
+        TextView accessibilityTextViewMyClaims = (TextView) mView.findViewById(R.id.accessibilityTextViewMyClaims);
+        accessibilityTextViewMyClaims.setText(swarmReport.getAccessibility());
+
+        TextView sizeTextViewMyClaims = (TextView) mView.findViewById(R.id.sizeTextViewMyClaims);
+        sizeTextViewMyClaims.setText(swarmReport.getSize());
+
+        TextView reportedByTextViewMyClaims = (TextView) mView.findViewById(R.id.reportedByTextViewMyClaims);
+        reportedByTextViewMyClaims.setText(swarmReport.getReporterName());
+
+        TextView contactReporterTextViewMyClaims = (TextView) mView.findViewById(R.id.contactReporterTextViewMyClaims);
+        //TODO fix this
+        String userPushId = swarmReport.getReporterId();
+        DatabaseReference contactNumberRef = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(userPushId)
+                .child("phone");
+        contactNumberRef.setValue("no"); //TODO ??
+        //TODO set implicit intent here
+
+
+        TextView timeStampTextViewMyClaims = (TextView) mView.findViewById(R.id.timeStampTextViewMyClaims);
+        timeStampTextViewMyClaims.setText(swarmReport.getReportTimestamp());
+
+        ImageView swarmImageMyClaims = (ImageView) mView.findViewById(R.id.swarmImageMyClaims);
+        dropImageIntoView(swarmReport.getImageString(), mContext, swarmImageMyClaims);
+
+    }
+
     public void bindSwarmReport(SwarmReport swarmReport){
         currentSwarmReport = swarmReport;
         TextView timeStampTextView = (TextView) mView.findViewById(R.id.timeStampTextView);
@@ -105,7 +141,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             } else{
                 Picasso.with(context)
                         .load(imageURL)
-                        .resize(300, 300)
+                        .resize(400, 400)
                         .centerCrop()
                         .into(imageView);
             }

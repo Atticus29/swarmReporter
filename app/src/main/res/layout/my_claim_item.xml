@@ -12,7 +12,7 @@
         android:layout_marginBottom="8dp">
 
         <ImageView
-            android:id="@+id/swarmImage"
+            android:id="@+id/swarmImageMyClaims"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
@@ -24,10 +24,12 @@
             tools:layout_constraintLeft_creator="1"
             tools:layout_constraintRight_creator="1"
             android:layout_marginRight="8dp"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
 
         <TextView
-            android:id="@+id/timeStampTextView"
+            android:id="@+id/timeStampTextViewMyClaims"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Reported: "
@@ -41,8 +43,8 @@
             tools:layout_constraintLeft_creator="1" />
 
         <TextView
-            android:id="@+id/contactReporterTextView"
-            android:layout_width="match_parent"
+            android:id="@+id/contactReporterTextViewMyClaims"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Contact Swarm Reporter"
@@ -56,7 +58,7 @@
             app:layout_constraintTop_toBottomOf="@+id/claimantTextView" />
 
         <TextView
-            android:id="@+id/claimantTextView"
+            android:id="@+id/reportedByTextViewMyClaims"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -71,7 +73,7 @@
             tools:layout_constraintRight_creator="1" />
 
         <TextView
-            android:id="@+id/sizeTextView"
+            android:id="@+id/sizeTextViewMyClaims"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textColor="@color/primary_text"
@@ -86,7 +88,7 @@
             app:layout_constraintTop_toBottomOf="@+id/contactReporterTextView" />
 
         <TextView
-            android:id="@+id/accessibilityTextView"
+            android:id="@+id/accessibilityTextViewMyClaims"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -105,7 +107,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginLeft="0dp"
             android:layout_marginRight="8dp"
             android:background="@drawable/bivouac_button"
             android:text="Cancel My Claim"
