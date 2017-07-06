@@ -51,13 +51,14 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     Button cancelSwarmClaimButtonMyReportedSwarms;
     Button cancelMyClaimButton;
     ImageView mapImageView;
+    TextView contactTextViewMyReportedSwarms;
 
     public FirebaseClaimViewHolder(View itemView) {
         super(itemView);
         this.mView = itemView;
         this.mContext = itemView.getContext();
         claimButton = (Button) itemView.findViewById(R.id.claimSwarmButton);
-        //TODO maybe add buttons here? Test without first
+        //TODO maybe add buttons and contactTextViewMyReportedSwarms here? Test without first
         mapImageView = (ImageView) itemView.findViewById(R.id.mapImageView);
     }
 
@@ -78,30 +79,12 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
 
         TextView contactTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.contactTextViewMyReportedSwarms);
         if(swarmReport.isClaimed()){
+            contactTextViewMyReportedSwarms.setVisibility(View.VISIBLE);
+            contactTextViewMyReportedSwarms.setText("Contact the claimant");
+            contactTextViewMyReportedSwarms.setOnClickListener(this);
 
-
-            //TODO move this stuff into the click event
-            DatabaseReference dbRef = FirebaseDatabase.getInstance()
-                    .getReference("users")
-                    .child(swarmReport.getClaimantId())
-                    .child("phoneNumber");
-            dbRef.addValueEventListener(new ValueEventListener() {
-                String phoneNumber = "";
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    phoneNumber = dataSnapshot.getValue().toString();
-                    Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
-                    mContext.startActivity(phoneIntent);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.d("personal", "contact number event listener got cancelled");
-                }
-            });
-            //TODO get phone number and set implicit intent
         } else{
-            contactTextViewMyReportedSwarms.setText("");
+            Log.d("personal", "swarmIs Unclaimed so contact option not made available");
         }
 
         TextView sizeTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.sizeTextViewMyReportedSwarms);
@@ -325,6 +308,25 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                     .child("claimedSwarms")
                     .child(currentSwarmReport.getReportId());
             claimantClaimantIdRef.removeValue(); //TODO check that this works
+        }
+        if(v == contactTextViewMyReportedSwarms){
+            DatabaseReference dbRef = FirebaseDatabase.getInstance()
+                    .getReference("users")
+                    .child(currentSwarmReport.getClaimantId())
+                    .child("phoneNumber");
+            dbRef.addValueEventListener(new ValueEventListener() {
+                String phoneNumber = "";
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    phoneNumber = dataSnapshot.getValue().toString();
+                    Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
+                    mContext.startActivity(phoneIntent);
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.d("personal", "contact number event listener got cancelled");
+                }
+            });
         }
     }
 
