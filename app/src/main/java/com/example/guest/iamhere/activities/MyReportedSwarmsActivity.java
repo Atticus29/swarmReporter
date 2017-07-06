@@ -54,7 +54,7 @@ public class MyReportedSwarmsActivity extends AppCompatActivity {
             @Override
             protected void populateViewHolder(FirebaseClaimViewHolder viewHolder,
                                               SwarmReport model, int position) {
-                viewHolder.bindSwarmReportForMyClaims(model);
+                viewHolder.bindSwarmReportForMyReportedSwarms(model);
                 myReportedSwarmsRecyclerView.setVisibility(View.VISIBLE); //TODO maybe move this back to setUpBlankAdapter?
             }
         };
