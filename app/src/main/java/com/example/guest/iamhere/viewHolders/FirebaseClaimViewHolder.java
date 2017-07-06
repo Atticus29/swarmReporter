@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
@@ -23,8 +24,11 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -74,6 +78,27 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
 
         TextView contactTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.contactTextViewMyReportedSwarms);
         if(swarmReport.isClaimed()){
+
+
+            //TODO move this stuff into the click event
+            DatabaseReference dbRef = FirebaseDatabase.getInstance()
+                    .getReference("users")
+                    .child(swarmReport.getClaimantId())
+                    .child("phoneNumber");
+            dbRef.addValueEventListener(new ValueEventListener() {
+                String phoneNumber = "";
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    phoneNumber = dataSnapshot.getValue().toString();
+                    Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
+                    mContext.startActivity(phoneIntent);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.d("personal", "contact number event listener got cancelled");
+                }
+            });
             //TODO get phone number and set implicit intent
         } else{
             contactTextViewMyReportedSwarms.setText("");
@@ -148,6 +173,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         staticMapURL = "https://maps.googleapis.com/maps/api/staticmap?size=400x400&key=" + SecretConstants.STATIC_MAP_API_KEY + "&markers=size:mid%7Ccolor:red%7C" + Double.toString(claimerLatitude) +"," + Double.toString(claimerLongitude) + "&visible=" + Double.toString(claimerLatitude) +"," + Double.toString(claimerLongitude) + "%7C" + Double.toString(swarmReport.getLatitude()) +"," + Double.toString(swarmReport.getLongitude()) + " &markers=size:mid%7Ccolor:yellow%7Clabel:S%7C" + Double.toString(swarmReport.getLatitude()) +"," + Double.toString(swarmReport.getLongitude());
         dropImageIntoView(staticMapURL, mContext, mapImageView);
     }
+
     public void bindClaimerLatLong(Double latitude, Double longitude){
         claimerLatitude = latitude;
         claimerLongitude = longitude;
@@ -250,27 +276,27 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             DatabaseReference allClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference("all")
                     .child(currentSwarmReport.getReportId())
-                    .child("claimed"); //TODO not sure
+                    .child("claimed");
             allClaimantIdRef.setValue(false);
 
             DatabaseReference cityClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference(currentSwarmReport.getCity())
                     .child(currentSwarmReport.getReportId())
-                    .child("claimed"); //TODO not sure
+                    .child("claimed");
             cityClaimantIdRef.setValue(false);
 
             DatabaseReference reporterClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference("users")
                     .child(currentSwarmReport.getReporterId())
-                    .child("reportedSwarms") //TODO not sure
+                    .child("reportedSwarms")
                     .child(currentSwarmReport.getReportId())
-                    .child("claimed"); //TODO not sure
+                    .child("claimed");
             reporterClaimantIdRef.setValue(false);
 
             DatabaseReference claimantClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference("users")
                     .child(currentSwarmReport.getClaimantId())
-                    .child("claimedSwarms") //TODO not sure
+                    .child("claimedSwarms")
                     .child(currentSwarmReport.getReportId());
             claimantClaimantIdRef.removeValue(); //TODO check that this works
         }
@@ -289,14 +315,14 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             DatabaseReference reporterClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference("users")
                     .child(currentSwarmReport.getReporterId())
-                    .child("reportedSwarms") //TODO not sure
+                    .child("reportedSwarms")
                     .child(currentSwarmReport.getReportId());
             reporterClaimantIdRef.removeValue();
 
             DatabaseReference claimantClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference("users")
                     .child(currentSwarmReport.getClaimantId())
-                    .child("claimedSwarms") //TODO not sure
+                    .child("claimedSwarms")
                     .child(currentSwarmReport.getReportId());
             claimantClaimantIdRef.removeValue(); //TODO check that this works
         }
