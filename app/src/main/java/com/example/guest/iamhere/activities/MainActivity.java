@@ -206,16 +206,21 @@ public class MainActivity extends AppCompatActivity
 
         if(id == R.id.action_myClaims){
             Intent intent = new Intent(MainActivity.this, MyClaimedSwarmsActivity.class);
-            intent.putExtra("userName", userName);
-            intent.putExtra("userId", userId);
-            startActivity(intent);
+            if(userName != null && userId != null){
+                intent.putExtra("userName", userName);
+                intent.putExtra("userId", userId);
+                startActivity(intent);
+            }
         }
 
         if(id == R.id.action_myReportedSwarms){
             Intent intent = new Intent(MainActivity.this, MyReportedSwarmsActivity.class);
-            intent.putExtra("userName", userName);
-            intent.putExtra("userId", userId);
-            startActivity(intent);
+            if(userName != null && userId != null){
+                intent.putExtra("userName", userName);
+                intent.putExtra("userId", userId);
+                startActivity(intent);
+            }
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
