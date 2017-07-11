@@ -32,6 +32,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.models.SwarmReport;
@@ -210,6 +211,8 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra("userName", userName);
                 intent.putExtra("userId", userId);
                 startActivity(intent);
+            } else{
+                Toast.makeText(this, "Unable to retrieve username and id", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -219,6 +222,8 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra("userName", userName);
                 intent.putExtra("userId", userId);
                 startActivity(intent);
+            } else{
+                Toast.makeText(this, "Unable to retrieve username and id", Toast.LENGTH_SHORT).show();
             }
 
         }
