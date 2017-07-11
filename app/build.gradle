@@ -38,6 +38,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     testCompile 'junit:junit:4.12'
+    compile 'com.firebase:geofire-android:2.1.1'
 }
 
 

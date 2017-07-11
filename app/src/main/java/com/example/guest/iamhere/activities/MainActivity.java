@@ -217,9 +217,14 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.action_newReport){
             Intent intent = new Intent(MainActivity.this, NewSwarmReportActivity.class);
-            intent.putExtra("userName", userName);
-            intent.putExtra("userId", userId);
-            startActivity(intent);
+            if(userName != null && userId != null){
+                intent.putExtra("userName", userName);
+                intent.putExtra("userId", userId);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Unable to retrieve username and id", Toast.LENGTH_SHORT).show();
+            }
+
         }
 
         if(id == R.id.action_myClaims){
