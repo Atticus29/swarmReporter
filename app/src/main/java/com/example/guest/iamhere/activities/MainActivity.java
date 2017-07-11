@@ -3,12 +3,14 @@ package com.example.guest.iamhere.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -91,6 +93,8 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth.AuthStateListener authListener;
     private View hView;
     private NavigationView navigationView;
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditor;
 
     @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
     @Bind(R.id.greetingTextView) TextView greetingTextView;
@@ -105,8 +109,17 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mEditor = mSharedPreferences.edit();
+
         String passedUserName = getIntent().getStringExtra("userName");
-        if(passedUserName != null){
+        String passedUid = getIntent().getStringExtra("userId");
+
+        if(passedUserName != null && passedUid != null){
+            addToSharedPreferences("userName", passedUserName);
+            addToSharedPreferences("userId", passedUid);
+            userName = passedUserName;
+            userId = passedUid;
             greetingTextView.setText("Unclaimed swarms near " + passedUserName + ":");
         } else{
             greetingTextView.setText("");
@@ -166,6 +179,10 @@ public class MainActivity extends AppCompatActivity
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)
                 .setFastestInterval(1 * 1000);
+    }
+
+    private void addToSharedPreferences(String key, String passedUserName) {
+        mEditor.putString(key, passedUserName).apply();
     }
 
     @Override
