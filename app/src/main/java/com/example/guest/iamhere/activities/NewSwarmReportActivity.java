@@ -4,11 +4,13 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -72,6 +74,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private SwarmReport newSwarmReport = new SwarmReport();
     private DatabaseReference pushRef;
+    private SharedPreferences mSharedPreferences;
 
     @Bind(R.id.reportSwarmButton) Button reportSwarmButton;
     @Bind(R.id.baseball) RadioButton baseball;
@@ -93,10 +96,6 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_new_swarm_report);
 
         ButterKnife.bind(this);
-
-//        userName = getIntent().getStringExtra("userName");
-//        Log.d("personal", "userName upon extraction from intent is " + userName);
-//        userId = getIntent().getStringExtra("userId");
 
         reportSwarmButton.setOnClickListener(this);
         addImageButton.setOnClickListener(this);
@@ -124,6 +123,12 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 }
             }
         };
+
+        if(userName == null | userId == null){
+            mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            userName = mSharedPreferences.getString("userName", null);
+            userId = mSharedPreferences.getString("userId", null);
+        }
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -268,8 +273,8 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
             if (newSwarmReport.getSize() != null && newSwarmReport.getAccessibility() != null) {
                 if (newSwarmReport.getReportId() != null) {
                     Log.d("personal", "userId is " + userId);
-                    GeoFire geoFire = new GeoFire(ref);
-                    geoFire.setLocation("geoLocation", new GeoLocation(newSwarmReport.getLatitude(), newSwarmReport.getLongitude()));
+//                    GeoFire geoFire = new GeoFire(ref);
+//                    geoFire.setLocation("geoLocation", new GeoLocation(newSwarmReport.getLatitude(), newSwarmReport.getLongitude()));
                     //TODO maybe add Completion Listener if this gives you trouble
                     pushRef.setValue(newSwarmReport);
                     DatabaseReference reporterRef = FirebaseDatabase.getInstance()

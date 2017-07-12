@@ -125,11 +125,14 @@ public class MainActivity extends AppCompatActivity
         if(passedUserName != null && passedUid != null){
             addToSharedPreferences("userName", passedUserName);
             addToSharedPreferences("userId", passedUid);
-            userName = passedUserName;
-            userId = passedUid;
-            greetingTextView.setText("Unclaimed swarms near " + passedUserName + ":");
         } else{
             greetingTextView.setText("");
+        }
+
+        userName = mSharedPreferences.getString("userName", null);
+        userId = mSharedPreferences.getString("userId", null);
+        if(userName != null && userId != null){
+            greetingTextView.setText("Unclaimed swarms near " + passedUserName + ":");
         }
 
         setUpBlankAdapter();
