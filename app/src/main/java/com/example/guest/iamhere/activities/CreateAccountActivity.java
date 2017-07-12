@@ -150,6 +150,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
             return false;
         } else if (!password.equals(confirmPassword)) {
             passwordInputTextView.setError("Passwords do not match");
+            mAuthProgressDialog.dismiss();
             return false;
         }
         return true;
