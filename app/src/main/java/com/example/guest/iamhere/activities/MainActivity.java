@@ -37,9 +37,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.guest.iamhere.R;
+import com.example.guest.iamhere.SecretConstants;
 import com.example.guest.iamhere.models.SwarmReport;
 import com.example.guest.iamhere.services.GeoCodingService;
 import com.example.guest.iamhere.viewHolders.FirebaseClaimViewHolder;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -50,6 +55,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -95,6 +101,7 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
+    private GeoFire geoFire;
 
     @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
     @Bind(R.id.greetingTextView) TextView greetingTextView;
@@ -308,15 +315,48 @@ public class MainActivity extends AppCompatActivity
 
                 if(currenLatitude != null && currentLongitude !=null){
                     Log.d("personal", "Got lat and long");
+                    Log.d("personal", "lat in handleNewLocation is " + Double.toString(currenLatitude));
+                    Log.d("personal", "long in handleNewLocation is " + Double.toString(currentLongitude));
+                    Log.d("personal", "query radius is " + Double.toString(SecretConstants.QUERY_RADIUS));
                     ArrayList<String> children = new ArrayList<String>();
                     children.add(city);
+                    DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference().child("geoFire");
+                    geoFire = new GeoFire(geoFireRef);
+                    Log.d("personal", "is geoFire null? " + Boolean.toString(geoFire == null));
+                    GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(currenLatitude, currentLongitude), SecretConstants.QUERY_RADIUS);
+                    geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+                        @Override
+                        public void onKeyEntered(String key, GeoLocation location) {
+                            System.out.println(String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
+                        }
+
+                        @Override
+                        public void onKeyExited(String key) {
+                            System.out.println(String.format("Key %s is no longer in the search area", key));
+                        }
+
+                        @Override
+                        public void onKeyMoved(String key, GeoLocation location) {
+                            System.out.println(String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
+                        }
+
+                        @Override
+                        public void onGeoQueryReady() {
+                            System.out.println("All initial data has been loaded and events have been fired!");
+                        }
+
+                        @Override
+                        public void onGeoQueryError(DatabaseError error) {
+                            System.err.println("There was an error with this query: " + error);
+                        }
+                    });
                     setUpFirebaseAdapter(children);
                 }
             }
             else
             {
                 city = "unknown";
-                Log.d("personal", "couldnt' get an address from the location");
+                Log.d("personal", "couldn't get an address from the location");
             }
         } catch(IOException e){
             Log.d("personal", "getFromLocation didn't work");
@@ -328,6 +368,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void getCityFromHttpCall() {
+        //TODO complete this
         if (currenLatitude != null && currentLongitude != null) {
             city = "all";
             final GeoCodingService geoCodingService = new GeoCodingService();
@@ -368,6 +409,7 @@ public class MainActivity extends AppCompatActivity
                 for(int i =1; i<children.size(); i++){
                     swarmReportQuery = swarmReportQuery.getRef().child(children.get(i));
                 }
+                DatabaseReference swarmReportQueryAsReferenceForGeoFire = (DatabaseReference) swarmReportQuery;
                 swarmReportQuery = swarmReportQuery
                         .orderByChild("claimed")
                         .equalTo(false);

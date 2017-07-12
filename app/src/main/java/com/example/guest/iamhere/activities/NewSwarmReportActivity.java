@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.models.SwarmReport;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -266,6 +268,9 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
             if (newSwarmReport.getSize() != null | newSwarmReport.getAccessibility() != null) {
                 if (newSwarmReport.getReportId() != null) {
                     Log.d("personal", "userId is " + userId);
+                    GeoFire geoFire = new GeoFire(ref);
+                    geoFire.setLocation("geoLocation", new GeoLocation(newSwarmReport.getLatitude(), newSwarmReport.getLongitude()));
+                    //TODO maybe add Completion Listener if this gives you trouble
                     pushRef.setValue(newSwarmReport);
                     DatabaseReference reporterRef = FirebaseDatabase.getInstance()
                             .getReference()
