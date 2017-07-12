@@ -265,7 +265,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
             }
         } else if (v == reportSwarmButton) {
-            if (newSwarmReport.getSize() != null | newSwarmReport.getAccessibility() != null) {
+            if (newSwarmReport.getSize() != null && newSwarmReport.getAccessibility() != null) {
                 if (newSwarmReport.getReportId() != null) {
                     Log.d("personal", "userId is " + userId);
                     GeoFire geoFire = new GeoFire(ref);
