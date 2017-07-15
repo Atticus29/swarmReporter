@@ -293,7 +293,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
 
                     DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference().child("geofire");
                     GeoFire geoFire = new GeoFire(geoFireRef);
-                    geoFire.setLocation(newSwarmReport.getReportTimestamp(), new GeoLocation(newSwarmReport.getLatitude(), newSwarmReport.getLongitude()));
+                    geoFire.setLocation(newSwarmReport.getReportId(), new GeoLocation(newSwarmReport.getLatitude(), newSwarmReport.getLongitude()));
                 }
                 Intent intent = new Intent(NewSwarmReportActivity.this, MainActivity.class);
                 intent.putExtra("userName", userName);

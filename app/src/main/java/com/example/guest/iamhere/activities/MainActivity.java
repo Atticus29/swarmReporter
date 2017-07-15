@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
     private GeoFire geoFire;
+    private GeoQuery geoQuery;
 
     @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
     @Bind(R.id.greetingTextView) TextView greetingTextView;
@@ -323,29 +324,34 @@ public class MainActivity extends AppCompatActivity
                     Log.d("personal", "query radius is " + Double.toString(SecretConstants.QUERY_RADIUS));
                     ArrayList<String> children = new ArrayList<String>();
                     children.add(city);
-                    DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference().child("geoFire");
+                    DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference().child("geofire");
                     geoFire = new GeoFire(geoFireRef);
                     Log.d("personal", "is geoFire null? " + Boolean.toString(geoFire == null));
-                    GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(currenLatitude, currentLongitude), SecretConstants.QUERY_RADIUS);
+                    geoQuery = geoFire.queryAtLocation(new GeoLocation(currenLatitude, currentLongitude), SecretConstants.QUERY_RADIUS);
                     geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
                         @Override
                         public void onKeyEntered(String key, GeoLocation location) {
-                            System.out.println(String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
+                            Log.d("personal", "onKeyEntered entered");
+                            Log.d("personal", "is key null? " + Boolean.toString(key == null));
+                            Log.d("personal",String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
                         }
 
                         @Override
                         public void onKeyExited(String key) {
-                            System.out.println(String.format("Key %s is no longer in the search area", key));
+                            Log.d("personal", "onKeyExited entered");
+                            Log.d("personal",String.format("Key %s is no longer in the search area", key));
                         }
 
                         @Override
                         public void onKeyMoved(String key, GeoLocation location) {
-                            System.out.println(String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
+                            Log.d("personal", "onKeyMoved entered");
+                            Log.d("personal", String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
                         }
 
                         @Override
                         public void onGeoQueryReady() {
-                            System.out.println("All initial data has been loaded and events have been fired!");
+
+                            Log.d("personal", "All initial data has been loaded and events have been fired!");
                         }
 
                         @Override
@@ -492,6 +498,7 @@ public class MainActivity extends AppCompatActivity
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
+        this.geoQuery.removeAllListeners();
     }
 
     @Override
