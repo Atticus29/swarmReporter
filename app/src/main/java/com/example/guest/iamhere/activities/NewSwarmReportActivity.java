@@ -273,8 +273,6 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
             if (newSwarmReport.getSize() != null && newSwarmReport.getAccessibility() != null) {
                 if (newSwarmReport.getReportId() != null) {
                     Log.d("personal", "userId is " + userId);
-//                    GeoFire geoFire = new GeoFire(ref);
-//                    geoFire.setLocation("geoLocation", new GeoLocation(newSwarmReport.getLatitude(), newSwarmReport.getLongitude()));
                     //TODO maybe add Completion Listener if this gives you trouble
                     pushRef.setValue(newSwarmReport);
                     DatabaseReference reporterRef = FirebaseDatabase.getInstance()
