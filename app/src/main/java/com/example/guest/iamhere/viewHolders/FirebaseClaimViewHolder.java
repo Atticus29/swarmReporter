@@ -181,7 +181,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             } else{
                 Picasso.with(context)
                         .load(imageURL)
-                        .resize(400, 400)
+                        .resize(SecretConstants.PIC_WIDTH, SecretConstants.PIC_HEIGHT)
                         .centerCrop()
                         .into(imageView);
             }
@@ -354,7 +354,11 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             distanceInMeters = Math.sqrt(distance);
             distanceInMiles = convertToMiles(distanceInMeters);
         }
-        return String.format("%.0f", distanceInMiles);
+        if (distanceInMiles < 1.0){
+            return " < 1";
+        } else{
+            return String.format("%.0f", distanceInMiles);
+        }
     }
 
     public Double convertToMiles(Double distanceInMeters){

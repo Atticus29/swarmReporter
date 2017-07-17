@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity
                         ImageView profileImageView = (ImageView) hView.findViewById(R.id.profileImageView);
                         Picasso.with(hView.getContext())
                                 .load(passedUserProfileURL)
-                                .resize(300, 300)
+                                .resize(SecretConstants.PIC_WIDTH, SecretConstants.PIC_HEIGHT)
                                 .centerCrop()
                                 .into(profileImageView);
                     }
