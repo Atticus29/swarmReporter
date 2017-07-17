@@ -9,6 +9,7 @@
     android:orientation="vertical">
 
     <android.support.constraint.ConstraintLayout
+        android:layout_marginLeft="8dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="8dp">
@@ -92,6 +93,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/bivouac_button"
             android:text="Claim"
             app:layout_constraintLeft_toLeftOf="@+id/accessibilityTextView"
