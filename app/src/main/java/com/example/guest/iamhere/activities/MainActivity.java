@@ -73,6 +73,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -110,6 +111,7 @@ public class MainActivity extends AppCompatActivity
     private SwarmReport retrievedModel;
     private ValueEventListener allRefListener;
     private DatabaseReference allRef;
+    private HashMap<DatabaseReference, ValueEventListener> hashMap = new HashMap<DatabaseReference, ValueEventListener>();
 
     @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
     @Bind(R.id.greetingTextView) TextView greetingTextView;
@@ -436,6 +438,7 @@ public class MainActivity extends AppCompatActivity
                                 public void onCancelled(DatabaseError databaseError) {
                                 }
                             });
+                            hashMap.put(allRef, allRefListener);
                         }
 
                     }
@@ -451,13 +454,13 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-//    public static void removeValueEventListener(HashMap<DatabaseReference, ValueEventListener> hashMap) {
-//        for (Map.Entry<DatabaseReference, ValueEventListener> entry : hashMap.entrySet()) {
-//            DatabaseReference databaseReference = entry.getKey();
-//            ValueEventListener valueEventListener = entry.getValue();
-//            databaseReference.removeEventListener(valueEventListener);
-//        }
-//    }
+    public static void removeValueEventListener(HashMap<DatabaseReference, ValueEventListener> hashMap) {
+        for (Map.Entry<DatabaseReference, ValueEventListener> entry : hashMap.entrySet()) {
+            DatabaseReference databaseReference = entry.getKey();
+            ValueEventListener valueEventListener = entry.getValue();
+            databaseReference.removeEventListener(valueEventListener);
+        }
+    }
 
     private void setUpBlankAdapter(){
         Log.d("personal", "got here setUpBlankAdapater");
@@ -476,7 +479,7 @@ public class MainActivity extends AppCompatActivity
             mFirebaseAdapter.cleanup();
         }
 //        allRef.removeEventListener(allRefListener);
-//        removeValueEventListener(hashMap);
+        removeValueEventListener(hashMap);
 
     }
 
