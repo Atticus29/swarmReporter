@@ -152,13 +152,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             GoogleSignInAccount acct = result.getSignInAccount();
             updateUI(true);
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.putExtra("userName", acct.getDisplayName().toString());
-            Log.d("personal handleResult", acct.getDisplayName().toString());
-            intent.putExtra("userId", acct.getId().toString());
-            Log.d("personal userId handle", acct.getId().toString());
-            Log.d("personal", "photo URL handleSignInResult is " + acct.getPhotoUrl());
-            intent.putExtra("photoUrl", acct.getPhotoUrl());
-            startActivity(intent);
+            if(acct.getDisplayName().toString() != null){
+                intent.putExtra("userName", acct.getDisplayName().toString());
+                Log.d("personal handleResult", acct.getDisplayName().toString());
+                intent.putExtra("userId", acct.getId().toString());
+                Log.d("personal userId handle", acct.getId().toString());
+                Log.d("personal", "photo URL handleSignInResult is " + acct.getPhotoUrl());
+                intent.putExtra("photoUrl", acct.getPhotoUrl());
+                startActivity(intent);
+            } else{
+                Toast.makeText(this, "Couldn't get userName, etc.", Toast.LENGTH_SHORT).show();
+            }
+
         } else {
 
             updateUI(false);

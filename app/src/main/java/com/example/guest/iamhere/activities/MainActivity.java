@@ -40,6 +40,7 @@ import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.SecretConstants;
 import com.example.guest.iamhere.models.SwarmReport;
 import com.example.guest.iamhere.services.GeoCodingService;
+import com.example.guest.iamhere.utilityClasses.Utilities;
 import com.example.guest.iamhere.viewHolders.FirebaseClaimViewHolder;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -113,9 +114,12 @@ public class MainActivity extends AppCompatActivity
     private DatabaseReference allRef;
     private HashMap<DatabaseReference, ValueEventListener> hashMap = new HashMap<DatabaseReference, ValueEventListener>();
 
-    @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
-    @Bind(R.id.greetingTextView) TextView greetingTextView;
-    @Bind(R.id.progressBarForRecyclerView) ProgressBar progressBarForRecyclerView;
+    @Bind(R.id.claimRecyclerView)
+    RecyclerView claimRecyclerView;
+    @Bind(R.id.greetingTextView)
+    TextView greetingTextView;
+    @Bind(R.id.progressBarForRecyclerView)
+    ProgressBar progressBarForRecyclerView;
 
 
     @Override
@@ -132,16 +136,16 @@ public class MainActivity extends AppCompatActivity
         String passedUserName = getIntent().getStringExtra("userName");
         String passedUid = getIntent().getStringExtra("userId");
 
-        if(passedUserName != null && passedUid != null){
+        if (passedUserName != null && passedUid != null) {
             addToSharedPreferences("userName", passedUserName);
             addToSharedPreferences("userId", passedUid);
-        } else{
+        } else {
             greetingTextView.setText("");
         }
 
         userName = mSharedPreferences.getString("userName", null);
         userId = mSharedPreferences.getString("userId", null);
-        if(userName != null && userId != null){
+        if (userName != null && userId != null) {
             greetingTextView.setText("Unclaimed swarms near " + passedUserName + ":");
         }
 
@@ -216,7 +220,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     private void logout() {
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(com.example.guest.iamhere.activities.MainActivity.this, LoginGateActivity.class);
@@ -235,9 +238,9 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
-        if (id == R.id.action_newReport){
+        if (id == R.id.action_newReport) {
             Intent intent = new Intent(MainActivity.this, NewSwarmReportActivity.class);
-            if(userName != null && userId != null){
+            if (userName != null && userId != null) {
                 intent.putExtra("userName", userName);
                 intent.putExtra("userId", userId);
                 startActivity(intent);
@@ -247,24 +250,24 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        if(id == R.id.action_myClaims){
+        if (id == R.id.action_myClaims) {
             Intent intent = new Intent(MainActivity.this, MyClaimedSwarmsActivity.class);
-            if(userName != null && userId != null){
+            if (userName != null && userId != null) {
                 intent.putExtra("userName", userName);
                 intent.putExtra("userId", userId);
                 startActivity(intent);
-            } else{
+            } else {
                 Toast.makeText(this, "Unable to retrieve username and id", Toast.LENGTH_SHORT).show();
             }
         }
 
-        if(id == R.id.action_myReportedSwarms){
+        if (id == R.id.action_myReportedSwarms) {
             Intent intent = new Intent(MainActivity.this, MyReportedSwarmsActivity.class);
-            if(userName != null && userId != null){
+            if (userName != null && userId != null) {
                 intent.putExtra("userName", userName);
                 intent.putExtra("userId", userId);
                 startActivity(intent);
-            } else{
+            } else {
                 Toast.makeText(this, "Unable to retrieve username and id", Toast.LENGTH_SHORT).show();
             }
 
@@ -279,31 +282,31 @@ public class MainActivity extends AppCompatActivity
     public void onConnected(@Nullable Bundle bundle) {
         Log.d("personal", "got into onConnected");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
             return;
         }
-        Location location = LocationServices.FusedLocationApi.getLastLocation (mGoogleApiClient);
-        if(location == null){
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (location == null) {
             Log.d("personal", "location null");
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        }else {
+        } else {
             Log.d("personal", "location not null");
             handleNewLocation(location);
         }
     }
 
     @Override
-    public void onRequestPermissionsResult (int requestCode, String permissions[], int[] grantResults){
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         Log.d("personal", "got into permissionResults");
-        switch(requestCode){
+        switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
-                if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d("personal", "permission was granted");
                     Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                    if(location == null){
+                    if (location == null) {
                         Log.d("personal", "location is null inside permission");
                         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-                    }else {
+                    } else {
                         Log.d("personal", "about to call new location");
                         handleNewLocation(location);
                     }
@@ -312,24 +315,23 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void handleNewLocation(Location location){
+    private void handleNewLocation(Location location) {
         Log.d("personal", "got to new location");
         currenLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
         Log.d("personal", "lat is " + Double.toString(currenLatitude) + " and longitude is " + Double.toString(currentLongitude));
         Log.d("personal", "geo coder present? " + Boolean.toString(Geocoder.isPresent()));
-        if(currenLatitude != null && currentLongitude !=null){
+        if (currenLatitude != null && currentLongitude != null) {
             setUpGeoFire();
         }
 
         Geocoder gcd = new Geocoder(MainActivity.this, Locale.getDefault());
-        try{
+        try {
             List<Address> addresses = gcd.getFromLocation(currenLatitude, currentLongitude, 1);
-            if (addresses.size() > 0)
-            {
-                city = addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea() ;
+            if (addresses.size() > 0) {
+                city = addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea();
 
-                if(currenLatitude != null && currentLongitude !=null){
+                if (currenLatitude != null && currentLongitude != null) {
                     Log.d("personal", "Got lat and long");
                     Log.d("personal", "lat in handleNewLocation is " + Double.toString(currenLatitude));
                     Log.d("personal", "long in handleNewLocation is " + Double.toString(currentLongitude));
@@ -339,13 +341,11 @@ public class MainActivity extends AppCompatActivity
 
 //                    setUpFirebaseAdapter(children);
                 }
-            }
-            else
-            {
+            } else {
                 city = "unknown";
                 Log.d("personal", "couldn't get an address from the location");
             }
-        } catch(IOException e){
+        } catch (IOException e) {
             Log.d("personal", "getFromLocation didn't work");
             e.printStackTrace();
 
@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void setUpGeoFire(){
+    private void setUpGeoFire() {
         DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference().child("geofire");
         geoFire = new GeoFire(geoFireRef);
         Log.d("personal", "is geoFire null? " + Boolean.toString(geoFire == null));
@@ -361,16 +361,17 @@ public class MainActivity extends AppCompatActivity
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                Log.d("personal", "onKeyEntered entered");
                 Log.d("personal", "is key null? " + Boolean.toString(key == null));
-                Log.d("personal",String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
+                Log.d("personal", String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
                 swarmReportIds.add(key);
             }
 
             @Override
             public void onKeyExited(String key) {
                 Log.d("personal", "onKeyExited entered");
-                Log.d("personal",String.format("Key %s is no longer in the search area", key));
+                Log.d("personal", String.format("Key %s is no longer in the search area", key));
+                swarmReportIds = Utilities.removeItemFromArrayList(key, swarmReportIds);
+                //TODO check that this works
             }
 
             @Override
@@ -383,13 +384,14 @@ public class MainActivity extends AppCompatActivity
             public void onGeoQueryReady() {
 
                 Log.d("personal", "All initial data has been loaded and events have been fired!");
-//                DatabaseReference userCurrentLocationRef = FirebaseDatabase.getInstance().getReference(Double.toString(currenLatitude) + ", " + Double.toString(currentLongitude));
-                for(int i =0; i<swarmReportIds.size(); i++){
+                Utilities.addIdsToFirebase(userId + "_current", swarmReportIds);
+
+                for (int i = 0; i < swarmReportIds.size(); i++) {
                     Log.d("personal", "swarmId: " + swarmReportIds.get(i));
 //                    userCurrentLocationRef
                 }
                 ArrayList<String> children = new ArrayList<String>();
-                children.add("all");
+                children.add(userId + "_current");
                 setUpFirebaseAdapter(children);
 
             }
@@ -402,56 +404,56 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setUpFirebaseAdapter(final ArrayList<String> children) {
-        this.runOnUiThread(new Runnable() { //TODO maybe get rid of this
+        Log.d("personal", "first child is " + children.get(0));
+        swarmReportQuery = FirebaseDatabase.getInstance().getReference(children.get(0));
+        for (int i = 1; i < children.size(); i++) {
+            swarmReportQuery = swarmReportQuery.getRef().child(children.get(i));
+        }
+        Log.d("personal", "got into setUpFirebaseAdapter");
+//                swarmReportQuery = swarmReportQuery
+//                        .orderByChild("claimed")
+//                        .equalTo(false);
+        mFirebaseAdapter = new FirebaseRecyclerAdapter<Boolean, FirebaseClaimViewHolder>
+                (Boolean.class, R.layout.claim_item, FirebaseClaimViewHolder.class,
+                        swarmReportQuery) {
+
             @Override
-            public void run() {
-                swarmReportQuery = FirebaseDatabase.getInstance().getReference(children.get(0));
-                for(int i =1; i<children.size(); i++){
-                    swarmReportQuery = swarmReportQuery.getRef().child(children.get(i));
-                }
-//                DatabaseReference swarmReportQueryAsReferenceForGeoFire = (DatabaseReference) swarmReportQuery;
-                swarmReportQuery = swarmReportQuery
-                        .orderByChild("claimed")
-                        .equalTo(false);
-                mFirebaseAdapter = new FirebaseRecyclerAdapter<SwarmReport, FirebaseClaimViewHolder>
-                        (SwarmReport.class, R.layout.claim_item, FirebaseClaimViewHolder.class,
-                                swarmReportQuery) {
+            protected void populateViewHolder(final FirebaseClaimViewHolder viewHolder,
+                                              Boolean model, int position) {
+                viewHolder.bindClaimerLatLong(currenLatitude, currentLongitude);
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                viewHolder.bindCurrentUserNameAndId(user.getDisplayName(), user.getUid());
+                Log.d("personal", "position is " + Integer.toString(position));
+                Log.d("personal", "swarmReportIds length is " + Integer.toString(swarmReportIds.size()));
+                String targetKey = getRef(position).getKey();
+                Log.d("personal", "targetKey is " + targetKey);
+                allRef = FirebaseDatabase.getInstance().getReference("all").child(targetKey);
+                allRefListener = allRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.d("personal", "got into onDataChange");
+                        SwarmReport retrievedModel = dataSnapshot.getValue(SwarmReport.class);
+                        Log.d("personal", "retrievedModel is a " + retrievedModel.getClass().getName());
+                        if(!retrievedModel.isClaimed()){
+                            viewHolder.bindSwarmReport(retrievedModel);
+                        }
+                    }
 
                     @Override
-                    protected void populateViewHolder(final FirebaseClaimViewHolder viewHolder,
-                                                      SwarmReport model, int position) {
-                        viewHolder.bindClaimerLatLong(currenLatitude, currentLongitude);
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        viewHolder.bindCurrentUserNameAndId(user.getDisplayName(), user.getUid());
-                        Log.d("personal", "position is " + Integer.toString(position));
-                        Log.d("personal", "swarmReportIds length is " + Integer.toString(swarmReportIds.size()));
-                        if(position < swarmReportIds.size()){
-                            String targetKey = swarmReportIds.get(position);
-                            allRef = FirebaseDatabase.getInstance().getReference("all").child(targetKey);
-                            allRefListener = allRef.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    SwarmReport retrievedModel = dataSnapshot.getValue(SwarmReport.class);
-                                    viewHolder.bindSwarmReport(retrievedModel);
-                                }
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                }
-                            });
-                            hashMap.put(allRef, allRefListener);
-                        }
-
+                    public void onCancelled(DatabaseError databaseError) {
                     }
-                };
-                setUpBlankAdapter();
-                Log.d("personal", "got past setUpBlankAdapter");
-                DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(claimRecyclerView.getContext(),
-                        new LinearLayoutManager(MainActivity.this).getOrientation());
-                dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
-                claimRecyclerView.addItemDecoration(dividerItemDecoration);
-                progressBarForRecyclerView.setVisibility(View.GONE);
+                });
+                hashMap.put(allRef, allRefListener);
+
+
             }
-        });
+        };
+        setUpBlankAdapter();
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(claimRecyclerView.getContext(),
+                new LinearLayoutManager(MainActivity.this).getOrientation());
+        dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
+        claimRecyclerView.addItemDecoration(dividerItemDecoration);
+        progressBarForRecyclerView.setVisibility(View.GONE);
     }
 
     public static void removeValueEventListener(HashMap<DatabaseReference, ValueEventListener> hashMap) {
@@ -462,7 +464,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void setUpBlankAdapter(){
+    private void setUpBlankAdapter() {
         Log.d("personal", "got here setUpBlankAdapater");
         claimRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
@@ -475,7 +477,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mFirebaseAdapter != null){
+        if (mFirebaseAdapter != null) {
             mFirebaseAdapter.cleanup();
         }
 //        allRef.removeEventListener(allRefListener);
@@ -491,13 +493,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        if(connectionResult.hasResolution()){
-            try{
+        if (connectionResult.hasResolution()) {
+            try {
                 connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-            } catch(IntentSender.SendIntentException e){
+            } catch (IntentSender.SendIntentException e) {
                 e.printStackTrace();
             }
-        } else{
+        } else {
             Log.d("personal", "Location services failed with code " + connectionResult.getErrorCode());
         }
     }
@@ -512,7 +514,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStop() {
         super.onStop();
-        if(mGoogleApiClient.isConnected()){
+        if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
