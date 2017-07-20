@@ -1,5 +1,7 @@
 package com.example.guest.iamhere.utilityClasses;
 
+import android.util.Log;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -11,11 +13,19 @@ import java.util.ArrayList;
 
 public class Utilities {
 
+    public static void printArrayListContents (ArrayList<String> aL){
+        for(int i=0; i<aL.size(); i++){
+            Log.d("personal", aL.get(i));
+        }
+    }
+
     public static void addIdsToFirebase (String nodeName, ArrayList<String> ids){
+        Log.d("personal", "nodeName is " + nodeName);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(nodeName);
         String pushKey;
         for(int i = 0; i<ids.size(); i++){
             pushKey = ids.get(i);
+            Log.d("personal", "pushKey is " + pushKey);
             DatabaseReference subRef = ref.child(pushKey);
             subRef.setValue(true);
         }

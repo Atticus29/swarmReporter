@@ -113,6 +113,8 @@ public class MainActivity extends AppCompatActivity
     private ValueEventListener allRefListener;
     private DatabaseReference allRef;
     private HashMap<DatabaseReference, ValueEventListener> hashMap = new HashMap<DatabaseReference, ValueEventListener>();
+    private String claimCheckKey;
+    private Boolean geoQueryStatusIsAGo = false;
 
     @Bind(R.id.claimRecyclerView)
     RecyclerView claimRecyclerView;
@@ -361,9 +363,27 @@ public class MainActivity extends AppCompatActivity
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
+                claimCheckKey = key;
                 Log.d("personal", "is key null? " + Boolean.toString(key == null));
                 Log.d("personal", String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
-                swarmReportIds.add(key);
+                final DatabaseReference claimCheckRef = FirebaseDatabase.getInstance().getReference("all").child(key);
+                claimCheckRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        SwarmReport claimCheckSwarmReport = dataSnapshot.getValue(SwarmReport.class);
+                        Log.d("personal", "swarmReportClaimId listener found swarm " + claimCheckSwarmReport.getReportId());
+                        if (!claimCheckSwarmReport.isClaimed()){
+                            Log.d("personal", "swarm " + claimCheckSwarmReport.getReportId() + " isn't claimed");
+                            swarmReportIds.add(claimCheckKey);
+                            Utilities.printArrayListContents(swarmReportIds);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override
@@ -384,6 +404,7 @@ public class MainActivity extends AppCompatActivity
             public void onGeoQueryReady() {
 
                 Log.d("personal", "All initial data has been loaded and events have been fired!");
+                geoQueryStatusIsAGo = true;
                 Utilities.addIdsToFirebase(userId + "_current", swarmReportIds);
 
                 for (int i = 0; i < swarmReportIds.size(); i++) {

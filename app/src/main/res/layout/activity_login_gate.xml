@@ -25,9 +25,7 @@
         android:textColor="@color/primary_text"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/gateRegisterButton"
-        android:layout_marginRight="0dp"
         app:layout_constraintRight_toRightOf="@+id/gateRegisterButton"
-        android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="@+id/gateRegisterButton"
         app:layout_constraintHorizontal_bias="0.597" />
 
@@ -42,5 +40,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="31dp"
         android:layout_marginLeft="32dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="32dp" />
 </android.support.constraint.ConstraintLayout>
