@@ -318,76 +318,25 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void handleNewLocation(Location location) {
-        Log.d("personal", "got to new location");
         currenLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
         Log.d("personal", "lat is " + Double.toString(currenLatitude) + " and longitude is " + Double.toString(currentLongitude));
-        Log.d("personal", "geo coder present? " + Boolean.toString(Geocoder.isPresent()));
         if (currenLatitude != null && currentLongitude != null) {
             setUpGeoFire();
         }
-
-        Geocoder gcd = new Geocoder(MainActivity.this, Locale.getDefault());
-        try {
-            List<Address> addresses = gcd.getFromLocation(currenLatitude, currentLongitude, 1);
-            if (addresses.size() > 0) {
-                city = addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea();
-
-                if (currenLatitude != null && currentLongitude != null) {
-                    Log.d("personal", "Got lat and long");
-                    Log.d("personal", "lat in handleNewLocation is " + Double.toString(currenLatitude));
-                    Log.d("personal", "long in handleNewLocation is " + Double.toString(currentLongitude));
-                    Log.d("personal", "query radius is " + Double.toString(SecretConstants.QUERY_RADIUS));
-                    ArrayList<String> children = new ArrayList<String>();
-                    children.add(city);
-
-//                    setUpFirebaseAdapter(children);
-                }
-            } else {
-                city = "unknown";
-                Log.d("personal", "couldn't get an address from the location");
-            }
-        } catch (IOException e) {
-            Log.d("personal", "getFromLocation didn't work");
-            e.printStackTrace();
-
-        }
-
     }
 
     private void setUpGeoFire() {
         DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference().child("geofire");
         geoFire = new GeoFire(geoFireRef);
-        Log.d("personal", "is geoFire null? " + Boolean.toString(geoFire == null));
         geoQuery = geoFire.queryAtLocation(new GeoLocation(currenLatitude, currentLongitude), SecretConstants.QUERY_RADIUS);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
                 claimCheckKey = key;
-                Log.d("personal", "is key null? " + Boolean.toString(key == null));
                 Log.d("personal", String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
                 swarmReportIds.add(claimCheckKey);
             }
-//                final DatabaseReference claimCheckRef = FirebaseDatabase.getInstance().getReference("all").child(key);
-//                claimCheckRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        SwarmReport claimCheckSwarmReport = dataSnapshot.getValue(SwarmReport.class);
-//                        Log.d("personal", "swarmReportClaimId listener found swarm " + claimCheckSwarmReport.getReportId());
-//                        if (!claimCheckSwarmReport.isClaimed()){
-//                            Log.d("personal", "swarm " + claimCheckSwarmReport.getReportId() + " isn't claimed");
-//                            swarmReportIds.add(claimCheckKey);
-//                            Utilities.printArrayListContents(swarmReportIds);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//
-//                    }
-//                });
-//            }
-
             @Override
             public void onKeyExited(String key) {
                 Log.d("personal", "onKeyExited entered");
@@ -404,13 +353,12 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onGeoQueryReady() {
-
                 Log.d("personal", "All initial data has been loaded and events have been fired!");
-                geoQueryStatusIsAGo = true;
                 Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
                 ArrayList<String> children = new ArrayList<String>();
                 children.add(userId + "_current");
                 setUpFirebaseAdapter(children);
+                //TODO check for asynchronicity issues when the swarm count is very high
             }
 
             @Override
@@ -426,7 +374,6 @@ public class MainActivity extends AppCompatActivity
         for (int i = 1; i < children.size(); i++) {
             swarmReportQuery = swarmReportQuery.getRef().child(children.get(i));
         }
-        Log.d("personal", "got into setUpFirebaseAdapter");
                 swarmReportQuery = swarmReportQuery
                         .orderByChild("claimed")
                         .equalTo(false);
@@ -440,36 +387,7 @@ public class MainActivity extends AppCompatActivity
                 viewHolder.bindClaimerLatLong(currenLatitude, currentLongitude);
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 viewHolder.bindCurrentUserNameAndId(user.getDisplayName(), user.getUid());
-                Log.d("personal", "position is " + Integer.toString(position));
-                Log.d("personal", "swarmReportIds length is " + Integer.toString(swarmReportIds.size()));
-                String targetKey = getRef(position).getKey();
-                Log.d("personal", "targetKey is " + targetKey);
                 viewHolder.bindSwarmReport(model);
-//                allRef = (Query) FirebaseDatabase.getInstance()
-//                        .getReference("all")
-//                        .child(targetKey);
-//                        .orderByChild("claimed")
-//                        .equalTo(false);
-//                allRefListener = allRef.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        Log.d("personal", "got into onDataChange");
-//                        try{
-//                            SwarmReport retrievedModel = dataSnapshot.getValue(SwarmReport.class);
-//                            Log.d("personal", "retrievedModel is a " + retrievedModel.getClass().getName());
-//                            viewHolder.bindSwarmReport(retrievedModel);
-//                        } catch(Exception e){
-//                            e.printStackTrace();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//                    }
-//                });
-//                hashMap.put(allRef, allRefListener);
-//
-
             }
         };
         setUpBlankAdapter();
@@ -489,13 +407,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setUpBlankAdapter() {
-        Log.d("personal", "got here setUpBlankAdapater");
         claimRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
         claimRecyclerView.setLayoutManager(linearLayoutManager);
         claimRecyclerView.setAdapter(mFirebaseAdapter);
         claimRecyclerView.setVisibility(View.VISIBLE);
-        Log.d("personal", "setUpBlankAdapter done with function");
     }
 
     @Override
@@ -504,7 +420,6 @@ public class MainActivity extends AppCompatActivity
         if (mFirebaseAdapter != null) {
             mFirebaseAdapter.cleanup();
         }
-//        allRef.removeEventListener(allRefListener);
 //        removeValueEventListener(hashMap);
 
     }
