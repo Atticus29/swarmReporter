@@ -366,25 +366,27 @@ public class MainActivity extends AppCompatActivity
                 claimCheckKey = key;
                 Log.d("personal", "is key null? " + Boolean.toString(key == null));
                 Log.d("personal", String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
-                final DatabaseReference claimCheckRef = FirebaseDatabase.getInstance().getReference("all").child(key);
-                claimCheckRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        SwarmReport claimCheckSwarmReport = dataSnapshot.getValue(SwarmReport.class);
-                        Log.d("personal", "swarmReportClaimId listener found swarm " + claimCheckSwarmReport.getReportId());
-                        if (!claimCheckSwarmReport.isClaimed()){
-                            Log.d("personal", "swarm " + claimCheckSwarmReport.getReportId() + " isn't claimed");
-                            swarmReportIds.add(claimCheckKey);
-                            Utilities.printArrayListContents(swarmReportIds);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                swarmReportIds.add(claimCheckKey);
             }
+//                final DatabaseReference claimCheckRef = FirebaseDatabase.getInstance().getReference("all").child(key);
+//                claimCheckRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        SwarmReport claimCheckSwarmReport = dataSnapshot.getValue(SwarmReport.class);
+//                        Log.d("personal", "swarmReportClaimId listener found swarm " + claimCheckSwarmReport.getReportId());
+//                        if (!claimCheckSwarmReport.isClaimed()){
+//                            Log.d("personal", "swarm " + claimCheckSwarmReport.getReportId() + " isn't claimed");
+//                            swarmReportIds.add(claimCheckKey);
+//                            Utilities.printArrayListContents(swarmReportIds);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//
+//                    }
+//                });
+//            }
 
             @Override
             public void onKeyExited(String key) {
@@ -431,9 +433,9 @@ public class MainActivity extends AppCompatActivity
             swarmReportQuery = swarmReportQuery.getRef().child(children.get(i));
         }
         Log.d("personal", "got into setUpFirebaseAdapter");
-//                swarmReportQuery = swarmReportQuery
-//                        .orderByChild("claimed")
-//                        .equalTo(false);
+                swarmReportQuery = swarmReportQuery
+                        .orderByChild("claimed")
+                        .equalTo(false);
         mFirebaseAdapter = new FirebaseRecyclerAdapter<Boolean, FirebaseClaimViewHolder>
                 (Boolean.class, R.layout.claim_item, FirebaseClaimViewHolder.class,
                         swarmReportQuery) {
@@ -455,9 +457,10 @@ public class MainActivity extends AppCompatActivity
                         Log.d("personal", "got into onDataChange");
                         SwarmReport retrievedModel = dataSnapshot.getValue(SwarmReport.class);
                         Log.d("personal", "retrievedModel is a " + retrievedModel.getClass().getName());
-                        if(!retrievedModel.isClaimed()){
-                            viewHolder.bindSwarmReport(retrievedModel);
-                        }
+                        viewHolder.bindSwarmReport(retrievedModel);
+//                        if(!retrievedModel.isClaimed()){
+//                            viewHolder.bindSwarmReport(retrievedModel);
+//                        }
                     }
 
                     @Override

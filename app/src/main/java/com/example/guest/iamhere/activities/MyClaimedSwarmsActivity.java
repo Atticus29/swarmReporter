@@ -61,7 +61,7 @@ public class MyClaimedSwarmsActivity extends AppCompatActivity {
                     }
                 };
                 setUpBlankAdapter();
-                Log.d("personal", "got past setUpBlankAdapter");
+                Log.d("personal", "got past setUpBlankAdapter myClaimed");
                 DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(myClaimedSwarmsRecyclerView.getContext(),
                         new LinearLayoutManager(MyClaimedSwarmsActivity.this).getOrientation());
                 dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));

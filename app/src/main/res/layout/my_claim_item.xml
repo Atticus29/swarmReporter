@@ -22,6 +22,7 @@
             android:clickable="true"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/timeStampTextViewMyClaims"
             app:srcCompat="@drawable/bee"
             tools:layout_constraintLeft_creator="1"
             tools:layout_constraintRight_creator="1"
@@ -38,6 +39,7 @@
             android:textSize="20sp"
             android:textColor="@color/primary_text"
             app:layout_constraintTop_toBottomOf="@+id/swarmImage"
+            app:layout_constraintBottom_toTopOf="@+id/contactReporterTextViewMyClaims"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -52,12 +54,11 @@
             android:text="Contact Swarm Reporter"
             android:textColor="@color/primary_text"
             android:textSize="20sp"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="@+id/timeStampTextView"
-            app:layout_constraintRight_toRightOf="@+id/timeStampTextView"
             tools:layout_constraintLeft_creator="1"
             tools:layout_constraintRight_creator="1"
-            app:layout_constraintTop_toBottomOf="@+id/claimantTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/timeStampTextViewMyClaims"
+            app:layout_constraintBottom_toTopOf="@+id/reportedByTextViewMyClaims"/>
 
         <TextView
             android:id="@+id/reportedByTextViewMyClaims"
@@ -70,7 +71,8 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="@+id/timeStampTextView"
             app:layout_constraintRight_toRightOf="@+id/timeStampTextView"
-            app:layout_constraintTop_toBottomOf="@+id/timeStampTextView"
+            app:layout_constraintTop_toBottomOf="@+id/contactReporterTextViewMyClaims"
+            app:layout_constraintBottom_toTopOf="@+id/sizeTextViewMyClaims"
             tools:layout_constraintLeft_creator="1"
             tools:layout_constraintRight_creator="1" />
 
@@ -83,11 +85,12 @@
             android:text="Size: The size of a __"
             app:layout_constraintLeft_toLeftOf="@+id/claimantTextView"
             app:layout_constraintRight_toRightOf="@+id/claimantTextView"
+            app:layout_constraintTop_toBottomOf="@+id/reportedByTextViewMyClaims"
+            app:layout_constraintBottom_toTopOf="@+id/accessibilityTextViewMyClaims"
             tools:layout_constraintRight_creator="1"
             tools:layout_constraintLeft_creator="1"
             app:layout_constraintHorizontal_bias="0.0"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/contactReporterTextView" />
+            android:layout_marginTop="8dp"/>
 
         <TextView
             android:id="@+id/accessibilityTextViewMyClaims"
@@ -97,9 +100,10 @@
             android:textColor="@color/primary_text"
             android:textSize="20sp"
             android:text="Accessibility: __"
-            app:layout_constraintLeft_toLeftOf="@+id/sizeTextView"
-            app:layout_constraintRight_toRightOf="@+id/sizeTextView"
-            app:layout_constraintTop_toBottomOf="@+id/sizeTextView"
+            app:layout_constraintLeft_toLeftOf="@+id/sizeTextViewMyClaims"
+            app:layout_constraintRight_toRightOf="@+id/sizeTextViewMyClaims"
+            app:layout_constraintTop_toBottomOf="@+id/sizeTextViewMyClaims"
+            app:layout_constraintBottom_toTopOf="@+id/cancelMyClaimButton"
             tools:layout_constraintRight_creator="1"
             tools:layout_constraintLeft_creator="1"
             app:layout_constraintHorizontal_bias="0.0" />
