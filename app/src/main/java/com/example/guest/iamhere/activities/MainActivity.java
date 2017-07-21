@@ -111,8 +111,8 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<String> swarmReportIds = new ArrayList<>();
     private SwarmReport retrievedModel;
     private ValueEventListener allRefListener;
-    private DatabaseReference allRef;
-    private HashMap<DatabaseReference, ValueEventListener> hashMap = new HashMap<DatabaseReference, ValueEventListener>();
+    private Query allRef;
+//    private HashMap<Query, ValueEventListener> hashMap = new HashMap<Query, ValueEventListener>();
     private String claimCheckKey;
     private Boolean geoQueryStatusIsAGo = false;
 
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity
         userName = mSharedPreferences.getString("userName", null);
         userId = mSharedPreferences.getString("userId", null);
         if (userName != null && userId != null) {
-            greetingTextView.setText("Unclaimed swarms near " + passedUserName + ":");
+            greetingTextView.setText("Unclaimed swarms near " + userName + ":");
         }
 
         setUpBlankAdapter();
@@ -407,16 +407,10 @@ public class MainActivity extends AppCompatActivity
 
                 Log.d("personal", "All initial data has been loaded and events have been fired!");
                 geoQueryStatusIsAGo = true;
-                Utilities.addIdsToFirebase(userId + "_current", swarmReportIds);
-
-                for (int i = 0; i < swarmReportIds.size(); i++) {
-                    Log.d("personal", "swarmId: " + swarmReportIds.get(i));
-//                    userCurrentLocationRef
-                }
+                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
                 ArrayList<String> children = new ArrayList<String>();
                 children.add(userId + "_current");
                 setUpFirebaseAdapter(children);
-
             }
 
             @Override
@@ -436,13 +430,13 @@ public class MainActivity extends AppCompatActivity
                 swarmReportQuery = swarmReportQuery
                         .orderByChild("claimed")
                         .equalTo(false);
-        mFirebaseAdapter = new FirebaseRecyclerAdapter<Boolean, FirebaseClaimViewHolder>
-                (Boolean.class, R.layout.claim_item, FirebaseClaimViewHolder.class,
+        mFirebaseAdapter = new FirebaseRecyclerAdapter<SwarmReport, FirebaseClaimViewHolder>
+                (SwarmReport.class, R.layout.claim_item, FirebaseClaimViewHolder.class,
                         swarmReportQuery) {
 
             @Override
             protected void populateViewHolder(final FirebaseClaimViewHolder viewHolder,
-                                              Boolean model, int position) {
+                                              SwarmReport model, int position) {
                 viewHolder.bindClaimerLatLong(currenLatitude, currentLongitude);
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 viewHolder.bindCurrentUserNameAndId(user.getDisplayName(), user.getUid());
@@ -450,25 +444,31 @@ public class MainActivity extends AppCompatActivity
                 Log.d("personal", "swarmReportIds length is " + Integer.toString(swarmReportIds.size()));
                 String targetKey = getRef(position).getKey();
                 Log.d("personal", "targetKey is " + targetKey);
-                allRef = FirebaseDatabase.getInstance().getReference("all").child(targetKey);
-                allRefListener = allRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.d("personal", "got into onDataChange");
-                        SwarmReport retrievedModel = dataSnapshot.getValue(SwarmReport.class);
-                        Log.d("personal", "retrievedModel is a " + retrievedModel.getClass().getName());
-                        viewHolder.bindSwarmReport(retrievedModel);
-//                        if(!retrievedModel.isClaimed()){
+                viewHolder.bindSwarmReport(model);
+//                allRef = (Query) FirebaseDatabase.getInstance()
+//                        .getReference("all")
+//                        .child(targetKey);
+//                        .orderByChild("claimed")
+//                        .equalTo(false);
+//                allRefListener = allRef.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        Log.d("personal", "got into onDataChange");
+//                        try{
+//                            SwarmReport retrievedModel = dataSnapshot.getValue(SwarmReport.class);
+//                            Log.d("personal", "retrievedModel is a " + retrievedModel.getClass().getName());
 //                            viewHolder.bindSwarmReport(retrievedModel);
+//                        } catch(Exception e){
+//                            e.printStackTrace();
 //                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
-                hashMap.put(allRef, allRefListener);
-
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//                    }
+//                });
+//                hashMap.put(allRef, allRefListener);
+//
 
             }
         };
@@ -480,9 +480,9 @@ public class MainActivity extends AppCompatActivity
         progressBarForRecyclerView.setVisibility(View.GONE);
     }
 
-    public static void removeValueEventListener(HashMap<DatabaseReference, ValueEventListener> hashMap) {
-        for (Map.Entry<DatabaseReference, ValueEventListener> entry : hashMap.entrySet()) {
-            DatabaseReference databaseReference = entry.getKey();
+    public static void removeValueEventListener(HashMap<Query, ValueEventListener> hashMap) {
+        for (Map.Entry<Query, ValueEventListener> entry : hashMap.entrySet()) {
+            Query databaseReference = entry.getKey();
             ValueEventListener valueEventListener = entry.getValue();
             databaseReference.removeEventListener(valueEventListener);
         }
@@ -505,7 +505,7 @@ public class MainActivity extends AppCompatActivity
             mFirebaseAdapter.cleanup();
         }
 //        allRef.removeEventListener(allRefListener);
-        removeValueEventListener(hashMap);
+//        removeValueEventListener(hashMap);
 
     }
 

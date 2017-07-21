@@ -75,8 +75,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.guest.iamhere.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.MyClaimedSwarmsActivity" />
-        <activity android:name=".activities.MyReportedSwarmsActivity"></activity>
+        <activity android:name=".activities.MyClaimedSwarmsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.guest.iamhere.activities.MainActivity" />
+        </activity>
+        <activity android:name=".activities.MyReportedSwarmsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.guest.iamhere.activities.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

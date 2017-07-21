@@ -2,8 +2,12 @@ package com.example.guest.iamhere.utilityClasses;
 
 import android.util.Log;
 
+import com.example.guest.iamhere.models.SwarmReport;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -25,9 +29,30 @@ public class Utilities {
         String pushKey;
         for(int i = 0; i<ids.size(); i++){
             pushKey = ids.get(i);
-            Log.d("personal", "pushKey is " + pushKey);
             DatabaseReference subRef = ref.child(pushKey);
             subRef.setValue(true);
+        }
+    }
+
+    public static void transferSwarmReportsFromAllToNewNode (String nodeName, ArrayList<String> ids){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(nodeName);
+        String pushKey;
+        for(int i = 0; i<ids.size(); i++){
+            pushKey = ids.get(i);
+            final DatabaseReference subRef = ref.child(pushKey);
+            DatabaseReference allRef = FirebaseDatabase.getInstance().getReference("all").child(pushKey);
+            allRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    SwarmReport currentSwarmReport = dataSnapshot.getValue(SwarmReport.class);
+                    subRef.setValue(currentSwarmReport);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
     }
 
