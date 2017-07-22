@@ -7,7 +7,6 @@ import java.security.Timestamp;
 public class SwarmReport {
     private Double latitude;
     private Double longitude;
-    private String city;
     private String reporterName;
     private String reporterId;
     private String reportId;
@@ -22,10 +21,9 @@ public class SwarmReport {
 
     public SwarmReport(){}
 
-    public SwarmReport(Double latitude, Double longitude, String city, String reporterName, String reporterId, String size, String reportTimestamp, String accessibility) {
+    public SwarmReport(Double latitude, Double longitude, String reporterName, String reporterId, String size, String reportTimestamp, String accessibility) {
         this.latitude = latitude;
         this.longitude = longitude;
-        this.city = city;
         this.reporterName = reporterName;
         this.reporterId = reporterId;
         this.size = size;
@@ -40,10 +38,6 @@ public class SwarmReport {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
     }
 
     public void setReporterName(String reporterName) {
@@ -104,10 +98,6 @@ public class SwarmReport {
 
     public Double getLongitude() {
         return longitude;
-    }
-
-    public String getCity() {
-        return city;
     }
 
     public String getReporterName() {

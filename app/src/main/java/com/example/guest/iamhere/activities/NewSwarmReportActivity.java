@@ -66,7 +66,6 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
-    private String city;
     private String userName;
     private String userId;
     private Double currenLatitude;
@@ -101,34 +100,12 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         addImageButton.setOnClickListener(this);
 
         auth = FirebaseAuth.getInstance();
-        authListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Log.d("personal", "user happens in NewSwarmReport");
-                if (user != null) {
-                    Log.d("personal", "onAuthStateChanged happens in NewSwarmReport and user isn't null");
-                    for (UserInfo userInfo : user.getProviderData()) {
-                        if (userName == null && userInfo.getDisplayName() != null) {
-                            userName = userInfo.getDisplayName();
-                            Log.d("personal", "onAuthStateChanged userName is " + userName);
-                        }
-                        if (userId == null && userInfo.getUid() != null) {
-                            userId = userInfo.getUid();
-                            Log.d("personal", "onAuthStateChanged userId is " + userId);
-                        }
-                    }
-                } else {
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        userName = mSharedPreferences.getString("userName", null);
+        userId = mSharedPreferences.getString("userId", null);
+        Log.d("personal", "newSwarm userName is " + userName);
+        Log.d("personal", "newSwarm userId is " + userId);
 
-                }
-            }
-        };
-
-        if(userName == null | userId == null){
-            mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            userName = mSharedPreferences.getString("userName", null);
-            userId = mSharedPreferences.getString("userId", null);
-        }
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -174,33 +151,20 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private void handleNewLocation(Location location) {
         currenLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
-        Geocoder gcd = new Geocoder(NewSwarmReportActivity.this, Locale.getDefault());
-        try {
-            List<Address> addresses = gcd.getFromLocation(currenLatitude, currentLongitude, 1);
-            if (addresses.size() > 0) {
-                city = addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea();
-                Log.d("cityNewSwarm", city);
-                locationTextView.setText("Looks like you're in: " + city + ". We'll register your swarm there.");
-                if(userId != null && userName != null){
-                    progressBar.setVisibility(View.GONE);
-                    reportSwarmButton.setVisibility(View.VISIBLE);
-                    addImageButton.setVisibility(View.VISIBLE);
-                } else{
-                    Log.d("personal", "userId or userName is null!");
-                }
-
-            } else {
-                city = "unknown";
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        Log.d("personal", "newSwarm lat is " + currenLatitude);
+        Log.d("personal", "newSwarm lon is " + currentLongitude);
+        if(userId != null && userName != null && currenLatitude != 0.0 && currentLongitude != 0.0) {
+            progressBar.setVisibility(View.GONE);
+            reportSwarmButton.setVisibility(View.VISIBLE);
+            addImageButton.setVisibility(View.VISIBLE);
+        } else {
+            Log.d("newSwarm", "either location or user info is null!");
         }
-
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.d(TAG, "Location services suspended. Please reconnect");
+        Log.d("newSwarm", "Location services suspended. Please reconnect");
 
     }
 
@@ -213,7 +177,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 e.printStackTrace();
             }
         } else {
-            Log.d(TAG, "Location services failed with code " + connectionResult.getErrorCode());
+            Log.d("newSwarm", "Location services failed with code " + connectionResult.getErrorCode());
         }
     }
 
@@ -221,16 +185,12 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     @Override
     public void onStart() {
         super.onStart();
-        auth.addAuthStateListener(authListener);
         mGoogleApiClient.connect();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (authListener != null) {
-            auth.removeAuthStateListener(authListener);
-        }
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
@@ -246,9 +206,9 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         size = getSize();
         accessibility = getAccessibility();
         if (size != null && accessibility != null) {
+            Log.d("personal", "newSwarm got into newSwarmReport assignment");
             newSwarmReport.setLatitude(currenLatitude);
             newSwarmReport.setLongitude(currentLongitude);
-            newSwarmReport.setCity(city);
             newSwarmReport.setReporterName(userName);
             newSwarmReport.setReporterId(userId);
             newSwarmReport.setSize(size);
@@ -259,9 +219,10 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 newSwarmReport.setImageString("https://coxshoney.com/wp-content/uploads/bee_swarm_man.jpg");
             }
             database = FirebaseDatabase.getInstance();
-            ref = database.getReference(city);
+            ref = database.getReference("all");
             pushRef = ref.push();
             String pushId = pushRef.getKey();
+            Log.d("personal", "pushId is " + pushId);
             newSwarmReport.setReportId(pushId);
         }
         if (v == addImageButton) {
@@ -272,24 +233,23 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         } else if (v == reportSwarmButton) {
             if (newSwarmReport.getSize() != null && newSwarmReport.getAccessibility() != null) {
                 if (newSwarmReport.getReportId() != null) {
-                    Log.d("personal", "userId is " + userId);
+                    Log.d("personal", "newSwarm inside reportSwarmButton userId is " + userId);
                     //TODO maybe add Completion Listener if this gives you trouble
                     pushRef.setValue(newSwarmReport);
                     DatabaseReference reporterRef = FirebaseDatabase.getInstance()
-                            .getReference()
-                            .child("users")
+                            .getReference("users")
                             .child(userId)
                             .child("reportedSwarms")
                             .child(newSwarmReport.getReportId());
                     reporterRef.setValue(newSwarmReport);
 
                     DatabaseReference allRef = FirebaseDatabase.getInstance()
-                            .getReference()
-                            .child("all")
+                            .getReference("all")
                             .child(newSwarmReport.getReportId());
                     allRef.setValue(newSwarmReport);
 
-                    DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference().child("geofire");
+                    DatabaseReference geoFireRef = FirebaseDatabase.getInstance()
+                            .getReference("geofire");
                     GeoFire geoFire = new GeoFire(geoFireRef);
                     geoFire.setLocation(newSwarmReport.getReportId(), new GeoLocation(newSwarmReport.getLatitude(), newSwarmReport.getLongitude()));
                 }
@@ -335,14 +295,14 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     public String getAccessibility() {
         String accessibility = null;
         if (reach.isChecked()) {
-            accessibility = "reach";
+            accessibility = "within reach";
         } else if (ladder.isChecked()) {
-            accessibility = "ladder";
+            accessibility = "requires ladder";
 
         } else if (hasLadder.isChecked()) {
-            accessibility = "hasLadder";
+            accessibility = "reporter has ladder";
         } else if (tallLadder.isChecked()) {
-            accessibility = "tallLadder";
+            accessibility = "requires tall ladder";
         }
         return accessibility;
     }

@@ -143,7 +143,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
 
         //TODO get current location lat and long and put here
 
-        distanceTextView.setText("Located " + calculateDistanceAsString(claimerLatitude, swarmReport.getLatitude(), claimerLongitude, swarmReport.getLongitude(),0.0, 0.0) + " miles away in " + swarmReport.getCity());
+        distanceTextView.setText("Located " + calculateDistanceAsString(claimerLatitude, swarmReport.getLatitude(), claimerLongitude, swarmReport.getLongitude(),0.0, 0.0) + " miles away.");
         sizeTextView.setText("Size: The size of a " + swarmReport.getSize());
         accessibilityTextView.setText("Accessibility: " + swarmReport.getAccessibility());
 
@@ -213,19 +213,19 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             updateReportedSwarmsRef.setValue(true);
 
             DatabaseReference ref = FirebaseDatabase.getInstance()
-                    .getReference(currentSwarmReport.getCity())
+                    .getReference(userId+"_current")
                     .child(currentSwarmReport.getReportId())
                     .child("claimed");
             ref.setValue(true);
 
             DatabaseReference claimantNameRef = FirebaseDatabase.getInstance()
-                    .getReference(currentSwarmReport.getCity())
+                    .getReference(userId+"_current")
                     .child(currentSwarmReport.getReportId())
                     .child("claimantName");
             claimantNameRef.setValue(userName);
 
             DatabaseReference claimantIdRef = FirebaseDatabase.getInstance()
-                    .getReference(currentSwarmReport.getCity())
+                    .getReference(userId+"_current")
                     .child(currentSwarmReport.getReportId())
                     .child("claimantId");
             claimantIdRef.setValue(userId);
@@ -262,11 +262,11 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                     .child("claimed");
             allClaimantIdRef.setValue(false);
 
-            DatabaseReference cityClaimantIdRef = FirebaseDatabase.getInstance()
-                    .getReference(currentSwarmReport.getCity())
+            DatabaseReference currentUserLocationClaimantIdRef = FirebaseDatabase.getInstance()
+                    .getReference(userId+"_current")
                     .child(currentSwarmReport.getReportId())
                     .child("claimed");
-            cityClaimantIdRef.setValue(false);
+            currentUserLocationClaimantIdRef.setValue(false);
 
             DatabaseReference reporterClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference("users")
@@ -290,10 +290,10 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                     .child(currentSwarmReport.getReportId());
             allClaimantIdRef.removeValue();
 
-            DatabaseReference cityClaimantIdRef = FirebaseDatabase.getInstance()
-                    .getReference(currentSwarmReport.getCity())
+            DatabaseReference currentUserLocationClaimantIdRef = FirebaseDatabase.getInstance()
+                    .getReference(userId+"_current")
                     .child(currentSwarmReport.getReportId());
-            cityClaimantIdRef.removeValue();
+            currentUserLocationClaimantIdRef.removeValue();
 
             DatabaseReference reporterClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference("users")

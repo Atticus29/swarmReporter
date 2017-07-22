@@ -92,7 +92,6 @@ public class MainActivity extends AppCompatActivity
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
-    private String city;
     private Query swarmReportQuery;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
     private Double currenLatitude;
@@ -327,7 +326,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setUpGeoFire() {
-        DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference().child("geofire");
+        Log.d("personal", "setUpGeoFire called");
+        DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference("geofire");
         geoFire = new GeoFire(geoFireRef);
         geoQuery = geoFire.queryAtLocation(new GeoLocation(currenLatitude, currentLongitude), SecretConstants.QUERY_RADIUS);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
