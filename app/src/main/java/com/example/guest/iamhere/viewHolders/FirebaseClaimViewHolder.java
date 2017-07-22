@@ -102,13 +102,13 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         cancelMyClaimButton.setOnClickListener(this);
 
         TextView accessibilityTextViewMyClaims = (TextView) mView.findViewById(R.id.accessibilityTextViewMyClaims);
-        accessibilityTextViewMyClaims.setText(swarmReport.getAccessibility());
+        accessibilityTextViewMyClaims.setText("Accessibility: " + swarmReport.getAccessibility());
 
         TextView sizeTextViewMyClaims = (TextView) mView.findViewById(R.id.sizeTextViewMyClaims);
-        sizeTextViewMyClaims.setText(swarmReport.getSize());
+        sizeTextViewMyClaims.setText("The size of a: " + swarmReport.getSize());
 
         TextView reportedByTextViewMyClaims = (TextView) mView.findViewById(R.id.reportedByTextViewMyClaims);
-        reportedByTextViewMyClaims.setText(swarmReport.getReporterName());
+        reportedByTextViewMyClaims.setText("Reported by: " + swarmReport.getReporterName());
 
         TextView contactReporterTextViewMyClaims = (TextView) mView.findViewById(R.id.contactReporterTextViewMyClaims);
         //TODO fix this
