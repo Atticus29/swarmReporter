@@ -71,7 +71,12 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
 
         TextView claimantTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.claimantTextViewMyReportedSwarms);
         if(swarmReport.isClaimed()){
-            claimantTextViewMyReportedSwarms.setText("Claimed by: " + swarmReport.getClaimantName());
+            if(swarmReport.getClaimantId() != null){
+                claimantTextViewMyReportedSwarms.setText("Claimed by: " + swarmReport.getClaimantName());
+            } else{
+                claimantTextViewMyReportedSwarms.setText("");
+            }
+
         } else{
             claimantTextViewMyReportedSwarms.setText("This swarm has not yet been claimed");
         }

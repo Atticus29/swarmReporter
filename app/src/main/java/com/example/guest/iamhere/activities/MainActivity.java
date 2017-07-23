@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity
     private Double currentLongitude;
     private String userName;
     private String userId;
+    private String photoUrl;
     private String passedUserProfileURL;
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
@@ -115,12 +116,9 @@ public class MainActivity extends AppCompatActivity
     private String claimCheckKey;
     private Boolean geoQueryStatusIsAGo = false;
 
-    @Bind(R.id.claimRecyclerView)
-    RecyclerView claimRecyclerView;
-    @Bind(R.id.greetingTextView)
-    TextView greetingTextView;
-    @Bind(R.id.progressBarForRecyclerView)
-    ProgressBar progressBarForRecyclerView;
+    @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
+    @Bind(R.id.greetingTextView) TextView greetingTextView;
+    @Bind(R.id.progressBarForRecyclerView) ProgressBar progressBarForRecyclerView;
 
 
     @Override
@@ -136,12 +134,18 @@ public class MainActivity extends AppCompatActivity
 
         String passedUserName = getIntent().getStringExtra("userName");
         String passedUid = getIntent().getStringExtra("userId");
+        String passedPhotoUrl = getIntent().getStringExtra("photoUrl");
+        Log.d("personal", "passedPhotoUrl is " + passedPhotoUrl);
 
         if (passedUserName != null && passedUid != null) {
             addToSharedPreferences("userName", passedUserName);
             addToSharedPreferences("userId", passedUid);
         } else {
             greetingTextView.setText("");
+        }
+
+        if(passedPhotoUrl != null){
+            addToSharedPreferences("photoUrl", passedPhotoUrl);
         }
 
         userName = mSharedPreferences.getString("userName", null);
@@ -162,6 +166,23 @@ public class MainActivity extends AppCompatActivity
         hView = navigationView.getHeaderView(0);
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        ImageView profileImageView = (ImageView) hView.findViewById(R.id.profileImageView);
+        photoUrl = mSharedPreferences.getString("photoUrl", null);
+        if(photoUrl != null){
+            Log.d("personal", "photoUrl inside picasso is " + photoUrl);
+            Picasso.with(this)
+                    .load(photoUrl)
+                    .resize(500,500)
+                    .centerCrop()
+                    .into(profileImageView);
+        }
+
+        TextView greetingNameTextView = (TextView) hView.findViewById(R.id.greetingNameTextView);
+        if(userName != null){
+            Log.d("personal", "got into changing userName in textView");
+            greetingNameTextView.setText(userName);
+        }
 
         auth = FirebaseAuth.getInstance();
         Log.d("personal", "is auth null? " + Boolean.toString(auth == null));

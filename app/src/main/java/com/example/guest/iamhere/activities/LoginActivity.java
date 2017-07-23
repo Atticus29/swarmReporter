@@ -157,8 +157,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Log.d("personal handleResult", acct.getDisplayName().toString());
                     intent.putExtra("userId", acct.getId().toString());
                     Log.d("personal userId handle", acct.getId().toString());
-                    Log.d("personal", "photo URL handleSignInResult is " + acct.getPhotoUrl());
-                    intent.putExtra("photoUrl", acct.getPhotoUrl());
+                    Log.d("personal", "photo URL handleSignInResult is " + acct.getPhotoUrl().toString());
+                    intent.putExtra("photoUrl", acct.getPhotoUrl().toString());
                     startActivity(intent);
             } catch(Exception e){
                     e.printStackTrace();
