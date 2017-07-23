@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Bind(R.id.passwordTextView) TextView passwordTextView;
     @Bind(R.id.loginButton) Button loginButton;
     @Bind(R.id.google_sign_in_button) SignInButton signInButton;
+    @Bind(R.id.orText) TextView orText;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -46,6 +47,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        //Disable google authentication for the time being because the phone number stuff is difficult to do when they log in through google
+        signInButton.setVisibility(View.GONE);
+        orText.setVisibility(View.GONE);
+
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         signInButton.setOnClickListener(this);
         createAuthProgressDialog();

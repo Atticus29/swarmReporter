@@ -123,6 +123,18 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                 .child(userPushId)
                 .child("phone");
         contactNumberRef.setValue("no"); //TODO ??
+
+        contactNumberRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         //TODO set implicit intent here
 
 
