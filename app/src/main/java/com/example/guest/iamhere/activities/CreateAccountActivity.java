@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +38,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     private String email;
     private String password;
     private String phoneNumber;
+    private Boolean contactOk;
 
 
 
@@ -45,16 +48,33 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     @Bind(R.id.passwordInputTextView) TextView passwordInputTextView;
     @Bind(R.id.passwordConfirmInputTextView) TextView passwordConfirmInputTextView;
     @Bind(R.id.phoneNumberTextView) TextView phoneNumberTextView;
+    @Bind(R.id.switch1) Switch switch1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
         ButterKnife.bind(this);
+        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    Log.d("personal", "switch is Checked");
+                    contactOk = true;
+                } else {
+                    Log.d("personal", "switch is not Checked");
+                    contactOk = false;
+                }
+            }
+        });
         createAuthStateListener();
         mAuth = FirebaseAuth.getInstance();
         createInputButton.setOnClickListener(this);
         createAuthProgressDialog();
+    }
+
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
     }
 
     @Override
@@ -84,7 +104,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                             } else if(task.isSuccessful()){
                                 createFirebaseUserProfile(task.getResult().getUser());
                                 String pushId = task.getResult().getUser().getUid();
-                                User currentUser = new User(email, userName, phoneNumber);
+                                User currentUser = new User(email, userName, phoneNumber, contactOk);
                                 FirebaseDatabase db = FirebaseDatabase.getInstance();
                                 DatabaseReference ref = db
                                         .getReference("users")
