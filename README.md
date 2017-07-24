@@ -1,4 +1,4 @@
-# Bivuoac
+# SwarmReporter
 An Android app. for connecting bee swarms to beekeepers.
 
 ## 19 June - 28 July, 2017
@@ -6,8 +6,6 @@ An Android app. for connecting bee swarms to beekeepers.
 ## By: Mark Fisher
 
 ## Known issues
-- [ ] If logged in with google, doesn't display on phone
-- [ ] If logged in with google, creating a new report messes up because it can't get the user
 
 ## Description
 

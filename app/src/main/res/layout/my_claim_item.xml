@@ -46,20 +46,6 @@
             app:layout_constraintRight_toRightOf="parent" />
 
         <TextView
-            android:id="@+id/contactReporterTextViewMyClaims"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Contact Swarm Reporter"
-            android:textColor="@color/primary_text"
-            android:textSize="20sp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/timeStampTextViewMyClaims"
-            android:layout_marginRight="0dp"
-            app:layout_constraintRight_toRightOf="@+id/timeStampTextViewMyClaims"
-            android:layout_marginLeft="0dp"
-            app:layout_constraintLeft_toLeftOf="@+id/timeStampTextViewMyClaims" />
-
-        <TextView
             android:id="@+id/reportedByTextViewMyClaims"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -67,11 +53,29 @@
             android:textColor="@color/primary_text"
             android:textSize="20sp"
             android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/contactReporterTextViewMyClaims"
+            app:layout_constraintTop_toBottomOf="@+id/timeStampTextViewMyClaims"
+            app:layout_constraintBottom_toTopOf="@+id/contactReporterTextViewMyClaims"
             android:layout_marginRight="0dp"
-            app:layout_constraintRight_toRightOf="@+id/contactReporterTextViewMyClaims"
+            app:layout_constraintRight_toRightOf="@+id/timeStampTextViewMyClaims"
             android:layout_marginLeft="0dp"
-            app:layout_constraintLeft_toLeftOf="@+id/contactReporterTextViewMyClaims" />
+            app:layout_constraintLeft_toLeftOf="@+id/timeStampTextViewMyClaims" />
+
+        <TextView
+            android:id="@+id/contactReporterTextViewMyClaims"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Contact Swarm Reporter"
+            android:drawableLeft="@drawable/ic_phone_black_24dp"
+            android:textColor="@color/primary_text"
+            android:textSize="20sp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/reportedByTextViewMyClaims"
+            app:layout_constraintBottom_toTopOf="@+id/sizeTextViewMyClaims"
+            android:layout_marginRight="0dp"
+            app:layout_constraintRight_toRightOf="@+id/reportedByTextViewMyClaims"
+            android:layout_marginLeft="0dp"
+            app:layout_constraintLeft_toLeftOf="@+id/reportedByTextViewMyClaims" />
+
 
         <TextView
             android:id="@+id/sizeTextViewMyClaims"

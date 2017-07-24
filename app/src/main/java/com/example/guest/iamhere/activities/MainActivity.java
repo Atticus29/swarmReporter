@@ -132,22 +132,6 @@ public class MainActivity extends AppCompatActivity
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mSharedPreferences.edit();
 
-//        String passedUserName = getIntent().getStringExtra("userName");
-//        String passedUid = getIntent().getStringExtra("userId");
-//        String passedPhotoUrl = getIntent().getStringExtra("photoUrl");
-//        Log.d("personal", "passedPhotoUrl is " + passedPhotoUrl);
-//
-//        if (passedUserName != null && passedUid != null) {
-//            addToSharedPreferences("userName", passedUserName);
-//            addToSharedPreferences("userId", passedUid);
-//        } else {
-//            greetingTextView.setText("");
-//        }
-//
-//        if(passedPhotoUrl != null){
-//            addToSharedPreferences("photoUrl", passedPhotoUrl);
-//        }
-
         userName = mSharedPreferences.getString("userName", null);
         userId = mSharedPreferences.getString("userId", null);
         if (userName != null && userId != null && !userName.equals("") && !userId.equals("")) {
