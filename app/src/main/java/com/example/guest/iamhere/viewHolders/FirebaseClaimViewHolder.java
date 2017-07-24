@@ -45,6 +45,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     private String userId;
     private GoogleMap mMap;
     private String staticMapURL;
+    private User currentReporter;
 
     View mView;
     Context mContext;
@@ -53,6 +54,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     Button cancelMyClaimButton;
     ImageView mapImageView;
     TextView contactTextViewMyReportedSwarms;
+    TextView contactReporterTextViewMyClaims;
 
     public FirebaseClaimViewHolder(View itemView) {
         super(itemView);
@@ -116,8 +118,10 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         TextView reportedByTextViewMyClaims = (TextView) mView.findViewById(R.id.reportedByTextViewMyClaims);
         reportedByTextViewMyClaims.setText("Reported by: " + swarmReport.getReporterName());
 
-        final TextView contactReporterTextViewMyClaims = (TextView) mView.findViewById(R.id.contactReporterTextViewMyClaims);
-        //TODO fix this
+        contactReporterTextViewMyClaims = (TextView) mView.findViewById(R.id.contactReporterTextViewMyClaims);
+
+        contactReporterTextViewMyClaims.setOnClickListener(this);
+
         String userPushId = swarmReport.getReporterId();
         DatabaseReference currentReporterRef = FirebaseDatabase.getInstance()
                 .getReference("users")
@@ -126,9 +130,9 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         currentReporterRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                User currentReporter = dataSnapshot.getValue(User.class);
+                currentReporter = dataSnapshot.getValue(User.class);
                 if(currentReporter.getContactOk()){
-                    contactReporterTextViewMyClaims.setText("Call ");
+                    contactReporterTextViewMyClaims.setText("Call " + currentReporter.getUserName());
                 }
             }
 
@@ -137,7 +141,6 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
 
             }
         });
-        //TODO set implicit intent here
 
 
         TextView timeStampTextViewMyClaims = (TextView) mView.findViewById(R.id.timeStampTextViewMyClaims);
@@ -272,6 +275,12 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             Intent intent = new Intent(mContext, MapActivity.class);
             intent.putExtra("mapURL", staticMapURL);
             mContext.startActivity(intent);
+        }
+
+        if(v == contactReporterTextViewMyClaims){
+            Log.d("personal", "contactReporterTextViewMyClaims clicked");
+            dialPhoneNumber(currentReporter.getPhoneNumber());
+
         }
         if(v == cancelMyClaimButton){
             //Removes the claim from the user who claimed its list AND resets claim status in reporter, city, and all back to false
