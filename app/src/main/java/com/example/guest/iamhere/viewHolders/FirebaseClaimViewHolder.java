@@ -223,6 +223,14 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             currentSwarmReport.setClaimed(true);
             currentSwarmReport.setClaimantId(userId);
             currentSwarmReport.setClaimantName(userName);
+
+            DatabaseReference reportedRef = FirebaseDatabase.getInstance()
+                    .getReference("users")
+                    .child(currentSwarmReport.getReporterId())
+                    .child("reportedSwarms")
+                    .child(currentSwarmReport.getReportId());
+            reportedRef.setValue(currentSwarmReport);
+
             DatabaseReference claimerRef = FirebaseDatabase.getInstance()
                     .getReference("users")
                     .child(userId)
@@ -290,12 +298,13 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             String claimantIdTemp = myClaimSwarmReport.getClaimantId();
             myClaimSwarmReport.setClaimantName(null);
             myClaimSwarmReport.setClaimantId(null);
+            myClaimSwarmReport.setClaimed(false);
+
             //Removes the claim from the user who claimed its list AND resets claim status in reporter, city, and all back to false
             DatabaseReference allClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference("all")
-                    .child(myClaimSwarmReport.getReportId())
-                    .child("claimed");
-            allClaimantIdRef.setValue(false);
+                    .child(myClaimSwarmReport.getReportId());
+            allClaimantIdRef.setValue(myClaimSwarmReport);
 
             DatabaseReference reportedSwarmRef = FirebaseDatabase.getInstance()
                     .getReference("users")
@@ -304,19 +313,19 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                     .child(myClaimSwarmReport.getReportId());
             reportedSwarmRef.setValue(myClaimSwarmReport);
 
+
+
             DatabaseReference currentUserLocationClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference(userId+"_current")
-                    .child(myClaimSwarmReport.getReportId())
-                    .child("claimed");
-            currentUserLocationClaimantIdRef.setValue(false);
+                    .child(myClaimSwarmReport.getReportId());
+            currentUserLocationClaimantIdRef.setValue(myClaimSwarmReport);
 
             DatabaseReference reporterClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference("users")
                     .child(myClaimSwarmReport.getReporterId())
                     .child("reportedSwarms")
-                    .child(myClaimSwarmReport.getReportId())
-                    .child("claimed");
-            reporterClaimantIdRef.setValue(false);
+                    .child(myClaimSwarmReport.getReportId());
+            reporterClaimantIdRef.setValue(myClaimSwarmReport);
 
             DatabaseReference claimantClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference("users")
