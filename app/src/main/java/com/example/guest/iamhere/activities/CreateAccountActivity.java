@@ -68,25 +68,14 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    Log.d("personal", "switch is Checked");
                     contactOk = true;
                 } else {
-                    Log.d("personal", "switch is not Checked");
                     contactOk = false;
                 }
             }
         });
         createAuthStateListener();
         mAuth = FirebaseAuth.getInstance();
-//        mAuthListener = new FirebaseAuth.AuthStateListener() {
-//            @Override
-//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-//                FirebaseUser user = firebaseAuth.getCurrentUser();
-//                if (user != null) {
-//                } else {
-//                }
-//            }
-//        };
         createInputButton.setOnClickListener(this);
         createAuthProgressDialog();
     }
@@ -94,20 +83,12 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onStart() {
         super.onStart();
-//        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-//        if (mAuthListener != null) {
-//            mAuth.removeAuthStateListener(mAuthListener);
-//        }
     }
-
-//    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//
-//    }
 
     @Override
     public void onClick(View v) {
@@ -141,8 +122,6 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                                 createFirebaseUserProfile(task.getResult().getUser());
                                 pushId = task.getResult().getUser().getUid();
                                 User currentUser = new User(email, userName, phoneNumber, contactOk);
-                                Log.d("personal", "CreateAccountActivity pushId inside onComplete is " + pushId);
-                                Log.d("personal", "CreateAccountActivity userName inside onComplete is " + userName);
                                 FirebaseDatabase db = FirebaseDatabase.getInstance();
                                 DatabaseReference ref = db
                                         .getReference("users")
@@ -150,37 +129,12 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                                 ref.setValue(currentUser);
                                 addToSharedPreferences("userName", userName);
                                 addToSharedPreferences("userId", pushId);
-//                                login();
-
                             }
                         }
                     });
         }
-
     }
 
-    public void login(){
-        Log.d("personal", "CreateAccountActivity login entered");
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(CreateAccountActivity.this, "Authentication Failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }else {
-
-                            Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
-//                            intent.putExtra("userName", task.getResult().getUser().getDisplayName());
-//                            intent.putExtra("userId", task.getResult().getUser().getUid());
-                            Log.d("personal", "CreateAccountActivity userId is " + task.getResult().getUser().getUid());
-                            startActivity(intent);
-                        }
-                    }
-                });
-    }
 
     private void createFirebaseUserProfile(final FirebaseUser user) {
         UserProfileChangeRequest addProfileName = new UserProfileChangeRequest.Builder()
@@ -198,9 +152,6 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                             finish();
-//                            Log.d("NameInsideOnComplete", userName);
-//                            Log.d(TAG, "got into successful profile update");
-//                            Log.d("user", user.getEmail());
                         }
                     }
 
