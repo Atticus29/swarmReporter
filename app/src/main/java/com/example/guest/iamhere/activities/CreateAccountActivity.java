@@ -2,6 +2,8 @@ package com.example.guest.iamhere.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,6 +41,10 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     private String password;
     private String phoneNumber;
     private Boolean contactOk;
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditor;
+    private String pushId;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
 
 
@@ -55,6 +61,9 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
         ButterKnife.bind(this);
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mEditor = mSharedPreferences.edit();
+
         switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -69,19 +78,46 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         });
         createAuthStateListener();
         mAuth = FirebaseAuth.getInstance();
+//        mAuthListener = new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//                FirebaseUser user = firebaseAuth.getCurrentUser();
+//                if (user != null) {
+//                } else {
+//                }
+//            }
+//        };
         createInputButton.setOnClickListener(this);
         createAuthProgressDialog();
     }
 
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+    @Override
+    public void onStart() {
+        super.onStart();
+//        mAuth.addAuthStateListener(mAuthListener);
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+//        if (mAuthListener != null) {
+//            mAuth.removeAuthStateListener(mAuthListener);
+//        }
+    }
+
+//    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//
+//    }
 
     @Override
     public void onClick(View v) {
         if(v == createInputButton){
             createAccount();
         }
+    }
+
+    private void addToSharedPreferences(String key, String passedUserName) {
+        mEditor.putString(key, passedUserName).apply();
     }
 
     public void createAccount(){
@@ -103,19 +139,47 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                                 Toast.makeText(CreateAccountActivity.this, "Account creation was not successful. Account may already exist.", Toast.LENGTH_SHORT).show();
                             } else if(task.isSuccessful()){
                                 createFirebaseUserProfile(task.getResult().getUser());
-                                String pushId = task.getResult().getUser().getUid();
+                                pushId = task.getResult().getUser().getUid();
                                 User currentUser = new User(email, userName, phoneNumber, contactOk);
+                                Log.d("personal", "CreateAccountActivity pushId inside onComplete is " + pushId);
+                                Log.d("personal", "CreateAccountActivity userName inside onComplete is " + userName);
                                 FirebaseDatabase db = FirebaseDatabase.getInstance();
                                 DatabaseReference ref = db
                                         .getReference("users")
                                         .child(pushId);
                                 ref.setValue(currentUser);
+                                addToSharedPreferences("userName", userName);
+                                addToSharedPreferences("userId", pushId);
+//                                login();
 
                             }
                         }
                     });
         }
 
+    }
+
+    public void login(){
+        Log.d("personal", "CreateAccountActivity login entered");
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInWithEmail:failed", task.getException());
+                            Toast.makeText(CreateAccountActivity.this, "Authentication Failed",
+                                    Toast.LENGTH_SHORT).show();
+                        }else {
+
+                            Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
+//                            intent.putExtra("userName", task.getResult().getUser().getDisplayName());
+//                            intent.putExtra("userId", task.getResult().getUser().getUid());
+                            Log.d("personal", "CreateAccountActivity userId is " + task.getResult().getUser().getUid());
+                            startActivity(intent);
+                        }
+                    }
+                });
     }
 
     private void createFirebaseUserProfile(final FirebaseUser user) {
@@ -130,7 +194,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
-                            intent.putExtra("userName", userName);
+//                            intent.putExtra("userName", userName);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                             finish();

@@ -132,25 +132,25 @@ public class MainActivity extends AppCompatActivity
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mSharedPreferences.edit();
 
-        String passedUserName = getIntent().getStringExtra("userName");
-        String passedUid = getIntent().getStringExtra("userId");
-        String passedPhotoUrl = getIntent().getStringExtra("photoUrl");
-        Log.d("personal", "passedPhotoUrl is " + passedPhotoUrl);
-
-        if (passedUserName != null && passedUid != null) {
-            addToSharedPreferences("userName", passedUserName);
-            addToSharedPreferences("userId", passedUid);
-        } else {
-            greetingTextView.setText("");
-        }
-
-        if(passedPhotoUrl != null){
-            addToSharedPreferences("photoUrl", passedPhotoUrl);
-        }
+//        String passedUserName = getIntent().getStringExtra("userName");
+//        String passedUid = getIntent().getStringExtra("userId");
+//        String passedPhotoUrl = getIntent().getStringExtra("photoUrl");
+//        Log.d("personal", "passedPhotoUrl is " + passedPhotoUrl);
+//
+//        if (passedUserName != null && passedUid != null) {
+//            addToSharedPreferences("userName", passedUserName);
+//            addToSharedPreferences("userId", passedUid);
+//        } else {
+//            greetingTextView.setText("");
+//        }
+//
+//        if(passedPhotoUrl != null){
+//            addToSharedPreferences("photoUrl", passedPhotoUrl);
+//        }
 
         userName = mSharedPreferences.getString("userName", null);
         userId = mSharedPreferences.getString("userId", null);
-        if (userName != null && userId != null) {
+        if (userName != null && userId != null && !userName.equals("") && !userId.equals("")) {
             greetingTextView.setText("Unclaimed swarms near " + userName + ":");
         }
 
@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity
 
         ImageView profileImageView = (ImageView) hView.findViewById(R.id.profileImageView);
         photoUrl = mSharedPreferences.getString("photoUrl", null);
-        if(photoUrl != null){
+        if(photoUrl != null && !photoUrl.equals("")){
             Log.d("personal", "photoUrl inside picasso is " + photoUrl);
             Picasso.with(this)
                     .load(photoUrl)
@@ -227,10 +227,6 @@ public class MainActivity extends AppCompatActivity
                 .setFastestInterval(1 * 1000);
     }
 
-    private void addToSharedPreferences(String key, String passedUserName) {
-        mEditor.putString(key, passedUserName).apply();
-    }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -244,10 +240,17 @@ public class MainActivity extends AppCompatActivity
 
     private void logout() {
         FirebaseAuth.getInstance().signOut();
+        addToSharedPreferences("userName", "");
+        addToSharedPreferences("userId", "");
+        addToSharedPreferences("photoUrl", "");
         Intent intent = new Intent(com.example.guest.iamhere.activities.MainActivity.this, LoginGateActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    private void addToSharedPreferences(String key, String passedUserName) {
+        mEditor.putString(key, passedUserName).apply();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

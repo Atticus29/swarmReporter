@@ -17,6 +17,7 @@ import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.SecretConstants;
 import com.example.guest.iamhere.activities.MapActivity;
 import com.example.guest.iamhere.models.SwarmReport;
+import com.example.guest.iamhere.models.User;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -115,19 +116,20 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         TextView reportedByTextViewMyClaims = (TextView) mView.findViewById(R.id.reportedByTextViewMyClaims);
         reportedByTextViewMyClaims.setText("Reported by: " + swarmReport.getReporterName());
 
-        TextView contactReporterTextViewMyClaims = (TextView) mView.findViewById(R.id.contactReporterTextViewMyClaims);
+        final TextView contactReporterTextViewMyClaims = (TextView) mView.findViewById(R.id.contactReporterTextViewMyClaims);
         //TODO fix this
         String userPushId = swarmReport.getReporterId();
-        DatabaseReference contactNumberRef = FirebaseDatabase.getInstance()
+        DatabaseReference currentReporterRef = FirebaseDatabase.getInstance()
                 .getReference("users")
-                .child(userPushId)
-                .child("phone");
-        contactNumberRef.setValue("no"); //TODO ??
+                .child(userPushId);
 
-        contactNumberRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        currentReporterRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
+                User currentReporter = dataSnapshot.getValue(User.class);
+                if(currentReporter.getContactOk()){
+                    contactReporterTextViewMyClaims.setText("Call ");
+                }
             }
 
             @Override
@@ -345,6 +347,12 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                 }
             });
         }
+    }
+
+    public void dialPhoneNumber(String phoneNumber) {
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:" + phoneNumber));
+        mContext.startActivity(intent);
     }
 
     public String calculateDistanceAsString(Double currentLatitude, Double claimLatitude, Double currentLongitude, Double claimLongitude, Double elevation1, Double elevation2){

@@ -2,6 +2,8 @@ package com.example.guest.iamhere.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -41,12 +43,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private ProgressDialog authProgressDialog;
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditor;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mEditor = mSharedPreferences.edit();
 
         //Disable google authentication for the time being because the phone number stuff is difficult to do when they log in through google
         signInButton.setVisibility(View.GONE);
@@ -107,10 +115,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.putExtra("userName", task.getResult().getUser().getDisplayName());
                             intent.putExtra("userId", task.getResult().getUser().getUid());
+                            Log.d("personal", "LoginActivity userId is " + task.getResult().getUser().getUid());
+                            addToSharedPreferences("userName", task.getResult().getUser().getDisplayName());
+                            addToSharedPreferences("userId", task.getResult().getUser().getUid());
                             startActivity(intent);
                         }
                     }
                 });
+    }
+
+    private void addToSharedPreferences(String key, String passedUserName) {
+        mEditor.putString(key, passedUserName).apply();
     }
 
     @Override
