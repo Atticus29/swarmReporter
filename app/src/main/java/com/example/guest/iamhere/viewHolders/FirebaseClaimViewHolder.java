@@ -286,6 +286,8 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         }
         if(v == cancelMyClaimButton){
             Log.d("personal", "myClaim cancelMyClaimButton clicked");
+            String claimantNameTemp = myClaimSwarmReport.getClaimantName();
+            String claimantIdTemp = myClaimSwarmReport.getClaimantId();
             myClaimSwarmReport.setClaimantName(null);
             myClaimSwarmReport.setClaimantId(null);
             //Removes the claim from the user who claimed its list AND resets claim status in reporter, city, and all back to false
@@ -318,7 +320,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
 
             DatabaseReference claimantClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference("users")
-                    .child(myClaimSwarmReport.getClaimantId())
+                    .child(claimantIdTemp)
                     .child("claimedSwarms")
                     .child(myClaimSwarmReport.getReportId());
             claimantClaimantIdRef.removeValue(); //TODO check that this works
