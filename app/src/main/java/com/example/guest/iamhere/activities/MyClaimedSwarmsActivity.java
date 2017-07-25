@@ -1,5 +1,7 @@
 package com.example.guest.iamhere.activities;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -25,6 +27,10 @@ import butterknife.ButterKnife;
 public class MyClaimedSwarmsActivity extends AppCompatActivity {
     private Query swarmReportQuery;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditor;
+    private String userName;
+    private String userId;
 
     @Bind(R.id.myClaimedSwarmsRecyclerView) RecyclerView myClaimedSwarmsRecyclerView;
 
@@ -33,11 +39,16 @@ public class MyClaimedSwarmsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_claimed_swarms);
         ButterKnife.bind(this);
-        String Uid = getIntent().getStringExtra("userId");
-        Log.d("personal", "uid in MyClaimedSwarmsActivity is " + Uid);
+
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mEditor = mSharedPreferences.edit();
+
+        userName = mSharedPreferences.getString("userName", null);
+        userId = mSharedPreferences.getString("userId", null);
+
         ArrayList<String> children = new ArrayList<>();
         children.add("users");
-        children.add(Uid);
+        children.add(userId);
         children.add("claimedSwarms"); //TODO ??
         setUpFirebaseAdapter(children);
     }
@@ -57,6 +68,7 @@ public class MyClaimedSwarmsActivity extends AppCompatActivity {
                     @Override
                     protected void populateViewHolder(FirebaseClaimViewHolder viewHolder,
                                                       SwarmReport model, int position) {
+                        viewHolder.bindCurrentUserNameAndId(userName, userId);
                         viewHolder.bindSwarmReportForMyClaims(model);
                     }
                 };
