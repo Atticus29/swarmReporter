@@ -67,6 +67,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     }
 
     public void bindSwarmReportForMyReportedSwarms(SwarmReport swarmReport){
+        currentSwarmReport = swarmReport;
         ImageView swarmImageMyReportedSwarms = (ImageView) mView.findViewById(R.id.swarmImageMyReportedSwarms);
         dropImageIntoView(swarmReport.getImageString(), mContext, swarmImageMyReportedSwarms);
 
@@ -86,7 +87,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         }
 
 
-        TextView contactTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.contactTextViewMyReportedSwarms);
+        contactTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.contactTextViewMyReportedSwarms);
         if(swarmReport.isClaimed()){
             contactTextViewMyReportedSwarms.setVisibility(View.VISIBLE);
             contactTextViewMyReportedSwarms.setText("Contact the claimant");
@@ -364,15 +365,14 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         if(v == contactTextViewMyReportedSwarms){
             DatabaseReference dbRef = FirebaseDatabase.getInstance()
                     .getReference("users")
-                    .child(currentSwarmReport.getClaimantId())
+                    .child(currentSwarmReport.getReporterId())
                     .child("phoneNumber");
             dbRef.addValueEventListener(new ValueEventListener() {
                 String phoneNumber = "";
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     phoneNumber = dataSnapshot.getValue().toString();
-                    Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
-                    mContext.startActivity(phoneIntent);
+                    dialPhoneNumber(phoneNumber);
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
