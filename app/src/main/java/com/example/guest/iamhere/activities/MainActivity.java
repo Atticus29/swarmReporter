@@ -393,8 +393,7 @@ public class MainActivity extends AppCompatActivity
             protected void populateViewHolder(final FirebaseClaimViewHolder viewHolder,
                                               SwarmReport model, int position) {
                 viewHolder.bindClaimerLatLong(currenLatitude, currentLongitude);
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                viewHolder.bindCurrentUserNameAndId(user.getDisplayName(), user.getUid());
+                viewHolder.bindCurrentUserNameAndId(userName, userId);
                 viewHolder.bindSwarmReport(model);
             }
         };

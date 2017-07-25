@@ -222,6 +222,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         if(v == claimButton){
             currentSwarmReport.setClaimed(true);
             currentSwarmReport.setClaimantId(userId);
+            Log.d("personal", "userName upon claimButton click is " + userName);
             currentSwarmReport.setClaimantName(userName);
 
             DatabaseReference reportedRef = FirebaseDatabase.getInstance()
