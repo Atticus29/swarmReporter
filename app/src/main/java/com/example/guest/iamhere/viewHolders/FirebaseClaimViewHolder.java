@@ -54,6 +54,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     Button claimButton;
     Button cancelSwarmClaimButtonMyReportedSwarms;
     Button cancelMyClaimButton;
+    Button deleteReportButton;
     ImageView mapImageView;
     TextView contactTextViewMyReportedSwarms;
     TextView contactReporterTextViewMyClaims;
@@ -69,6 +70,9 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     public void bindSwarmReportForMyReportedSwarms(SwarmReport swarmReport){
         myReportedSwarmReport = swarmReport;
         cancelSwarmClaimButtonMyReportedSwarms = (Button) mView.findViewById(R.id.cancelSwarmClaimButtonMyReportedSwarms);
+
+        deleteReportButton = (Button) mView.findViewById(R.id.deleteReportButton);
+        deleteReportButton.setOnClickListener(this);
 
         if(myReportedSwarmReport.getClaimantId() == null){
             cancelSwarmClaimButtonMyReportedSwarms.setVisibility(View.GONE);
@@ -294,6 +298,9 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             Intent intent = new Intent(mContext, MapActivity.class);
             intent.putExtra("mapURL", staticMapURL);
             mContext.startActivity(intent);
+        }
+        if(v == deleteReportButton){
+            Log.d("personal", "deleteReportButton clicked");
         }
 
         if(v == contactReporterTextViewMyClaims){
