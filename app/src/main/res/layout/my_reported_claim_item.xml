@@ -61,6 +61,7 @@
         <TextView
             android:id="@+id/contactTextViewMyReportedSwarms"
             android:layout_width="0dp"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:drawableLeft="@drawable/ic_phone_black_24dp"
