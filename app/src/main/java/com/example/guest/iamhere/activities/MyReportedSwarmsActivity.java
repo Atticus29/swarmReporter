@@ -1,5 +1,7 @@
 package com.example.guest.iamhere.activities;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -23,6 +25,10 @@ import butterknife.ButterKnife;
 public class MyReportedSwarmsActivity extends AppCompatActivity {
     private Query swarmReportQuery;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
+    private String userName;
+    private String userId;
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditor;
 
     @Bind(R.id.myReportedSwarmsRecyclerView) RecyclerView myReportedSwarmsRecyclerView;
 
@@ -32,11 +38,15 @@ public class MyReportedSwarmsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_reported_swarms);
         ButterKnife.bind(this);
 
-        String Uid = getIntent().getStringExtra("userId");
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mEditor = mSharedPreferences.edit();
+
+        userName = mSharedPreferences.getString("userName", null);
+        userId = mSharedPreferences.getString("userId", null);
 
         ArrayList<String> children = new ArrayList<>();
         children.add("users");
-        children.add(Uid);
+        children.add(userId);
         children.add("reportedSwarms"); //TODO ???
 
         setUpFirebaseAdapter(children);
@@ -54,6 +64,7 @@ public class MyReportedSwarmsActivity extends AppCompatActivity {
             @Override
             protected void populateViewHolder(FirebaseClaimViewHolder viewHolder,
                                               SwarmReport model, int position) {
+                viewHolder.bindCurrentUserNameAndId(userName, userId);
                 viewHolder.bindSwarmReportForMyReportedSwarms(model);
                 myReportedSwarmsRecyclerView.setVisibility(View.VISIBLE); //TODO maybe move this back to setUpBlankAdapter?
             }
