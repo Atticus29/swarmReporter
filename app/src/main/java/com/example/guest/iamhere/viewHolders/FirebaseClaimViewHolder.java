@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
@@ -47,12 +48,14 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     private String staticMapURL;
     private User currentReporter;
     private SwarmReport myClaimSwarmReport;
+    private SwarmReport myReportedSwarmReport;
 
     View mView;
     Context mContext;
     Button claimButton;
     Button cancelSwarmClaimButtonMyReportedSwarms;
     Button cancelMyClaimButton;
+    Button deleteReportButton;
     ImageView mapImageView;
     TextView contactTextViewMyReportedSwarms;
     TextView contactReporterTextViewMyClaims;
@@ -62,21 +65,33 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         this.mView = itemView;
         this.mContext = itemView.getContext();
         claimButton = (Button) itemView.findViewById(R.id.claimSwarmButton);
-        //TODO maybe add buttons and contactTextViewMyReportedSwarms here? Test without first
         mapImageView = (ImageView) itemView.findViewById(R.id.mapImageView);
     }
 
     public void bindSwarmReportForMyReportedSwarms(SwarmReport swarmReport){
+        myReportedSwarmReport = swarmReport;
+        cancelSwarmClaimButtonMyReportedSwarms = (Button) mView.findViewById(R.id.cancelSwarmClaimButtonMyReportedSwarms);
+
+        deleteReportButton = (Button) mView.findViewById(R.id.deleteReportButton);
+        deleteReportButton.setOnClickListener(this);
+
+        if(myReportedSwarmReport.getClaimantId() == null){
+            cancelSwarmClaimButtonMyReportedSwarms.setVisibility(View.GONE);
+        } else{
+            cancelSwarmClaimButtonMyReportedSwarms.setVisibility(View.VISIBLE);
+            cancelSwarmClaimButtonMyReportedSwarms.setOnClickListener(this);
+        }
+
         ImageView swarmImageMyReportedSwarms = (ImageView) mView.findViewById(R.id.swarmImageMyReportedSwarms);
         dropImageIntoView(swarmReport.getImageString(), mContext, swarmImageMyReportedSwarms);
 
         TextView timeStampTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.timeStampTextViewMyReportedSwarms);
-        timeStampTextViewMyReportedSwarms.setText("Reported on: " + swarmReport.getReportTimestamp());
+        timeStampTextViewMyReportedSwarms.setText("Reported on: " + myReportedSwarmReport.getReportTimestamp());
 
         TextView claimantTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.claimantTextViewMyReportedSwarms);
-        if(swarmReport.isClaimed()){
-            if(swarmReport.getClaimantId() != null){
-                claimantTextViewMyReportedSwarms.setText("Claimed by: " + swarmReport.getClaimantName());
+        if(myReportedSwarmReport.isClaimed()){
+            if(myReportedSwarmReport.getClaimantId() != null){
+                claimantTextViewMyReportedSwarms.setText("Claimed by: " + myReportedSwarmReport.getClaimantName());
             } else{
                 claimantTextViewMyReportedSwarms.setText("");
             }
@@ -86,7 +101,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         }
 
 
-        TextView contactTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.contactTextViewMyReportedSwarms);
+        contactTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.contactTextViewMyReportedSwarms);
         if(swarmReport.isClaimed()){
             contactTextViewMyReportedSwarms.setVisibility(View.VISIBLE);
             contactTextViewMyReportedSwarms.setText("Contact the claimant");
@@ -97,13 +112,12 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         }
 
         TextView sizeTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.sizeTextViewMyReportedSwarms);
-        sizeTextViewMyReportedSwarms.setText("Size: The size of a " + swarmReport.getSize());
+        sizeTextViewMyReportedSwarms.setText("Size: The size of a " + myReportedSwarmReport.getSize());
 
         TextView accessibilityTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.accessibilityTextViewMyReportedSwarms);
-        accessibilityTextViewMyReportedSwarms.setText("Accessibility: " + swarmReport.getAccessibility());
+        accessibilityTextViewMyReportedSwarms.setText("Accessibility: " + myReportedSwarmReport.getAccessibility());
 
-        Button cancelSwarmClaimButtonMyReportedSwarms = (Button) mView.findViewById(R.id.cancelSwarmClaimButtonMyReportedSwarms);
-        cancelSwarmClaimButtonMyReportedSwarms.setOnClickListener(this);
+
     }
 
     public void bindSwarmReportForMyClaims(SwarmReport swarmReport){
@@ -192,8 +206,6 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     }
 
     public void dropImageIntoView(String imageURL, Context context, ImageView imageView){
-        Log.d("personal", "got into dropImageIntoView");
-        Log.d("personal", "imageURL is " + imageURL);
         if(imageURL != null){
             if(!imageURL.contains("http")){
                 try{
@@ -288,6 +300,43 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             intent.putExtra("mapURL", staticMapURL);
             mContext.startActivity(intent);
         }
+        if(v == deleteReportButton){
+            DatabaseReference allClaimantIdRef = FirebaseDatabase.getInstance()
+                    .getReference("all")
+                    .child(myReportedSwarmReport.getReportId());
+            allClaimantIdRef.removeValue();
+
+            DatabaseReference reportedSwarmRef = FirebaseDatabase.getInstance()
+                    .getReference("users")
+                    .child(userId)
+                    .child("reportedSwarms")
+                    .child(myReportedSwarmReport.getReportId());
+            reportedSwarmRef.removeValue();
+
+            DatabaseReference currentUserLocationClaimantIdRef = FirebaseDatabase.getInstance()
+                    .getReference(userId+"_current")
+                    .child(myReportedSwarmReport.getReportId());
+            currentUserLocationClaimantIdRef.removeValue();
+
+            if(myReportedSwarmReport.isClaimed()){
+                DatabaseReference claimantRef = FirebaseDatabase.getInstance()
+                        .getReference(myReportedSwarmReport.getClaimantId()+"_current")
+                        .child(myReportedSwarmReport.getReportId());
+                claimantRef.removeValue();
+
+                DatabaseReference claimantClaimedSwarmsRef = FirebaseDatabase.getInstance()
+                        .getReference("users")
+                        .child(myReportedSwarmReport.getClaimantId())
+                        .child("claimedSwarms")
+                        .child(myReportedSwarmReport.getReportId());
+                claimantClaimedSwarmsRef.removeValue();
+            }
+
+            DatabaseReference geoFireRef = FirebaseDatabase.getInstance()
+                    .getReference(myReportedSwarmReport.getReportId());
+            geoFireRef.removeValue();
+
+        }
 
         if(v == contactReporterTextViewMyClaims){
             dialPhoneNumber(currentReporter.getPhoneNumber());
@@ -333,46 +382,58 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                     .child(claimantIdTemp)
                     .child("claimedSwarms")
                     .child(myClaimSwarmReport.getReportId());
-            claimantClaimantIdRef.removeValue(); //TODO check that this works
+            claimantClaimantIdRef.removeValue();
         }
-        if(v == cancelSwarmClaimButtonMyReportedSwarms){
-            //Deletes the swarmReport from everywhere in the DB
+        if(v == cancelSwarmClaimButtonMyReportedSwarms) {
+            String claimantNameTemp = myReportedSwarmReport.getClaimantName();
+            String claimantIdTemp = myReportedSwarmReport.getClaimantId();
+            myReportedSwarmReport.setClaimantName(null);
+            myReportedSwarmReport.setClaimantId(null);
+            myReportedSwarmReport.setClaimed(false);
             DatabaseReference allClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference("all")
-                    .child(currentSwarmReport.getReportId());
-            allClaimantIdRef.removeValue();
+                    .child(myReportedSwarmReport.getReportId());
+            allClaimantIdRef.setValue(myReportedSwarmReport);
+
+            DatabaseReference reportedSwarmRef = FirebaseDatabase.getInstance()
+                    .getReference("users")
+                    .child(userId)
+                    .child("reportedSwarms")
+                    .child(myReportedSwarmReport.getReportId());
+            reportedSwarmRef.setValue(myReportedSwarmReport);
+
+
 
             DatabaseReference currentUserLocationClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference(userId+"_current")
-                    .child(currentSwarmReport.getReportId());
-            currentUserLocationClaimantIdRef.removeValue();
+                    .child(myReportedSwarmReport.getReportId());
+            currentUserLocationClaimantIdRef.setValue(myReportedSwarmReport);
 
             DatabaseReference reporterClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference("users")
-                    .child(currentSwarmReport.getReporterId())
+                    .child(myReportedSwarmReport.getReporterId())
                     .child("reportedSwarms")
-                    .child(currentSwarmReport.getReportId());
-            reporterClaimantIdRef.removeValue();
+                    .child(myReportedSwarmReport.getReportId());
+            reporterClaimantIdRef.setValue(myReportedSwarmReport);
 
             DatabaseReference claimantClaimantIdRef = FirebaseDatabase.getInstance()
                     .getReference("users")
-                    .child(currentSwarmReport.getClaimantId())
+                    .child(claimantIdTemp)
                     .child("claimedSwarms")
-                    .child(currentSwarmReport.getReportId());
-            claimantClaimantIdRef.removeValue(); //TODO check that this works
+                    .child(myReportedSwarmReport.getReportId());
+            claimantClaimantIdRef.setValue(null);
         }
         if(v == contactTextViewMyReportedSwarms){
             DatabaseReference dbRef = FirebaseDatabase.getInstance()
                     .getReference("users")
-                    .child(currentSwarmReport.getClaimantId())
+                    .child(currentSwarmReport.getReporterId())
                     .child("phoneNumber");
             dbRef.addValueEventListener(new ValueEventListener() {
                 String phoneNumber = "";
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     phoneNumber = dataSnapshot.getValue().toString();
-                    Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
-                    mContext.startActivity(phoneIntent);
+                    dialPhoneNumber(phoneNumber);
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
