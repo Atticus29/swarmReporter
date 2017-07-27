@@ -5,7 +5,29 @@ An Android app. for connecting bee swarms to beekeepers.
 
 ## By: Mark Fisher
 
-## Known issues
+- [ ] TODO change font size of switch
+- [ ] Put up in app store
+- [ ] Add tutorial video
+- [ ] Test a reporter and a claimer who don't want their contact info. shared.
+- [ ] Strip API key info. from commit history
+
+- [ ] Add nav drawer to all Activities
+- [ ] Add push notifications when new swarms enter the radius
+
+## How to use the app
+1. Register an account
+2. The app will ask for permission to use your location. If you give it permission, it will find unclaimed swarms near your location. If a map shows up on your display, you can click on the map for better resolution.
+3. The app will remember your login credentials on your device until you select "Logout" from the navigation drawer on the left.
+
+### For beekeepers
+3. You can click the claim button to claim any unclaimed swarms.
+4. In the navigation drawer on the left, you'll see a section for seeing your claimedSwarms. You can use this to refer to the location or contact and coordinate with the person who reported the swarm.
+5. You can also cancel your claim on the swarm at any time, in which case the swarm becomes available for others to claim.
+
+### For swarm reporters
+6. If you want to report a new swarm, you can do this by clicking on the navigation drawer and selecting, "". Fill out the information you can, and even take a picture of the swarm if you'd like.
+7. To see the swarms you've reported, click on the navigation drawer and select, "View My Reported Swarms". From there, you can see which of your reports have been claimed. If any have been claimed, you have the ability to cancel that claim at any time, in which case the swarm becomes available for others to claim.
+8. You also have the ability to delete a report from "View My Reported Swarms". You would do this if the swarm has left the site or if a beekeeper has retrieved the swarm.
 
 ## Description
 
@@ -25,24 +47,22 @@ Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers
 - [x] Reporter reports essential details about the swarm (does it require a ladder? Approximate size of swarm (baseball vs. basketball))
 - [x] Users can post a picture of the swarm
 - [x] A user is alerted if the email address already exists
-- [ ] Users can see swarms they've claimed but not retrieved on a separate page
-- [ ] Users can see swarms they've reported by have not been retrieved
-- [ ] Claims are removed from the database once the claimer confirms that the swarm was retrieved
-- [ ] Users can swipe down on the screen to refresh the location
-- [ ] Users are prevented from retrieving more than one swarm a week
-- [ ] A claimed swarm re-appears as available if it is not physically retrieved in 6 hours
-- [ ] Contact information between reporter and responder is exchanged
-- [ ] Users can see swarm reports within a certain radius
-- [ ] A responding user can see the report and find out how far away it is from their location/address, updated in real time
-- [ ] Users are notified when a new swarm is reported in their area
-- [ ] The reporting user can see who claimed the swarm and how far away they were when they claimed it.
-- [ ] Contact information between reporter and responder can be exchanged if both sides want that
+- [x] Users can see swarms they've claimed but not retrieved on a separate page
+- [x] Users can see swarms they've reported by have not been retrieved
+- [x] Claims are removed from the database once the reporter deletes the swarm (say, after it has been retrieved)
+- [x] The reporting user can see who claimed the swarm
+- [x] Contact information between reporter and responder can be exchanged if both sides want that
+- [x] Users can see swarm reports within a certain radius
+- [x] Reporters and responders can cancel a report/claim
 
 ## Future features:
+- [ ] Users can swipe down on the screen to refresh the location
+- [ ] Users are prevented from retrieving more than one swarm a week
+- [ ] Contact information between reporter and responder is exchanged
+- [ ] A responding user can see the report and find out how far away it is from their location/address, updated in real time
+- [ ] Users are notified when a new swarm is reported in their area
 - [ ] A claimed swarm re-appears as available if it is not physically retrieved by a certain amount of time
 - [ ] Swarm responders pay swarm reporters a very small sum of money for retrieving the swarm (this will incentivize the reporters to adopt)
-- [ ] Reporters and responders can cancel a report/claim
-- [ ] Reporters can decline a claim
 
 ## Distant future features:
 - [ ] Reporters can see responder’s geographical progress towards them on a map
@@ -61,11 +81,6 @@ Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers
 #### Actual
 * [Google location service tutorial from treehouse](http://blog.teamtreehouse.com/beginners-guide-location-android)
   * You may have to use Run-time permissions, which are not covered in the above tutorial
-
-### Master Checklist
-
-- [ ] Strip API key info. from commit history
-
 
 ### Models
 - [x] SwarmReport
