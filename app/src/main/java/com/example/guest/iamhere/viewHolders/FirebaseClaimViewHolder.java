@@ -75,12 +75,36 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         deleteReportButton = (Button) mView.findViewById(R.id.deleteReportButton);
         deleteReportButton.setOnClickListener(this);
 
+        contactReporterTextViewMyClaims = (TextView) mView.findViewById(R.id.contactReporterTextViewMyClaims);
+
         if(myReportedSwarmReport.getClaimantId() == null){
             cancelSwarmClaimButtonMyReportedSwarms.setVisibility(View.GONE);
         } else{
             cancelSwarmClaimButtonMyReportedSwarms.setVisibility(View.VISIBLE);
             cancelSwarmClaimButtonMyReportedSwarms.setOnClickListener(this);
         }
+
+        String userPushId = swarmReport.getReporterId();
+        DatabaseReference currentReporterRef = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(userPushId);
+
+        currentReporterRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                currentReporter = dataSnapshot.getValue(User.class);
+                if(currentReporter.getContactOk()){
+                    contactTextViewMyReportedSwarms.setVisibility(View.VISIBLE);
+                    contactTextViewMyReportedSwarms.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_phone_black_24dp,0,0,0);
+                    contactTextViewMyReportedSwarms.setText("Call " + currentReporter.getUserName());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         ImageView swarmImageMyReportedSwarms = (ImageView) mView.findViewById(R.id.swarmImageMyReportedSwarms);
         dropImageIntoView(swarmReport.getImageString(), mContext, swarmImageMyReportedSwarms);

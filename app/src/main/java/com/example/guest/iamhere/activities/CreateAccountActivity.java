@@ -47,14 +47,20 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     private FirebaseAuth.AuthStateListener mAuthListener;
 
 
-
-    @Bind(R.id.createInputButton) Button createInputButton;
-    @Bind(R.id.nameInputTextView) TextView nameInputTextView;
-    @Bind(R.id.emailInputTextView) TextView emailInputTextView;
-    @Bind(R.id.passwordInputTextView) TextView passwordInputTextView;
-    @Bind(R.id.passwordConfirmInputTextView) TextView passwordConfirmInputTextView;
-    @Bind(R.id.phoneNumberTextView) TextView phoneNumberTextView;
-    @Bind(R.id.switch1) Switch switch1;
+    @Bind(R.id.createInputButton)
+    Button createInputButton;
+    @Bind(R.id.nameInputTextView)
+    TextView nameInputTextView;
+    @Bind(R.id.emailInputTextView)
+    TextView emailInputTextView;
+    @Bind(R.id.passwordInputTextView)
+    TextView passwordInputTextView;
+    @Bind(R.id.passwordConfirmInputTextView)
+    TextView passwordConfirmInputTextView;
+    @Bind(R.id.phoneNumberTextView)
+    TextView phoneNumberTextView;
+    @Bind(R.id.switch1)
+    Switch switch1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +70,18 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mSharedPreferences.edit();
 
-        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+        switch1.setOnCheckedChangeListener(null);
+        switch1.setChecked(false);
+        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
+                if ((Boolean) isChecked == null) {
+                    Log.d("personal", "isChecked never checked in the first place");
+                }
+                if (isChecked) {
                     contactOk = true;
                 } else {
+                    //TODO figure out why this never happens (right now this is solved downstream in the user object creation in the db
                     contactOk = false;
                 }
             }
@@ -92,7 +104,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View v) {
-        if(v == createInputButton){
+        if (v == createInputButton) {
             createAccount();
         }
     }
@@ -101,7 +113,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         mEditor.putString(key, passedUserName).apply();
     }
 
-    public void createAccount(){
+    public void createAccount() {
 
         mAuthProgressDialog.show();
         confirmPassword = passwordConfirmInputTextView.getText().toString().trim();
@@ -110,7 +122,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         userName = nameInputTextView.getText().toString().trim();
         phoneNumber = phoneNumberTextView.getText().toString().trim();
 
-        if(isValidEmail(email) && isValidName(userName) && isValidPassword(password, confirmPassword)){
+        if (isValidEmail(email) && isValidName(userName) && isValidPassword(password, confirmPassword)) {
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -118,9 +130,13 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                             mAuthProgressDialog.dismiss();
                             if (!task.isSuccessful()) {
                                 Toast.makeText(CreateAccountActivity.this, "Account creation was not successful. Account may already exist.", Toast.LENGTH_SHORT).show();
-                            } else if(task.isSuccessful()){
+                            } else if (task.isSuccessful()) {
                                 createFirebaseUserProfile(task.getResult().getUser());
                                 pushId = task.getResult().getUser().getUid();
+                                if (contactOk == null) {
+                                    contactOk = false;
+                                }
+                                Log.d("personal", "contactOk is " + Boolean.toString(contactOk));
                                 User currentUser = new User(email, userName, phoneNumber, contactOk);
                                 FirebaseDatabase db = FirebaseDatabase.getInstance();
                                 DatabaseReference ref = db
@@ -129,6 +145,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                                 ref.setValue(currentUser);
                                 addToSharedPreferences("userName", userName);
                                 addToSharedPreferences("userId", pushId);
+
                             }
                         }
                     });
@@ -198,12 +215,12 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         mAuthProgressDialog.setCancelable(false);
     }
 
-    public void createAuthStateListener(){
-        authStateListener = new FirebaseAuth.AuthStateListener(){
+    public void createAuthStateListener() {
+        authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth){
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 final FirebaseUser user = firebaseAuth.getCurrentUser();
-                if(user != null){
+                if (user != null) {
                 }
             }
         };
