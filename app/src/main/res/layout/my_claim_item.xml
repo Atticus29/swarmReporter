@@ -17,8 +17,8 @@
 
         <ImageView
             android:id="@+id/swarmImageMyClaims"
-            android:layout_width="257dp"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="196dp"
             android:clickable="true"
             app:srcCompat="@drawable/bee"
             android:layout_marginStart="8dp"
@@ -105,7 +105,7 @@
 
         <Button
             android:id="@+id/cancelMyClaimButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:background="@drawable/bivouac_button"
@@ -119,7 +119,8 @@
             app:layout_constraintRight_toRightOf="@+id/accessibilityTextViewMyClaims"
             android:layout_marginLeft="8dp"
             app:layout_constraintLeft_toLeftOf="@+id/accessibilityTextViewMyClaims"
-            app:layout_constraintHorizontal_bias="0.0" />
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintVertical_bias="0.0" />
 
     </android.support.constraint.ConstraintLayout>
 
