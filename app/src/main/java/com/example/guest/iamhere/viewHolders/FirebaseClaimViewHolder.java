@@ -47,6 +47,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     private GoogleMap mMap;
     private String staticMapURL;
     private User currentReporter;
+    private User currentClaimant;
     private SwarmReport myClaimSwarmReport;
     private SwarmReport myReportedSwarmReport;
 
@@ -84,21 +85,23 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             cancelSwarmClaimButtonMyReportedSwarms.setOnClickListener(this);
         }
 
-        String userPushId = swarmReport.getReporterId();
-        DatabaseReference currentReporterRef = FirebaseDatabase.getInstance()
+        String userPushId = swarmReport.getClaimantId();
+        DatabaseReference currentClaimantRef = FirebaseDatabase.getInstance()
                 .getReference("users")
                 .child(userPushId);
 
         contactTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.contactTextViewMyReportedSwarms);
         contactTextViewMyReportedSwarms.setOnClickListener(this);
-        currentReporterRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        currentClaimantRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                currentReporter = dataSnapshot.getValue(User.class);
-                if(currentReporter.getContactOk() && myReportedSwarmReport.isClaimed()){
+                currentClaimant = dataSnapshot.getValue(User.class);
+                Log.d("personal", "currentReporter contactOk is " + Boolean.toString(currentClaimant.getContactOk()));
+                Log.d("personal", "myReportedSwarmReport is claimed?: " + Boolean.toString(myReportedSwarmReport.isClaimed()));
+                if(currentClaimant.getContactOk() && myReportedSwarmReport.isClaimed()){
 //                    contactTextViewMyReportedSwarms.setVisibility(View.VISIBLE);
                     contactTextViewMyReportedSwarms.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_phone_black_24dp,0,0,0);
-                    contactTextViewMyReportedSwarms.setText("Call " + currentReporter.getUserName());
+                    contactTextViewMyReportedSwarms.setText("Call " + currentClaimant.getUserName());
                 }
             }
 
@@ -454,7 +457,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         if(v == contactTextViewMyReportedSwarms){
             DatabaseReference dbRef = FirebaseDatabase.getInstance()
                     .getReference("users")
-                    .child(currentSwarmReport.getReporterId())
+                    .child(myReportedSwarmReport.getClaimantId())
                     .child("phoneNumber");
             dbRef.addValueEventListener(new ValueEventListener() {
                 String phoneNumber = "";
