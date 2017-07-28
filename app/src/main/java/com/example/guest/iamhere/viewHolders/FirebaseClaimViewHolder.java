@@ -85,31 +85,34 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             cancelSwarmClaimButtonMyReportedSwarms.setOnClickListener(this);
         }
 
-        String userPushId = swarmReport.getClaimantId();
-        DatabaseReference currentClaimantRef = FirebaseDatabase.getInstance()
-                .getReference("users")
-                .child(userPushId);
+        if(myReportedSwarmReport.isClaimed()){
+            String userPushId = myReportedSwarmReport.getClaimantId();
+            DatabaseReference currentClaimantRef = FirebaseDatabase.getInstance()
+                    .getReference("users")
+                    .child(userPushId);
 
-        contactTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.contactTextViewMyReportedSwarms);
-        contactTextViewMyReportedSwarms.setOnClickListener(this);
-        currentClaimantRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                currentClaimant = dataSnapshot.getValue(User.class);
-                Log.d("personal", "currentReporter contactOk is " + Boolean.toString(currentClaimant.getContactOk()));
-                Log.d("personal", "myReportedSwarmReport is claimed?: " + Boolean.toString(myReportedSwarmReport.isClaimed()));
-                if(currentClaimant.getContactOk() && myReportedSwarmReport.isClaimed()){
+            contactTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.contactTextViewMyReportedSwarms);
+            contactTextViewMyReportedSwarms.setOnClickListener(this);
+            currentClaimantRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    currentClaimant = dataSnapshot.getValue(User.class);
+                    Log.d("personal", "currentReporter contactOk is " + Boolean.toString(currentClaimant.getContactOk()));
+                    Log.d("personal", "myReportedSwarmReport is claimed?: " + Boolean.toString(myReportedSwarmReport.isClaimed()));
+                    if(currentClaimant.getContactOk() && myReportedSwarmReport.isClaimed()){
 //                    contactTextViewMyReportedSwarms.setVisibility(View.VISIBLE);
-                    contactTextViewMyReportedSwarms.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_phone_black_24dp,0,0,0);
-                    contactTextViewMyReportedSwarms.setText("Call " + currentClaimant.getUserName());
+                        contactTextViewMyReportedSwarms.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_phone_black_24dp,0,0,0);
+                        contactTextViewMyReportedSwarms.setText("Call " + currentClaimant.getUserName());
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+
+        }
 
         ImageView swarmImageMyReportedSwarms = (ImageView) mView.findViewById(R.id.swarmImageMyReportedSwarms);
         dropImageIntoView(swarmReport.getImageString(), mContext, swarmImageMyReportedSwarms);
