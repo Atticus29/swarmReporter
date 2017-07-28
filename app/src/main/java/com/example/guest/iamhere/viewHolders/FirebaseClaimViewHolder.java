@@ -89,12 +89,14 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                 .getReference("users")
                 .child(userPushId);
 
+        contactTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.contactTextViewMyReportedSwarms);
+        contactTextViewMyReportedSwarms.setOnClickListener(this);
         currentReporterRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 currentReporter = dataSnapshot.getValue(User.class);
-                if(currentReporter.getContactOk()){
-                    contactTextViewMyReportedSwarms.setVisibility(View.VISIBLE);
+                if(currentReporter.getContactOk() && myReportedSwarmReport.isClaimed()){
+//                    contactTextViewMyReportedSwarms.setVisibility(View.VISIBLE);
                     contactTextViewMyReportedSwarms.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_phone_black_24dp,0,0,0);
                     contactTextViewMyReportedSwarms.setText("Call " + currentReporter.getUserName());
                 }
@@ -125,15 +127,15 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         }
 
 
-        contactTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.contactTextViewMyReportedSwarms);
-        if(swarmReport.isClaimed()){
-            contactTextViewMyReportedSwarms.setVisibility(View.VISIBLE);
-            contactTextViewMyReportedSwarms.setText("Contact the claimant");
-            contactTextViewMyReportedSwarms.setOnClickListener(this);
-
-        } else{
-            Log.d("personal", "swarmIs Unclaimed so contact option not made available");
-        }
+//        contactTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.contactTextViewMyReportedSwarms);
+//        if(swarmReport.isClaimed()){
+//            contactTextViewMyReportedSwarms.setVisibility(View.VISIBLE);
+//            contactTextViewMyReportedSwarms.setText("Contact the claimant");
+//            contactTextViewMyReportedSwarms.setOnClickListener(this);
+//
+//        } else{
+//            Log.d("personal", "swarmIs Unclaimed so contact option not made available");
+//        }
 
         TextView sizeTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.sizeTextViewMyReportedSwarms);
         sizeTextViewMyReportedSwarms.setText("Size: The size of a " + myReportedSwarmReport.getSize());
@@ -171,8 +173,10 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 currentReporter = dataSnapshot.getValue(User.class);
+                Log.d("personal", "contactOk is " + Boolean.toString(currentReporter.getContactOk()));
                 if(currentReporter.getContactOk()){
-                    contactReporterTextViewMyClaims.setText("Call " + currentReporter.getUserName());
+                    contactReporterTextViewMyClaims.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_phone_black_24dp,0,0,0);
+                    contactReporterTextViewMyClaims.setText("Contact " + currentReporter.getUserName());
                 }
             }
 
