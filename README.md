@@ -5,18 +5,6 @@ An Android app. for connecting bee swarms to beekeepers.
 
 ## By: Mark Fisher
 
-## Known issues
-- [ ] Buttons in myClaims and myReports overlap with the accessiblity textViews
-- [ ] It give you the option of calling someone who said they didn't want to be called
-
-## TODO change font size of switch
-- [ ] Add tutorial video
-- [ ] Test a reporter and a claimer who don't want their contact info. shared.
-- [ ] Strip API key info. from commit history
-- [ ] Put up in app store
-
-- [ ] Add nav drawer to all Activities
-- [ ] Add push notifications when new swarms enter the radius
 
 ## How to use the app
 1. Register an account
