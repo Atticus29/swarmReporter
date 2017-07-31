@@ -293,23 +293,23 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                     .child("claimed");
             updateReportedSwarmsRef.setValue(true);
 
-            DatabaseReference ref = FirebaseDatabase.getInstance()
-                    .getReference(userId+"_current")
-                    .child(currentSwarmReport.getReportId())
-                    .child("claimed");
-            ref.setValue(true);
-
-            DatabaseReference claimantNameRef = FirebaseDatabase.getInstance()
-                    .getReference(userId+"_current")
-                    .child(currentSwarmReport.getReportId())
-                    .child("claimantName");
-            claimantNameRef.setValue(userName);
-
-            DatabaseReference claimantIdRef = FirebaseDatabase.getInstance()
-                    .getReference(userId+"_current")
-                    .child(currentSwarmReport.getReportId())
-                    .child("claimantId");
-            claimantIdRef.setValue(userId);
+//            DatabaseReference ref = FirebaseDatabase.getInstance()
+//                    .getReference(userId+"_current")
+//                    .child(currentSwarmReport.getReportId())
+//                    .child("claimed");
+//            ref.setValue(true);
+//
+//            DatabaseReference claimantNameRef = FirebaseDatabase.getInstance()
+//                    .getReference(userId+"_current")
+//                    .child(currentSwarmReport.getReportId())
+//                    .child("claimantName");
+//            claimantNameRef.setValue(userName);
+//
+//            DatabaseReference claimantIdRef = FirebaseDatabase.getInstance()
+//                    .getReference(userId+"_current")
+//                    .child(currentSwarmReport.getReportId())
+//                    .child("claimantId");
+//            claimantIdRef.setValue(userId);
 
             DatabaseReference allClaimantClaimedRef = FirebaseDatabase.getInstance()
                     .getReference("all")

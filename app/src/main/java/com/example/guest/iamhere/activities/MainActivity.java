@@ -46,6 +46,7 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
+import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -334,7 +335,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setUpGeoFire() {
-        Log.d("personal", "setUpGeoFire called");
         DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference("geofire");
         geoFire = new GeoFire(geoFireRef);
         geoQuery = geoFire.queryAtLocation(new GeoLocation(currenLatitude, currentLongitude), SecretConstants.QUERY_RADIUS);
@@ -355,14 +355,12 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onKeyMoved(String key, GeoLocation location) {
-                Log.d("personal", "onKeyMoved entered");
-                Log.d("personal", String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
             }
 
             @Override
             public void onGeoQueryReady() {
                 Log.d("personal", "All initial data has been loaded and events have been fired!");
-                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
+                Utilities.addIdsToFirebase(userId + "_current", swarmReportIds);
                 ArrayList<String> children = new ArrayList<String>();
                 children.add(userId + "_current");
                 setUpFirebaseAdapter(children);
@@ -378,16 +376,20 @@ public class MainActivity extends AppCompatActivity
 
     private void setUpFirebaseAdapter(final ArrayList<String> children) {
         Log.d("personal", "first child is " + children.get(0));
-        swarmReportQuery = FirebaseDatabase.getInstance().getReference(children.get(0));
+
+        swarmReportQuery = FirebaseDatabase.getInstance().getReference("all");
+
+        DatabaseReference keyRef = FirebaseDatabase.getInstance().getReference(children.get(0)); //TODO edit here
+
         for (int i = 1; i < children.size(); i++) {
-            swarmReportQuery = swarmReportQuery.getRef().child(children.get(i));
+            keyRef = keyRef.getRef().child(children.get(i));
         }
                 swarmReportQuery = swarmReportQuery
                         .orderByChild("claimed")
                         .equalTo(false);
-        mFirebaseAdapter = new FirebaseRecyclerAdapter<SwarmReport, FirebaseClaimViewHolder>
+        mFirebaseAdapter = new FirebaseIndexRecyclerAdapter<SwarmReport, FirebaseClaimViewHolder>
                 (SwarmReport.class, R.layout.claim_item, FirebaseClaimViewHolder.class,
-                        swarmReportQuery) {
+                        keyRef, swarmReportQuery) {
 
             @Override
             protected void populateViewHolder(final FirebaseClaimViewHolder viewHolder,
