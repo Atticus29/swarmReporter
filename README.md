@@ -23,11 +23,11 @@ An Android app. for connecting bee swarms to beekeepers.
 
 ## Description
 
-In the late spring/early summer, honey bee hives sometimes get so large that they need to divide, a process called swarming. During swarming, a new queen is made at the original hive, and the old queen leaves with about half of the workers. They form a temporary hive-less structure (called a Bivuoac) while they conduct a search for a permanent home. Unfortunately, these swarms/bivouacs are often formed on low-hanging branches of trees, in people’s chimneys, etc., and they creep people out. So people call the fire department, etc., who in turn contact local beekeeping organizations which keep what are called swarm lists. Swarm lists are lists of eager beekeepers in the area who will gladly take a new hive of bees off of somebody’s property.
+In the late spring/early summer, honey bee hives sometimes get so large that they need to divide, a process called swarming. During swarming, a new queen is made at the original hive, and the old queen leaves with about half of the workers. They form a temporary hive-less structure (called a swarm) while they conduct a search for a permanent home. Unfortunately, these swarms are often formed on low-hanging branches of trees, in people’s chimneys, etc., and they creep people out. So people call the fire department, etc., who in turn contact local beekeeping organizations which keep what are called swarm lists. Swarm lists are lists of eager beekeepers in the area who will gladly take a new hive of bees off of somebody’s property.
 
 The problem is that currently, swarm lists are not decentralized and are quite clunky (essentially glorified phone trees). Beekeepers have to pay membership fees to join the swarm lists.
 
-Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers nearby.
+SwarmReporter is Uber for swarms: it matches swarm reporters with available beekeepers nearby.
 
 ## What users of the app can do:
 - [x] A user can log in/authenticate
@@ -103,7 +103,7 @@ Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers
 
 ### Set Up
 
-* Clone repository from GitHub: Navigate to your computer's terminal and type, `git clone https://github.com/Atticus29/bivuoac.git`
+* Clone repository from GitHub: Navigate to your computer's terminal and type, `git clone https://github.com/Atticus29/swarmReporter.git`
 * Open Android Studio (if not already installed, [begin install process here](https://developer.android.com/studio/index.html))
 * Create a file called "/app/src/main/java/com/example/guest/iamhere/SecretConstants.java"
   * Populate this file with the following String variables:
