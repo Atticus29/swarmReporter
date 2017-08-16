@@ -286,6 +286,10 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             path.add(currentSwarmReport.getClaimantId() + "_current/" + currentSwarmReport.getReportId());
             Utilities.removeSwarmReportAtNodePath(path);
 
+            path = new ArrayList<>();
+            path.add("geofire/" + currentSwarmReport.getReportId());
+            Utilities.removeSwarmReportAtNodePath(path);
+
 //            DatabaseReference updateReportedSwarmsRef = FirebaseDatabase.getInstance()
 //                    .getReference("users")
 //                    .child(currentSwarmReport.getReporterId())

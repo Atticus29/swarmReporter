@@ -97,13 +97,14 @@ public class Utilities {
     }
 
     public static ArrayList<String> removeItemFromArrayList (String key, ArrayList<String> aList){
-        int originalSize = aList.size();
-        for(int i = 0; i<originalSize; i++){
-            String currentKey = aList.get(i);
-            if (currentKey.equals(key)){
-                aList.remove(i);
-            }
-        }
+        while(aList.remove(key)) {}
+//        int originalSize = aList.size();
+//        for(int i = 0; i<originalSize; i++){
+//            String currentKey = aList.get(i);
+//            if (currentKey.equals(key)){
+//                aList.remove(i);
+//            }
+//        }
         return aList;
     }
 }

@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity
         userId = mSharedPreferences.getString("userId", null);
         if (userName != null && userId != null && !userName.equals("") && !userId.equals("")) {
             greetingTextView.setText("Unclaimed swarms near " + userName + ":");
-            clearDb(userId);
+            clearCurrentUserNode(userId);
         }
 
         setUpBlankAdapter(); //TODO check whether this is necessary
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity
                 .setFastestInterval(1 * 1000);
     }
 
-    public void clearDb(String userId){
+    public void clearCurrentUserNode(String userId){
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(userId + "_current");
         ref.removeValue();
         Log.d("personal", "removed references in userName_current");
@@ -337,26 +337,28 @@ public class MainActivity extends AppCompatActivity
                 Log.d("personal", String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
                 claimCheckKey = key;
                 swarmReportIds.add(claimCheckKey);
-
-                try{
-                    swarmReports.add(Utilities.getUnclaimedSwarmObjectWithId(claimCheckKey));
-                } catch(Exception e){
-                    e.printStackTrace();
-                }
-
+                clearCurrentUserNode(userId);
+                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
             }
 
             @Override
             public void onKeyExited(String key) {
                 Log.d("personal", "onKeyExited entered");
                 Log.d("personal", String.format("Key %s is no longer in the search area", key));
-                swarmReportIds = Utilities.removeItemFromArrayList(key, swarmReportIds);
-                //TODO check that this works
+                clearCurrentUserNode(userId);
+                Utilities.removeItemFromArrayList(key, swarmReportIds);
+                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
             }
 
 
             @Override
             public void onKeyMoved(String key, GeoLocation location) {
+                clearCurrentUserNode(userId);
+                swarmReportIds = Utilities.removeItemFromArrayList(key, swarmReportIds);
+                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
+//                ArrayList<String> children = new ArrayList<>();
+//                children.add(userId + "_current");
+//                setUpFirebaseAdapter(children);
 
             }
 
