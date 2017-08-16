@@ -5,23 +5,16 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
 import android.util.Log;
-import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -29,7 +22,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -39,7 +31,6 @@ import android.widget.Toast;
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.SecretConstants;
 import com.example.guest.iamhere.models.SwarmReport;
-import com.example.guest.iamhere.services.GeoCodingService;
 import com.example.guest.iamhere.utilityClasses.Utilities;
 import com.example.guest.iamhere.viewHolders.FirebaseClaimViewHolder;
 import com.firebase.geofire.GeoFire;
@@ -53,7 +44,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -88,7 +78,6 @@ import static java.security.AccessController.getContext;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    private String TAG = MainActivity.class.getSimpleName();
     private GoogleApiClient mGoogleApiClient;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
@@ -102,7 +91,6 @@ public class MainActivity extends AppCompatActivity
     private String photoUrl;
     private String passedUserProfileURL;
     private FirebaseAuth auth;
-    private FirebaseAuth.AuthStateListener authListener;
     private View hView;
     private NavigationView navigationView;
     private SharedPreferences mSharedPreferences;
@@ -110,12 +98,9 @@ public class MainActivity extends AppCompatActivity
     private GeoFire geoFire;
     private GeoQuery geoQuery;
     private ArrayList<String> swarmReportIds = new ArrayList<>();
-    private SwarmReport retrievedModel;
-    private ValueEventListener allRefListener;
-    private Query allRef;
-//    private HashMap<Query, ValueEventListener> hashMap = new HashMap<Query, ValueEventListener>();
+    private ArrayList<SwarmReport> swarmReports = new ArrayList<>();
     private String claimCheckKey;
-    private Boolean geoQueryStatusIsAGo = false;
+    private FirebaseAuth.AuthStateListener authListener;
 
     @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
     @Bind(R.id.greetingTextView) TextView greetingTextView;
@@ -127,6 +112,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
         ButterKnife.bind(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -137,9 +123,10 @@ public class MainActivity extends AppCompatActivity
         userId = mSharedPreferences.getString("userId", null);
         if (userName != null && userId != null && !userName.equals("") && !userId.equals("")) {
             greetingTextView.setText("Unclaimed swarms near " + userName + ":");
+            clearDb(userId);
         }
 
-        setUpBlankAdapter();
+        setUpBlankAdapter(); //TODO check whether this is necessary
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -210,6 +197,12 @@ public class MainActivity extends AppCompatActivity
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)
                 .setFastestInterval(1 * 1000);
+    }
+
+    public void clearDb(String userId){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(userId + "_current");
+        ref.removeValue();
+        Log.d("personal", "removed references in userName_current");
     }
 
     @Override
@@ -341,10 +334,18 @@ public class MainActivity extends AppCompatActivity
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                claimCheckKey = key;
                 Log.d("personal", String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
+                claimCheckKey = key;
                 swarmReportIds.add(claimCheckKey);
+
+                try{
+                    swarmReports.add(Utilities.getUnclaimedSwarmObjectWithId(claimCheckKey));
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+
             }
+
             @Override
             public void onKeyExited(String key) {
                 Log.d("personal", "onKeyExited entered");
@@ -353,15 +354,17 @@ public class MainActivity extends AppCompatActivity
                 //TODO check that this works
             }
 
+
             @Override
             public void onKeyMoved(String key, GeoLocation location) {
+
             }
 
             @Override
             public void onGeoQueryReady() {
                 Log.d("personal", "All initial data has been loaded and events have been fired!");
-                Utilities.addIdsToFirebase(userId + "_current", swarmReportIds);
-                ArrayList<String> children = new ArrayList<String>();
+                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
+                ArrayList<String> children = new ArrayList<>();
                 children.add(userId + "_current");
                 setUpFirebaseAdapter(children);
                 //TODO check for asynchronicity issues when the swarm count is very high
@@ -377,19 +380,15 @@ public class MainActivity extends AppCompatActivity
     private void setUpFirebaseAdapter(final ArrayList<String> children) {
         Log.d("personal", "first child is " + children.get(0));
 
-        swarmReportQuery = FirebaseDatabase.getInstance().getReference("all");
-
         DatabaseReference keyRef = FirebaseDatabase.getInstance().getReference(children.get(0)); //TODO edit here
 
         for (int i = 1; i < children.size(); i++) {
             keyRef = keyRef.getRef().child(children.get(i));
         }
-                swarmReportQuery = swarmReportQuery
-                        .orderByChild("claimed")
-                        .equalTo(false);
-        mFirebaseAdapter = new FirebaseIndexRecyclerAdapter<SwarmReport, FirebaseClaimViewHolder>
+
+        mFirebaseAdapter = new FirebaseRecyclerAdapter<SwarmReport, FirebaseClaimViewHolder>
                 (SwarmReport.class, R.layout.claim_item, FirebaseClaimViewHolder.class,
-                        keyRef, swarmReportQuery) {
+                        keyRef) {
 
             @Override
             protected void populateViewHolder(final FirebaseClaimViewHolder viewHolder,
@@ -399,7 +398,7 @@ public class MainActivity extends AppCompatActivity
                 viewHolder.bindSwarmReport(model);
             }
         };
-        setUpBlankAdapter();
+        setUpBlankAdapter(); //TODO check whether necessary
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(claimRecyclerView.getContext(),
                 new LinearLayoutManager(MainActivity.this).getOrientation());
         dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));

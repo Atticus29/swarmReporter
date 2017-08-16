@@ -219,7 +219,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 newSwarmReport.setImageString("https://coxshoney.com/wp-content/uploads/bee_swarm_man.jpg");
             }
             database = FirebaseDatabase.getInstance();
-            ref = database.getReference("all");
+            ref = database.getReference("all_unclaimed");
             pushRef = ref.push();
             String pushId = pushRef.getKey();
             Log.d("personal", "pushId is " + pushId);
@@ -244,7 +244,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                     reporterRef.setValue(newSwarmReport);
 
                     DatabaseReference allRef = FirebaseDatabase.getInstance()
-                            .getReference("all")
+                            .getReference("all_unclaimed")
                             .child(newSwarmReport.getReportId());
                     allRef.setValue(newSwarmReport);
 
