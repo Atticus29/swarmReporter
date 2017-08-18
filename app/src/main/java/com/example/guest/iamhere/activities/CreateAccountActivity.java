@@ -47,20 +47,13 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     private FirebaseAuth.AuthStateListener mAuthListener;
 
 
-    @Bind(R.id.createInputButton)
-    Button createInputButton;
-    @Bind(R.id.nameInputTextView)
-    TextView nameInputTextView;
-    @Bind(R.id.emailInputTextView)
-    TextView emailInputTextView;
-    @Bind(R.id.passwordInputTextView)
-    TextView passwordInputTextView;
-    @Bind(R.id.passwordConfirmInputTextView)
-    TextView passwordConfirmInputTextView;
-    @Bind(R.id.phoneNumberTextView)
-    TextView phoneNumberTextView;
-    @Bind(R.id.switch1)
-    Switch switch1;
+    @Bind(R.id.createInputButton) Button createInputButton;
+    @Bind(R.id.nameInputTextView) TextView nameInputTextView;
+    @Bind(R.id.emailInputTextView) TextView emailInputTextView;
+    @Bind(R.id.passwordInputTextView) TextView passwordInputTextView;
+    @Bind(R.id.passwordConfirmInputTextView) TextView passwordConfirmInputTextView;
+    @Bind(R.id.phoneNumberTextView) TextView phoneNumberTextView;
+    @Bind(R.id.switch1) Switch switch1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +73,8 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                 }
                 if (isChecked) {
                     contactOk = true;
+//                    phoneNumberTextView.setVisibility(View.VISIBLE);
+                    setContentView(R.layout.activity_create_account_phone);
                 } else {
                     //TODO figure out why this never happens (right now this is solved downstream in the user object creation in the db
                     contactOk = false;
