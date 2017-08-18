@@ -458,6 +458,15 @@ public class MainActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
+//        mGoogleApiClient = new GoogleApiClient.Builder(this)
+//                .addConnectionCallbacks(this)
+//                .addOnConnectionFailedListener(this)
+//                .addApi(LocationServices.API)
+//                .build();
+//        mLocationRequest = LocationRequest.create()
+//                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+//                .setInterval(10 * 1000)
+//                .setFastestInterval(1 * 1000);
     }
 
     @Override

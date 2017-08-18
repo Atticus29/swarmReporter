@@ -286,9 +286,9 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             path.add(currentSwarmReport.getClaimantId() + "_current/" + currentSwarmReport.getReportId());
             Utilities.removeSwarmReportAtNodePath(path);
 
-            path = new ArrayList<>();
-            path.add("geofire/" + currentSwarmReport.getReportId());
-            Utilities.removeSwarmReportAtNodePath(path);
+//            path = new ArrayList<>();
+//            path.add("geofire/" + currentSwarmReport.getReportId());
+//            Utilities.removeSwarmReportAtNodePath(path);
 
 //            DatabaseReference updateReportedSwarmsRef = FirebaseDatabase.getInstance()
 //                    .getReference("users")
@@ -364,16 +364,21 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
 
             //Removes the claim from the user who claimed its list AND resets claim status in reporter, city, and all back to false
             DatabaseReference allClaimantIdRef = FirebaseDatabase.getInstance()
-                    .getReference("all")
+                    .getReference("all_claimed")
                     .child(myClaimSwarmReport.getReportId());
-            allClaimantIdRef.setValue(myClaimSwarmReport);
+            allClaimantIdRef.removeValue();
 
-            DatabaseReference reportedSwarmRef = FirebaseDatabase.getInstance()
-                    .getReference("users")
-                    .child(userId)
-                    .child("reportedSwarms")
+            DatabaseReference allClaimantIdRefUnclaimed = FirebaseDatabase.getInstance()
+                    .getReference("all_unclaimed")
                     .child(myClaimSwarmReport.getReportId());
-            reportedSwarmRef.setValue(myClaimSwarmReport);
+            allClaimantIdRefUnclaimed.setValue(myClaimSwarmReport);
+
+//            DatabaseReference reportedSwarmRef = FirebaseDatabase.getInstance()
+//                    .getReference("users")
+//                    .child(userId)
+//                    .child("reportedSwarms")
+//                    .child(myClaimSwarmReport.getReportId());
+//            reportedSwarmRef.setValue(myClaimSwarmReport);
 
 
 
