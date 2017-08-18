@@ -18,6 +18,7 @@ public class SwarmReport {
     private String claimantName;
     private String claimantId;
     private String imageString;
+    private String geofireCode;
 
     public SwarmReport(){}
 
@@ -30,6 +31,14 @@ public class SwarmReport {
         this.reportTimestamp = reportTimestamp;
         this.accessibility = accessibility;
         this.imageString = "https://coxshoney.com/wp-content/uploads/bee_swarm_man.jpg";
+    }
+
+    public void setGeofireCode(String geofireCode) {
+        this.geofireCode = geofireCode;
+    }
+
+    public String getGeofireCode() {
+        return geofireCode;
     }
 
     public void setLatitude(Double latitude) {

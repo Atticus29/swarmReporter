@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.SecretConstants;
 import com.example.guest.iamhere.activities.MapActivity;
+import com.example.guest.iamhere.models.GeoFireEntry;
 import com.example.guest.iamhere.models.SwarmReport;
 import com.example.guest.iamhere.models.User;
 import com.example.guest.iamhere.utilityClasses.Utilities;
@@ -309,11 +310,15 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             path.add("all_unclaimed/" + myReportedSwarmReport.getReportId());
             Utilities.removeSwarmReportAtNodePath(path);
 
-            path = new ArrayList<>(); //TODO confirm that this one should be done
+            path = new ArrayList<>();
+            path.add("geofire/" + myReportedSwarmReport.getReportId());
+            Utilities.removeSwarmReportAtNodePath(path);
+
+            path = new ArrayList<>();
             path.add("all_claimed/" + myReportedSwarmReport.getReportId());
             Utilities.removeSwarmReportAtNodePath(path);
 
-            path = new ArrayList<>(); //TODO confirm that this one should be done
+            path = new ArrayList<>();
             path.add("users/" + userId + "/reportedSwarms/" + myReportedSwarmReport.getReportId());
             Utilities.removeSwarmReportAtNodePath(path);
 
@@ -322,11 +327,11 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             Utilities.removeSwarmReportAtNodePath(path);
 
             if(myReportedSwarmReport.isClaimed()){
-                path = new ArrayList<>(); //TODO confirm
+                path = new ArrayList<>();
                 path.add(myReportedSwarmReport.getClaimantId()+"_current/" + myReportedSwarmReport.getReportId());
                 Utilities.removeSwarmReportAtNodePath(path);
 
-                path = new ArrayList<>(); //TODO confirm
+                path = new ArrayList<>();
                 path.add("users/" + myReportedSwarmReport.getClaimantId() + "/claimedSwarms/" + myReportedSwarmReport.getReportId());
                 Utilities.removeSwarmReportAtNodePath(path);
             }
@@ -338,14 +343,19 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         }
         if(v == cancelMyClaimButton){
             Log.d("personal", "myClaim cancelMyClaimButton clicked");
+            SwarmReport tempSwarmReport = myClaimSwarmReport;
             String claimantIdTemp = myClaimSwarmReport.getClaimantId();
             myClaimSwarmReport.setClaimantName(null);
             myClaimSwarmReport.setClaimantId(null);
             myClaimSwarmReport.setClaimed(false);
 
+            GeoFireEntry geoFireEntry = new GeoFireEntry(myClaimSwarmReport);
+            geoFireEntry.makeEntryInFirebase(myClaimSwarmReport.getReportId());
+
             ArrayList<String> path = new ArrayList<>();
             path.add("all_claimed/" + myClaimSwarmReport.getReportId());
             Utilities.removeSwarmReportAtNodePath(path);
+
 
             path = new ArrayList<>();
             path.add("users/" + myClaimSwarmReport.getReporterId() + "/reportedSwarms/" + myClaimSwarmReport.getReportId());
@@ -373,6 +383,9 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             myReportedSwarmReport.setClaimantName(null);
             myReportedSwarmReport.setClaimantId(null);
             myReportedSwarmReport.setClaimed(false);
+
+            GeoFireEntry geoFireEntry = new GeoFireEntry(myReportedSwarmReport);
+            geoFireEntry.makeEntryInFirebase(myReportedSwarmReport.getReportId());
 
             ArrayList<String> path = new ArrayList<>();
             path.add("all_unclaimed/" + myReportedSwarmReport.getReportId());

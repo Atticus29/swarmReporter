@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.models.SwarmReport;
+import com.example.guest.iamhere.utilityClasses.Utilities;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
@@ -41,12 +42,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -236,22 +241,44 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                     Log.d("personal", "newSwarm inside reportSwarmButton userId is " + userId);
                     //TODO maybe add Completion Listener if this gives you trouble
                     pushRef.setValue(newSwarmReport);
-                    DatabaseReference reporterRef = FirebaseDatabase.getInstance()
-                            .getReference("users")
-                            .child(userId)
-                            .child("reportedSwarms")
-                            .child(newSwarmReport.getReportId());
-                    reporterRef.setValue(newSwarmReport);
 
-                    DatabaseReference allRef = FirebaseDatabase.getInstance()
-                            .getReference("all_unclaimed")
-                            .child(newSwarmReport.getReportId());
-                    allRef.setValue(newSwarmReport);
 
                     DatabaseReference geoFireRef = FirebaseDatabase.getInstance()
                             .getReference("geofire");
                     GeoFire geoFire = new GeoFire(geoFireRef);
                     geoFire.setLocation(newSwarmReport.getReportId(), new GeoLocation(newSwarmReport.getLatitude(), newSwarmReport.getLongitude()));
+
+
+                    //TODO put this elsewhere in a method
+                    DatabaseReference geoCodeRetrievalRef = geoFireRef.child(newSwarmReport.getReportId());
+                    geoCodeRetrievalRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                try{
+                                    String geoCode = ds.getValue(String.class);
+                                    newSwarmReport.setGeofireCode(geoCode);
+                                    Log.d("personal", "geofireCode is: " + newSwarmReport.getGeofireCode());
+                                    ArrayList<String> path = new ArrayList<>();
+                                    path.add("users/" + userId + "/reportedSwarms/" + newSwarmReport.getReportId());
+                                    Utilities.changeSwarmReportAtNodePathTo(path, newSwarmReport);
+
+                                    path = new ArrayList<>();
+                                    path.add("all_unclaimed/" + newSwarmReport.getReportId());
+                                    Utilities.changeSwarmReportAtNodePathTo(path, newSwarmReport);
+                                } catch(Exception e){
+                                    e.printStackTrace();
+                                    continue;
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
                 }
                 Intent intent = new Intent(NewSwarmReportActivity.this, MainActivity.class);
                 intent.putExtra("userName", userName);
