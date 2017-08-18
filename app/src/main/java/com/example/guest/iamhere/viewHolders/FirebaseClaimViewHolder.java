@@ -321,18 +321,18 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             path.add("all_claimed/" + myReportedSwarmReport.getReportId());
             Utilities.removeSwarmReportAtNodePath(path);
 
-            //TODO update these
-            DatabaseReference reportedSwarmRef = FirebaseDatabase.getInstance()
-                    .getReference("users")
-                    .child(userId)
-                    .child("reportedSwarms")
-                    .child(myReportedSwarmReport.getReportId());
-            reportedSwarmRef.removeValue();
+            path = new ArrayList<>(); //TODO confirm that this one should be done
+            path.add("users/" + userId + "/reportedSwarms/" + myReportedSwarmReport.getReportId());
+            Utilities.removeSwarmReportAtNodePath(path);
 
-            DatabaseReference currentUserLocationClaimantIdRef = FirebaseDatabase.getInstance()
-                    .getReference(userId+"_current")
-                    .child(myReportedSwarmReport.getReportId());
-            currentUserLocationClaimantIdRef.removeValue();
+            path = new ArrayList<>();
+            path.add(userId + "_current/" + myReportedSwarmReport.getReportId());
+            Utilities.removeSwarmReportAtNodePath(path);
+
+//            DatabaseReference currentUserLocationClaimantIdRef = FirebaseDatabase.getInstance()
+//                    .getReference(userId+"_current")
+//                    .child(myReportedSwarmReport.getReportId());
+//            currentUserLocationClaimantIdRef.removeValue();
 
             if(myReportedSwarmReport.isClaimed()){
                 path = new ArrayList<>(); //TODO confirm
@@ -344,9 +344,9 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                 Utilities.removeSwarmReportAtNodePath(path);
             }
 
-            DatabaseReference geoFireRef = FirebaseDatabase.getInstance()
-                    .getReference(myReportedSwarmReport.getReportId());
-            geoFireRef.removeValue(); //TODO remove? Did this even do anything before???
+//            DatabaseReference geoFireRef = FirebaseDatabase.getInstance()
+//                    .getReference(myReportedSwarmReport.getReportId());
+//            geoFireRef.removeValue(); //TODO remove? Did this even do anything before???
 
         }
 
@@ -362,16 +362,32 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             myClaimSwarmReport.setClaimantId(null);
             myClaimSwarmReport.setClaimed(false);
 
-            //Removes the claim from the user who claimed its list AND resets claim status in reporter, city, and all back to false
-            DatabaseReference allClaimantIdRef = FirebaseDatabase.getInstance()
-                    .getReference("all_claimed")
-                    .child(myClaimSwarmReport.getReportId());
-            allClaimantIdRef.removeValue();
 
-            DatabaseReference allClaimantIdRefUnclaimed = FirebaseDatabase.getInstance()
-                    .getReference("all_unclaimed")
-                    .child(myClaimSwarmReport.getReportId());
-            allClaimantIdRefUnclaimed.setValue(myClaimSwarmReport);
+
+            //Removes the claim from the user who claimed its list AND resets claim status in reporter, city, and all back to false
+
+            ArrayList<String> path = new ArrayList<>();
+            path.add("all_claimed/" + myClaimSwarmReport.getReportId());
+            Utilities.removeSwarmReportAtNodePath(path);
+
+//            DatabaseReference allClaimantIdRef = FirebaseDatabase.getInstance()
+//                    .getReference("all_claimed")
+//                    .child(myClaimSwarmReport.getReportId());
+//            allClaimantIdRef.removeValue();
+
+
+            path = new ArrayList<>();
+            path.add("users/" + myClaimSwarmReport.getReporterId() + "/reportedSwarms/" + myClaimSwarmReport.getReportId());
+            Utilities.changeSwarmReportAtNodePathTo(path, myClaimSwarmReport);
+
+            path = new ArrayList<>();
+            path.add("all_unclaimed/" + myClaimSwarmReport.getReportId());
+            Utilities.changeSwarmReportAtNodePathTo(path, myClaimSwarmReport);
+
+//            DatabaseReference allClaimantIdRefUnclaimed = FirebaseDatabase.getInstance()
+//                    .getReference("all_unclaimed")
+//                    .child(myClaimSwarmReport.getReportId());
+//            allClaimantIdRefUnclaimed.setValue(myClaimSwarmReport);
 
 //            DatabaseReference reportedSwarmRef = FirebaseDatabase.getInstance()
 //                    .getReference("users")
@@ -382,24 +398,38 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
 
 
 
-            DatabaseReference currentUserLocationClaimantIdRef = FirebaseDatabase.getInstance()
-                    .getReference(userId+"_current")
-                    .child(myClaimSwarmReport.getReportId());
-            currentUserLocationClaimantIdRef.setValue(myClaimSwarmReport);
+            path = new ArrayList<>();
+            path.add(userId + "_current/" + myClaimSwarmReport.getReportId());
+            Utilities.changeSwarmReportAtNodePathTo(path, myClaimSwarmReport);
 
-            DatabaseReference reporterClaimantIdRef = FirebaseDatabase.getInstance()
-                    .getReference("users")
-                    .child(myClaimSwarmReport.getReporterId())
-                    .child("reportedSwarms")
-                    .child(myClaimSwarmReport.getReportId());
-            reporterClaimantIdRef.setValue(myClaimSwarmReport);
+//            DatabaseReference currentUserLocationClaimantIdRef = FirebaseDatabase.getInstance()
+//                    .getReference(userId+"_current")
+//                    .child(myClaimSwarmReport.getReportId());
+//            currentUserLocationClaimantIdRef.setValue(myClaimSwarmReport);
 
-            DatabaseReference claimantClaimantIdRef = FirebaseDatabase.getInstance()
-                    .getReference("users")
-                    .child(claimantIdTemp)
-                    .child("claimedSwarms")
-                    .child(myClaimSwarmReport.getReportId());
-            claimantClaimantIdRef.removeValue();
+
+            path = new ArrayList<>();
+            path.add("users/" + myClaimSwarmReport.getReporterId() + "/reportedSwarms/" + myClaimSwarmReport.getReportId());
+            Utilities.changeSwarmReportAtNodePathTo(path, myClaimSwarmReport);
+
+//            DatabaseReference reporterClaimantIdRef = FirebaseDatabase.getInstance()
+//                    .getReference("users")
+//                    .child(myClaimSwarmReport.getReporterId())
+//                    .child("reportedSwarms")
+//                    .child(myClaimSwarmReport.getReportId());
+//            reporterClaimantIdRef.setValue(myClaimSwarmReport);
+
+
+            path = new ArrayList<>();
+            path.add("users/" + claimantIdTemp + "/claimedSwarms/" + myClaimSwarmReport.getReportId());
+            Utilities.removeSwarmReportAtNodePath(path);
+
+//            DatabaseReference claimantClaimantIdRef = FirebaseDatabase.getInstance()
+//                    .getReference("users")
+//                    .child(claimantIdTemp)
+//                    .child("claimedSwarms")
+//                    .child(myClaimSwarmReport.getReportId());
+//            claimantClaimantIdRef.removeValue();
         }
         if(v == cancelSwarmClaimButtonMyReportedSwarms) {
             String claimantNameTemp = myReportedSwarmReport.getClaimantName();
@@ -407,38 +437,59 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             myReportedSwarmReport.setClaimantName(null);
             myReportedSwarmReport.setClaimantId(null);
             myReportedSwarmReport.setClaimed(false);
-            DatabaseReference allClaimantIdRef = FirebaseDatabase.getInstance()
-                    .getReference("all")
-                    .child(myReportedSwarmReport.getReportId());
-            allClaimantIdRef.setValue(myReportedSwarmReport);
 
-            DatabaseReference reportedSwarmRef = FirebaseDatabase.getInstance()
-                    .getReference("users")
-                    .child(userId)
-                    .child("reportedSwarms")
-                    .child(myReportedSwarmReport.getReportId());
-            reportedSwarmRef.setValue(myReportedSwarmReport);
+            ArrayList<String> path = new ArrayList<>();
+            path.add("all_unclaimed/" + myReportedSwarmReport.getReportId());
+            Utilities.changeSwarmReportAtNodePathTo(path, myReportedSwarmReport);
+
+//            DatabaseReference allClaimantIdRef = FirebaseDatabase.getInstance()
+//                    .getReference("all_unclaimed")
+//                    .child(myReportedSwarmReport.getReportId());
+//            allClaimantIdRef.setValue(myReportedSwarmReport);
 
 
+            path = new ArrayList<>();
+            path.add("users/" + userId + "/reportedSwarms/" + myReportedSwarmReport.getReportId());
+            Utilities.changeSwarmReportAtNodePathTo(path, myReportedSwarmReport);
 
-            DatabaseReference currentUserLocationClaimantIdRef = FirebaseDatabase.getInstance()
-                    .getReference(userId+"_current")
-                    .child(myReportedSwarmReport.getReportId());
-            currentUserLocationClaimantIdRef.setValue(myReportedSwarmReport);
+//            DatabaseReference reportedSwarmRef = FirebaseDatabase.getInstance()
+//                    .getReference("users")
+//                    .child(userId)
+//                    .child("reportedSwarms")
+//                    .child(myReportedSwarmReport.getReportId());
+//            reportedSwarmRef.setValue(myReportedSwarmReport);
 
-            DatabaseReference reporterClaimantIdRef = FirebaseDatabase.getInstance()
-                    .getReference("users")
-                    .child(myReportedSwarmReport.getReporterId())
-                    .child("reportedSwarms")
-                    .child(myReportedSwarmReport.getReportId());
-            reporterClaimantIdRef.setValue(myReportedSwarmReport);
+            path = new ArrayList<>();
+            path.add(userId + "_current/" + myReportedSwarmReport.getReportId());
+            Utilities.changeSwarmReportAtNodePathTo(path, myReportedSwarmReport);
 
-            DatabaseReference claimantClaimantIdRef = FirebaseDatabase.getInstance()
-                    .getReference("users")
-                    .child(claimantIdTemp)
-                    .child("claimedSwarms")
-                    .child(myReportedSwarmReport.getReportId());
-            claimantClaimantIdRef.setValue(null);
+//            DatabaseReference currentUserLocationClaimantIdRef = FirebaseDatabase.getInstance()
+//                    .getReference(userId+"_current")
+//                    .child(myReportedSwarmReport.getReportId());
+//            currentUserLocationClaimantIdRef.setValue(myReportedSwarmReport);
+
+            path = new ArrayList<>();
+            path.add("users/" + myReportedSwarmReport.getReporterId() + "/reportedSwarms/" + myReportedSwarmReport.getReportId());
+            Utilities.changeSwarmReportAtNodePathTo(path, myReportedSwarmReport);
+
+//            DatabaseReference reporterClaimantIdRef = FirebaseDatabase.getInstance()
+//                    .getReference("users")
+//                    .child(myReportedSwarmReport.getReporterId())
+//                    .child("reportedSwarms")
+//                    .child(myReportedSwarmReport.getReportId());
+//            reporterClaimantIdRef.setValue(myReportedSwarmReport);
+
+
+            path = new ArrayList<>();
+            path.add("users/" + claimantIdTemp + "/claimedSwarms/" + myReportedSwarmReport.getReportId());
+            Utilities.removeSwarmReportAtNodePath(path);
+
+//            DatabaseReference claimantClaimantIdRef = FirebaseDatabase.getInstance()
+//                    .getReference("users")
+//                    .child(claimantIdTemp)
+//                    .child("claimedSwarms")
+//                    .child(myReportedSwarmReport.getReportId());
+//            claimantClaimantIdRef.setValue(null);
         }
         if(v == contactTextViewMyReportedSwarms){
             DatabaseReference dbRef = FirebaseDatabase.getInstance()
