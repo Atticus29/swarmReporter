@@ -6,7 +6,7 @@ An Android app. for connecting bee swarms to beekeepers.
 ## By: Mark Fisher
 
 ## Known issues
-- [ ] When I cancel a claim from the emulator that the emulator reported but my phone claimed, my phone’s app crashes but the emulator does not, and the app reloads just fine.
+- [ ] Needing to click multiply/something else when you click to allow to use phone number (maybe have it always there  but not toggleable?)
 
 ## Description
 

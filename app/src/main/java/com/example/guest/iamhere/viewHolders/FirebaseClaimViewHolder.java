@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements View.OnClickListener, OnMapReadyCallback {
     private String TAG = FirebaseClaimViewHolder.class.getSimpleName();
@@ -349,8 +350,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             myClaimSwarmReport.setClaimantId(null);
             myClaimSwarmReport.setClaimed(false);
 
-            GeoFireEntry geoFireEntry = new GeoFireEntry(myClaimSwarmReport);
-            geoFireEntry.makeEntryInFirebase(myClaimSwarmReport.getReportId());
+
 
             ArrayList<String> path = new ArrayList<>();
             path.add("all_claimed/" + myClaimSwarmReport.getReportId());
@@ -377,15 +377,25 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             path = new ArrayList<>();
             path.add("users/" + claimantIdTemp + "/claimedSwarms/" + myClaimSwarmReport.getReportId());
             Utilities.removeSwarmReportAtNodePath(path);
+
+            Utilities.establishSwarmReportInGeoFire(myClaimSwarmReport);
+            Utilities.updateSwarmReportWithItsGeoFireCode(myClaimSwarmReport, userId);
+
+//            GeoFireEntry geoFireEntry = new GeoFireEntry(myClaimSwarmReport);
+//            geoFireEntry.makeEntryInFirebase(myClaimSwarmReport.getReportId());
+
+//            try{
+//                TimeUnit.SECONDS.sleep(5);
+//            } catch(Exception e){
+//                Log.d("sleepError", "sleeping failed");
+//                e.printStackTrace();
+//            }
         }
         if(v == cancelSwarmClaimButtonMyReportedSwarms) {
             String claimantIdTemp = myReportedSwarmReport.getClaimantId();
             myReportedSwarmReport.setClaimantName(null);
             myReportedSwarmReport.setClaimantId(null);
             myReportedSwarmReport.setClaimed(false);
-
-            GeoFireEntry geoFireEntry = new GeoFireEntry(myReportedSwarmReport);
-            geoFireEntry.makeEntryInFirebase(myReportedSwarmReport.getReportId());
 
             ArrayList<String> path = new ArrayList<>();
             path.add("all_unclaimed/" + myReportedSwarmReport.getReportId());
@@ -407,6 +417,21 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             path = new ArrayList<>();
             path.add("users/" + claimantIdTemp + "/claimedSwarms/" + myReportedSwarmReport.getReportId());
             Utilities.removeSwarmReportAtNodePath(path);
+
+//            GeoFireEntry geoFireEntry = new GeoFireEntry(myReportedSwarmReport);
+//            geoFireEntry.makeEntryInFirebase(myReportedSwarmReport.getReportId());
+
+            Utilities.establishSwarmReportInGeoFire(myReportedSwarmReport);
+
+            Utilities.updateSwarmReportWithItsGeoFireCode(myReportedSwarmReport, userId);
+
+//            try{
+//                TimeUnit.SECONDS.sleep(5);
+//            } catch(Exception e){
+//                Log.d("sleepError", "sleeping failed");
+//                e.printStackTrace();
+//            }
+
         }
         if(v == contactTextViewMyReportedSwarms){
             DatabaseReference dbRef = FirebaseDatabase.getInstance()

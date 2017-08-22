@@ -243,41 +243,9 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                     pushRef.setValue(newSwarmReport);
 
 
-                    DatabaseReference geoFireRef = FirebaseDatabase.getInstance()
-                            .getReference("geofire");
-                    GeoFire geoFire = new GeoFire(geoFireRef);
-                    geoFire.setLocation(newSwarmReport.getReportId(), new GeoLocation(newSwarmReport.getLatitude(), newSwarmReport.getLongitude()));
+                    Utilities.establishSwarmReportInGeoFire(newSwarmReport);
 
-
-                    //TODO put this elsewhere in a method
-                    DatabaseReference geoCodeRetrievalRef = geoFireRef.child(newSwarmReport.getReportId());
-                    geoCodeRetrievalRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                                try{
-                                    String geoCode = ds.getValue(String.class);
-                                    newSwarmReport.setGeofireCode(geoCode);
-                                    Log.d("personal", "geofireCode is: " + newSwarmReport.getGeofireCode());
-                                    ArrayList<String> path = new ArrayList<>();
-                                    path.add("users/" + userId + "/reportedSwarms/" + newSwarmReport.getReportId());
-                                    Utilities.changeSwarmReportAtNodePathTo(path, newSwarmReport);
-
-                                    path = new ArrayList<>();
-                                    path.add("all_unclaimed/" + newSwarmReport.getReportId());
-                                    Utilities.changeSwarmReportAtNodePathTo(path, newSwarmReport);
-                                } catch(Exception e){
-                                    e.printStackTrace();
-                                    continue;
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
+                    Utilities.updateSwarmReportWithItsGeoFireCode(newSwarmReport, userId);
 
                 }
                 Intent intent = new Intent(NewSwarmReportActivity.this, MainActivity.class);

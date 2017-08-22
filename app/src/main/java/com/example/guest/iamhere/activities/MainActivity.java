@@ -164,12 +164,10 @@ public class MainActivity extends AppCompatActivity
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = auth.getCurrentUser();
                 for (UserInfo userInfo : user.getProviderData()) {
-                    Log.d("personal", "is userInfo null? " + Boolean.toString(userInfo == null));
                     if (passedUserProfileURL == null && userInfo.getPhotoUrl() != null) {
-                        Log.d("personal", "things are null and not null");
                         passedUserProfileURL = userInfo.getPhotoUrl().toString();
-                        Log.d("personal", "photoUrl is " + passedUserProfileURL);
                         ImageView profileImageView = (ImageView) hView.findViewById(R.id.profileImageView);
+                        //TODO deal with either including user profile stuff or not
                         Picasso.with(hView.getContext())
                                 .load(passedUserProfileURL)
                                 .resize(SecretConstants.PIC_WIDTH, SecretConstants.PIC_HEIGHT)
@@ -178,11 +176,9 @@ public class MainActivity extends AppCompatActivity
                     }
                     if (userId == null && userInfo.getUid() != null) {
                         userId = userInfo.getUid();
-                        Log.d("personal", "userId is " + userId);
                     }
                     if (userName == null && userInfo.getDisplayName() != null) {
                         userName = userInfo.getDisplayName();
-                        Log.d("personal", "userName is " + userName);
                     }
                 }
             }
@@ -334,20 +330,23 @@ public class MainActivity extends AppCompatActivity
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
+                Log.d("personal", "all of the onKeyEntered entered");
                 Log.d("personal", String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
                 claimCheckKey = key;
                 swarmReportIds.add(claimCheckKey);
                 clearCurrentUserNode(userId);
                 Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
+                Log.d("personal", "all of the onKeyEntered stuff happened");
             }
 
             @Override
             public void onKeyExited(String key) {
                 Log.d("personal", "onKeyExited entered");
                 Log.d("personal", String.format("Key %s is no longer in the search area", key));
-                clearCurrentUserNode(userId);
                 Utilities.removeItemFromArrayList(key, swarmReportIds);
+                clearCurrentUserNode(userId);
                 Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
+                Log.d("personal", "onKeyExited stuff all happened");
             }
 
 
@@ -458,15 +457,6 @@ public class MainActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .addConnectionCallbacks(this)
-//                .addOnConnectionFailedListener(this)
-//                .addApi(LocationServices.API)
-//                .build();
-//        mLocationRequest = LocationRequest.create()
-//                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-//                .setInterval(10 * 1000)
-//                .setFastestInterval(1 * 1000);
     }
 
     @Override
