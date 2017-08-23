@@ -104,6 +104,20 @@
             android:layout_marginLeft="0dp"
             app:layout_constraintLeft_toLeftOf="@+id/sizeTextViewMyClaims" />
 
+        <TextView
+            android:id="@+id/descriptionTextViewMyClaims"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/primary_text"
+            android:textSize="20sp"
+            android:text="Description: __"
+            app:layout_constraintLeft_toLeftOf="@+id/accessibilityTextViewMyClaims"
+            app:layout_constraintRight_toRightOf="@+id/accessibilityTextViewMyClaims"
+            app:layout_constraintTop_toBottomOf="@+id/accessibilityTextViewMyClaims"
+            tools:layout_constraintRight_creator="1"
+            tools:layout_constraintLeft_creator="1" />
+
         <Button
             android:id="@+id/cancelMyClaimButton"
             android:layout_width="0dp"
@@ -113,11 +127,11 @@
             android:text="Cancel My Claim"
             android:padding="8dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/accessibilityTextViewMyClaims"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionTextViewMyClaims"
             android:layout_marginRight="8dp"
-            app:layout_constraintRight_toRightOf="@+id/accessibilityTextViewMyClaims"
+            app:layout_constraintRight_toRightOf="@+id/descriptionTextViewMyClaims"
             android:layout_marginLeft="8dp"
-            app:layout_constraintLeft_toLeftOf="@+id/accessibilityTextViewMyClaims"
+            app:layout_constraintLeft_toLeftOf="@+id/descriptionTextViewMyClaims"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="8dp" />

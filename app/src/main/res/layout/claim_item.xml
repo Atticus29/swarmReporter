@@ -91,6 +91,20 @@
             tools:layout_constraintRight_creator="1"
             tools:layout_constraintLeft_creator="1" />
 
+        <TextView
+            android:id="@+id/descriptionTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/primary_text"
+            android:textSize="20sp"
+            android:text="Description: __"
+            app:layout_constraintLeft_toLeftOf="@+id/accessibilityTextView"
+            app:layout_constraintRight_toRightOf="@+id/accessibilityTextView"
+            app:layout_constraintTop_toBottomOf="@+id/accessibilityTextView"
+            tools:layout_constraintRight_creator="1"
+            tools:layout_constraintLeft_creator="1" />
+
         <Button
             android:id="@+id/claimSwarmButton"
             android:layout_width="0dp"
@@ -101,9 +115,9 @@
             android:layout_marginBottom="8dp"
             android:background="@drawable/bivouac_button"
             android:text="Claim"
-            app:layout_constraintLeft_toLeftOf="@+id/accessibilityTextView"
+            app:layout_constraintLeft_toLeftOf="@+id/descriptionTextView"
             app:layout_constraintRight_toLeftOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/accessibilityTextView"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionTextView"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
         <android.support.constraint.Guideline
