@@ -30,11 +30,11 @@ Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers
 - [x] Users can see swarm reports within a certain radius
 - [x] The reporting user can see who claimed the swarm
 - [x] Contact information between reporter and responder can be exchanged if both sides want that
-- [x] Reporters and responders can cancel a report/claim
+- [x] Reporters and responders can cancel a report/
+- [x] Reporters can add a description of the hive
 
 ## Planned features in a future version:
-- [ ] Users are prevented from retrieving more than one swarm a week
-- [ ] Reporters can add a description of the hive
+- [ ] Users are prevented from retrieving more than one swarm per some designated unit time
 - [ ] A claimed swarm re-appears as available if it is not physically retrieved in 6 hours
 - [ ] A responding user can see the report and find out how far away it is from their location/address, updated in real time
 - [ ] Users are notified when a new swarm is reported in their area
