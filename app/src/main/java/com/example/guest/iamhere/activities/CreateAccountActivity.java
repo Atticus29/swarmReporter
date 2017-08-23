@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +32,6 @@ import butterknife.ButterKnife;
 
 public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener {
     private FirebaseAuth mAuth;
-    private String TAG = CreateAccountActivity.class.getSimpleName();
     private ProgressDialog mAuthProgressDialog;
     private FirebaseAuth.AuthStateListener authStateListener;
 
@@ -48,39 +48,26 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
 
 
     @Bind(R.id.createInputButton) Button createInputButton;
-    @Bind(R.id.nameInputTextView) TextView nameInputTextView;
-    @Bind(R.id.emailInputTextView) TextView emailInputTextView;
-    @Bind(R.id.passwordInputTextView) TextView passwordInputTextView;
-    @Bind(R.id.passwordConfirmInputTextView) TextView passwordConfirmInputTextView;
-    @Bind(R.id.phoneNumberTextView) TextView phoneNumberTextView;
+    @Bind(R.id.nameInputTextView) EditText nameInputTextView;
+    @Bind(R.id.emailInputTextView) EditText emailInputTextView;
+    @Bind(R.id.passwordInputTextView) EditText passwordInputTextView;
+    @Bind(R.id.passwordConfirmInputTextView) EditText passwordConfirmInputTextView;
+    @Bind(R.id.phoneNumberTextView) EditText phoneNumberTextView;
     @Bind(R.id.switch1) Switch switch1;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
         ButterKnife.bind(this);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mSharedPreferences.edit();
+        phoneNumberTextView.setEnabled(false);
 
-        switch1.setOnCheckedChangeListener(null);
         switch1.setChecked(false);
-        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if ((Boolean) isChecked == null) {
-                    Log.d("personal", "isChecked never checked in the first place");
-                }
-                if (isChecked) {
-                    contactOk = true;
-//                    phoneNumberTextView.setVisibility(View.VISIBLE);
-                    setContentView(R.layout.activity_create_account_phone);
-                } else {
-                    //TODO figure out why this never happens (right now this is solved downstream in the user object creation in the db
-                    contactOk = false;
-                }
-            }
-        });
+        switch1.setOnClickListener(this);
+
+
         createAuthStateListener();
         mAuth = FirebaseAuth.getInstance();
         createInputButton.setOnClickListener(this);
@@ -101,6 +88,25 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         if (v == createInputButton) {
             createAccount();
+        }
+        if (v == switch1){
+            if(switch1.isChecked()){
+                Log.d("personal", "switch1 is checked entered");
+                switch1.setChecked(false);
+                Log.d("personal", "switch1 actual status is " + Boolean.toString(switch1.isChecked()));
+                switch1.toggle();
+                contactOk = false;
+                phoneNumberTextView.setEnabled(true);
+                Log.d("personal", "got to the end of switch1 is checked");
+            } else{
+                Log.d("personal", "switch1 is not checked");
+                switch1.setChecked(true);
+                switch1.toggle();
+                Log.d("personal", "switch1 actual status is " + Boolean.toString(switch1.isChecked()));
+                contactOk = true;
+                phoneNumberTextView.setEnabled(false);
+                Log.d("personal", "got to the end of switch1 is not checked");
+            }
         }
     }
 
@@ -160,7 +166,6 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Intent intent = new Intent(CreateAccountActivity.this, MainActivity.class);
-//                            intent.putExtra("userName", userName);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                             finish();

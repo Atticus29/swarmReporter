@@ -10,6 +10,8 @@ import com.google.firebase.database.ValueEventListener;
  * Created by mf on 8/18/17.
  */
 
+//TODO you should be able to remove this class
+
 public class GeoFireEntry {
 
     private String geoCode;

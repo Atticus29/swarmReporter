@@ -380,16 +380,6 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
 
             Utilities.establishSwarmReportInGeoFire(myClaimSwarmReport);
             Utilities.updateSwarmReportWithItsGeoFireCode(myClaimSwarmReport, userId);
-
-//            GeoFireEntry geoFireEntry = new GeoFireEntry(myClaimSwarmReport);
-//            geoFireEntry.makeEntryInFirebase(myClaimSwarmReport.getReportId());
-
-//            try{
-//                TimeUnit.SECONDS.sleep(5);
-//            } catch(Exception e){
-//                Log.d("sleepError", "sleeping failed");
-//                e.printStackTrace();
-//            }
         }
         if(v == cancelSwarmClaimButtonMyReportedSwarms) {
             String claimantIdTemp = myReportedSwarmReport.getClaimantId();
