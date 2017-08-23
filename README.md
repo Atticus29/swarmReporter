@@ -1,7 +1,7 @@
 # SwarmReporter
 An Android app. for connecting bee swarms to beekeepers.
 
-## 19 June - 28 July, 2017
+## 19 June - 23 August, 2017
 
 ## By: Mark Fisher
 
@@ -30,22 +30,21 @@ Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers
 - [x] Users can see swarm reports within a certain radius
 - [x] The reporting user can see who claimed the swarm
 - [x] Contact information between reporter and responder can be exchanged if both sides want that
+- [x] Reporters and responders can cancel a report/claim
 
 ## Planned features in a future version:
 - [ ] Users are prevented from retrieving more than one swarm a week
+- [ ] Reporters can add a description of the hive
 - [ ] A claimed swarm re-appears as available if it is not physically retrieved in 6 hours
 - [ ] A responding user can see the report and find out how far away it is from their location/address, updated in real time
 - [ ] Users are notified when a new swarm is reported in their area
 - [ ] A claimed swarm re-appears as available if it is not physically retrieved by a certain amount of time
-- [ ] Swarm responders pay swarm reporters a very small sum of money for retrieving the swarm (this will incentivize the reporters to adopt)
-- [ ] Reporters and responders can cancel a report/claim
-- [ ] Reporters can decline a claim
+- [ ] Swarm responders can pay for first dibs/early access
 
 ## Distant future features:
 - [ ] Reporters can see responder’s geographical progress towards them on a map
-- [ ] Ratings/feedback for the responders can be provided
-- [ ] Ratings/feedback for the reporters can be provided
-- [ ] Rating/feedback data is persisted on a database
+- [ ] Ratings/feedback for the responders is recorded and visualized
+- [ ] Ratings/feedback for the reporters is recorded and visualized
 - [ ] Ratings can influence e.g. the radius or frequency with which swarms are reported to a particular user
 
 ## Potential future features:
