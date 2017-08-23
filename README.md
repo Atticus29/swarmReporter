@@ -5,9 +5,6 @@ An Android app. for connecting bee swarms to beekeepers.
 
 ## By: Mark Fisher
 
-## Known issues
-- [ ] Needing to click multiply/something else when you click to allow to use phone number (maybe have it always there  but not toggleable?)
-
 ## Description
 
 In the late spring/early summer, honey bee hives sometimes get so large that they need to divide, a process called swarming. During swarming, a new queen is made at the original hive, and the old queen leaves with about half of the workers. They form a temporary hive-less structure (called a Bivuoac) while they conduct a search for a permanent home. Unfortunately, these swarms/bivouacs are often formed on low-hanging branches of trees, in people’s chimneys, etc., and they creep people out. So people call the fire department, etc., who in turn contact local beekeeping organizations which keep what are called swarm lists. Swarm lists are lists of eager beekeepers in the area who will gladly take a new hive of bees off of somebody’s property.
@@ -27,19 +24,18 @@ Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers
 - [x] Users can post a picture of the swarm
 - [x] A user is alerted if the email address already exists
 - [x] Users can see swarms they've claimed but not a separate page
-- [ ] Users can see swarms they've reported by have not been retrieved
-- [ ] Claims are removed from the database once the claimer confirms that the swarm was retrieved
-- [ ] Users can swipe down on the screen to refresh the location
+- [x] Users can see swarms they've reported but have not been removed
+- [x] Claims are removed from the database once the reporter deletes them
+- [x] Contact information between reporter and responder is exchanged
+- [x] Users can see swarm reports within a certain radius
+- [x] The reporting user can see who claimed the swarm
+- [x] Contact information between reporter and responder can be exchanged if both sides want that
+
+## Planned features in a future version:
 - [ ] Users are prevented from retrieving more than one swarm a week
 - [ ] A claimed swarm re-appears as available if it is not physically retrieved in 6 hours
-- [ ] Contact information between reporter and responder is exchanged
-- [ ] Users can see swarm reports within a certain radius
 - [ ] A responding user can see the report and find out how far away it is from their location/address, updated in real time
 - [ ] Users are notified when a new swarm is reported in their area
-- [ ] The reporting user can see who claimed the swarm and how far away they were when they claimed it.
-- [ ] Contact information between reporter and responder can be exchanged if both sides want that
-
-## Future features:
 - [ ] A claimed swarm re-appears as available if it is not physically retrieved by a certain amount of time
 - [ ] Swarm responders pay swarm reporters a very small sum of money for retrieving the swarm (this will incentivize the reporters to adopt)
 - [ ] Reporters and responders can cancel a report/claim
@@ -52,48 +48,10 @@ Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers
 - [ ] Rating/feedback data is persisted on a database
 - [ ] Ratings can influence e.g. the radius or frequency with which swarms are reported to a particular user
 
-## Planning
+## Potential future features:
+- [ ] Users can swipe down on the screen to refresh the location
 
-### Useful tutorials
-
-#### Potential
-* [GeoFire](https://github.com/firebase/geofire-java)
-
-#### Actual
-* [Google location service tutorial from treehouse](http://blog.teamtreehouse.com/beginners-guide-location-android)
-  * You may have to use Run-time permissions, which are not covered in the above tutorial
-
-### Master Checklist
-
-- [ ] Strip API key info. from commit history
-
-
-### Models
-- [x] SwarmReport
-
-
-### Forms
-- [x] Create a claim
-- [x] Create account
-- [x] Log in
-
-### Activities
-- [x] LoginActivity
-- [x] Landing activity
-- [x] Create an account activity
-- [x] Report swarm activity
-- [x] MainActivity (user see swarm reports in their city)
-
-### Adapters
-- [x] FirebaseViewHolder
-
-### API
-- [x] Google services
-
-## Specs/
-| Behavior                   | Input Example     | Output Example    |
-| -------------------------- | -----------------:| -----------------:|
-
+## Known issues and bugs
 
 ### Set Up
 
