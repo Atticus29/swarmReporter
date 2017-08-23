@@ -95,7 +95,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                 switch1.setChecked(false);
                 Log.d("personal", "switch1 actual status is " + Boolean.toString(switch1.isChecked()));
                 switch1.toggle();
-                contactOk = false;
+                contactOk = true;
                 phoneNumberTextView.setEnabled(true);
                 Log.d("personal", "got to the end of switch1 is checked");
             } else{
@@ -103,7 +103,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                 switch1.setChecked(true);
                 switch1.toggle();
                 Log.d("personal", "switch1 actual status is " + Boolean.toString(switch1.isChecked()));
-                contactOk = true;
+                contactOk = false;
                 phoneNumberTextView.setEnabled(false);
                 Log.d("personal", "got to the end of switch1 is not checked");
             }

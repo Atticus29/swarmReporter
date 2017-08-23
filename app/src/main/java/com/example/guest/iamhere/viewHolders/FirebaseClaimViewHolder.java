@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 import com.example.guest.iamhere.R;
 import com.example.guest.iamhere.SecretConstants;
 import com.example.guest.iamhere.activities.MapActivity;
-import com.example.guest.iamhere.models.GeoFireEntry;
 import com.example.guest.iamhere.models.SwarmReport;
 import com.example.guest.iamhere.models.User;
 import com.example.guest.iamhere.utilityClasses.Utilities;
@@ -35,11 +33,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements View.OnClickListener, OnMapReadyCallback {
     private String TAG = FirebaseClaimViewHolder.class.getSimpleName();
@@ -136,22 +135,14 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             claimantTextViewMyReportedSwarms.setText("This swarm has not yet been claimed");
         }
 
-
-//        contactTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.contactTextViewMyReportedSwarms);
-//        if(swarmReport.isClaimed()){
-//            contactTextViewMyReportedSwarms.setVisibility(View.VISIBLE);
-//            contactTextViewMyReportedSwarms.setText("Contact the claimant");
-//            contactTextViewMyReportedSwarms.setOnClickListener(this);
-//
-//        } else{
-//            Log.d("personal", "swarmIs Unclaimed so contact option not made available");
-//        }
-
         TextView sizeTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.sizeTextViewMyReportedSwarms);
         sizeTextViewMyReportedSwarms.setText("Size: The size of a " + myReportedSwarmReport.getSize());
 
         TextView accessibilityTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.accessibilityTextViewMyReportedSwarms);
         accessibilityTextViewMyReportedSwarms.setText("Accessibility: " + myReportedSwarmReport.getAccessibility());
+
+        TextView descriptionTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.descriptionTextViewMyReportedSwarms);
+        descriptionTextViewMyReportedSwarms.setText("Description: " + myReportedSwarmReport.getDescription());
 
 
     }
@@ -169,6 +160,9 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
 
         TextView reportedByTextViewMyClaims = (TextView) mView.findViewById(R.id.reportedByTextViewMyClaims);
         reportedByTextViewMyClaims.setText("Reported by: " + swarmReport.getReporterName());
+
+        TextView descriptionTextViewMyClaims = (TextView) mView.findViewById(R.id.descriptionTextViewMyClaims);
+        descriptionTextViewMyClaims.setText("Description: " + swarmReport.getDescription());
 
         contactReporterTextViewMyClaims = (TextView) mView.findViewById(R.id.contactReporterTextViewMyClaims);
 
@@ -211,6 +205,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         TextView distanceTextView = (TextView) mView.findViewById(R.id.claimantTextView);
         TextView sizeTextView = (TextView) mView.findViewById(R.id.sizeTextView);
         TextView accessibilityTextView = (TextView) mView.findViewById(R.id.accessibilityTextView);
+        TextView descriptionTextView = (TextView) mView.findViewById(R.id.descriptionTextView);
         Button claimSwarmButton = (Button) mView.findViewById(R.id.claimSwarmButton);
         claimSwarmButton.setOnClickListener(this);
         mapImageView.setOnClickListener(this);
@@ -222,6 +217,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         distanceTextView.setText("Located " + calculateDistanceAsString(claimerLatitude, swarmReport.getLatitude(), claimerLongitude, swarmReport.getLongitude(),0.0, 0.0) + " miles away.");
         sizeTextView.setText("Size: The size of a " + swarmReport.getSize());
         accessibilityTextView.setText("Accessibility: " + swarmReport.getAccessibility());
+        descriptionTextView.setText("Description: " + swarmReport.getDescription());
 
         ImageView swarmImage = (ImageView) mView.findViewById(R.id.swarmImage);
         if(swarmReport.getImageString() == null){
@@ -408,19 +404,9 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             path.add("users/" + claimantIdTemp + "/claimedSwarms/" + myReportedSwarmReport.getReportId());
             Utilities.removeSwarmReportAtNodePath(path);
 
-//            GeoFireEntry geoFireEntry = new GeoFireEntry(myReportedSwarmReport);
-//            geoFireEntry.makeEntryInFirebase(myReportedSwarmReport.getReportId());
-
             Utilities.establishSwarmReportInGeoFire(myReportedSwarmReport);
 
             Utilities.updateSwarmReportWithItsGeoFireCode(myReportedSwarmReport, userId);
-
-//            try{
-//                TimeUnit.SECONDS.sleep(5);
-//            } catch(Exception e){
-//                Log.d("sleepError", "sleeping failed");
-//                e.printStackTrace();
-//            }
 
         }
         if(v == contactTextViewMyReportedSwarms){

@@ -21,6 +21,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -65,6 +66,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private DatabaseReference ref;
     private String size;
     private String accessibility;
+    private String description;
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
     private GoogleApiClient mGoogleApiClient;
@@ -89,9 +91,9 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     @Bind(R.id.ladder) RadioButton ladder;
     @Bind(R.id.reach) RadioButton reach;
     @Bind(R.id.hasLadder) RadioButton hasLadder;
-    @Bind(R.id.locationTextView) TextView locationTextView;
     @Bind(R.id.addImageButton) Button addImageButton;
     @Bind(R.id.progressBar) ProgressBar progressBar;
+    @Bind(R.id.descriptionTextView) EditText descriptionTextView;
 
 
     @Override
@@ -210,13 +212,18 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         String timeString = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(currentTimestamp);
         size = getSize();
         accessibility = getAccessibility();
+        try{
+            description = getDescription();
+        } catch(Exception e){
+            Log.d("personal", "description is null");
+        }
         if (size != null && accessibility != null) {
-            Log.d("personal", "newSwarm got into newSwarmReport assignment");
             newSwarmReport.setLatitude(currenLatitude);
             newSwarmReport.setLongitude(currentLongitude);
             newSwarmReport.setReporterName(userName);
             newSwarmReport.setReporterId(userId);
             newSwarmReport.setSize(size);
+            newSwarmReport.setDescription(description);
             newSwarmReport.setClaimed(false);
             newSwarmReport.setAccessibility(accessibility);
             newSwarmReport.setReportTimestamp(timeString);
@@ -285,6 +292,15 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
             size = "beachball";
         }
         return size;
+    }
+
+    public String getDescription() throws Exception{
+        String returnVal = null;
+        returnVal = descriptionTextView.getText().toString().trim();
+        if(returnVal == null){
+            throw new Exception("Description is null");
+        }
+        return returnVal;
     }
 
     public String getAccessibility() {

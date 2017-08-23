@@ -130,8 +130,8 @@
 
         </RadioGroup>
 
-        <TextView
-            android:id="@+id/locationTextView"
+        <EditText
+            android:id="@+id/descriptionTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -140,13 +140,15 @@
             android:layout_marginStart="8dp"
             android:textColor="@color/primary_text"
             android:gravity="center"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:textSize="18sp"
+            android:hint="Add a description (e.g., the maple tree in the front yard on the corner of Madison and Portsmouth"
+            android:textColorHint="@color/primary_text"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/radioGroupAccessibility">
+            app:layout_constraintTop_toBottomOf="@+id/radioGroupAccessibility"
+            android:layout_marginTop="8dp">
 
-        </TextView>
+        </EditText>
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -158,7 +160,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/locationTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/descriptionTextView" />
 
         <Button
             android:id="@+id/addImageButton"
@@ -179,7 +181,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:textColor="@color/primary_text"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/locationTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/descriptionTextView" />
 
         <Button
             android:id="@+id/reportSwarmButton"
