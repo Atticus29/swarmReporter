@@ -20,4 +20,6 @@
     <color name="divider">#BDBDBD</color>
 
     <color name="hint">#808080</color>
+
+    <color name="link">#0645AD</color>
 </resources>

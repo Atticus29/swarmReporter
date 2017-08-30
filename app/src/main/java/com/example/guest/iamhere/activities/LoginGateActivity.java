@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -22,6 +23,7 @@ public class LoginGateActivity extends AppCompatActivity implements View.OnClick
 
     @Bind(R.id.gateLoginButton) Button gateLoginButton;
     @Bind(R.id.gateRegisterButton) Button gateRegisterButton;
+    @Bind(R.id.aboutButton) Button aboutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,7 @@ public class LoginGateActivity extends AppCompatActivity implements View.OnClick
 
         gateLoginButton.setOnClickListener(this);
         gateRegisterButton.setOnClickListener(this);
+        aboutButton.setOnClickListener(this);
     }
 
     @Override
@@ -50,6 +53,9 @@ public class LoginGateActivity extends AppCompatActivity implements View.OnClick
             startActivity(intent);
         } else if(v == gateLoginButton){
             Intent intent = new Intent(LoginGateActivity.this, LoginActivity.class);
+            startActivity(intent);
+        } else if (v == aboutButton){
+            Intent intent = new Intent(LoginGateActivity.this, AboutActivity.class);
             startActivity(intent);
         }
     }
