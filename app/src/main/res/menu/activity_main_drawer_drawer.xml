@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/action_logout"
+            android:title="Logout"
+            />
+        <item
+            android:id="@+id/action_newReport"
+            android:title="Report A Swarm"
+            />
+        <item
+            android:id="@+id/action_myClaims"
+            android:title="View My Claimed Swarms"
+            />
+        <item
+            android:id="@+id/action_myReportedSwarms"
+            android:title="View My Reported Swarms"
+            />
+    </group>
+
+</menu>
