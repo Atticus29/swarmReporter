@@ -16,6 +16,7 @@ import android.widget.TextView;
 import fisherdynamic.swarmreporter1.R;
 import fisherdynamic.swarmreporter1.SecretConstants;
 import fisherdynamic.swarmreporter1.activities.MapActivity;
+import fisherdynamic.swarmreporter1.activities.MyClaimedSwarmsActivity;
 import fisherdynamic.swarmreporter1.models.SwarmReport;
 import fisherdynamic.swarmreporter1.models.User;
 import fisherdynamic.swarmreporter1.utilityClasses.Utilities;
@@ -294,6 +295,8 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             path.add("all_unclaimed/" +  currentSwarmReport.getReportId());
             Utilities.removeSwarmReportAtNodePath(path);
 
+            Intent intent = new Intent(mContext, MyClaimedSwarmsActivity.class);
+            mContext.startActivity(intent);
         }
         if(v == mapImageView){
             Intent intent = new Intent(mContext, MapActivity.class);

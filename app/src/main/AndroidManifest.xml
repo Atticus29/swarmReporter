@@ -40,10 +40,11 @@
         </activity>
         <activity
             android:name=".activities.MainActivity"
-            android:label="@string/app_name"
+            android:label="Unclaimed Swarms"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.NewSwarmReportActivity"
+            android:label="Report A New Swarm"
             android:value="fisherdynamic.swarmreporter1.activities.MainActivity">
             <meta-data
                 android:name="com.google.firebase.messaging.default_notification_icon"
@@ -55,22 +56,26 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fisherdynamic.swarmreporter1.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.MapActivity">
+        <activity android:name=".activities.MapActivity"
+            android:label="Detailed Map View">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fisherdynamic.swarmreporter1.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.MyClaimedSwarmsActivity">
+        <activity android:name=".activities.MyClaimedSwarmsActivity"
+            android:label="My Claimed Swarms">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fisherdynamic.swarmreporter1.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.MyReportedSwarmsActivity">
+        <activity android:name=".activities.MyReportedSwarmsActivity"
+            android:label="My Reported Swarms">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fisherdynamic.swarmreporter1.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.AboutActivity">
+        <activity android:name=".activities.AboutActivity"
+            android:label="About SwarmReporter">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fisherdynamic.swarmreporter1.activities.LoginGateActivity">
