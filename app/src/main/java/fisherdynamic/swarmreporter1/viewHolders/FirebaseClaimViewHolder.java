@@ -40,7 +40,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 
 public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements View.OnClickListener, OnMapReadyCallback {
-    private String TAG = FirebaseClaimViewHolder.class.getSimpleName();
     private Double claimerLatitude;
     private Double claimerLongitude;
     private SwarmReport currentSwarmReport;

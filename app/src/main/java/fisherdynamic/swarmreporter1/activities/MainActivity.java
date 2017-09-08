@@ -302,7 +302,6 @@ public class MainActivity extends AppCompatActivity
     private void handleNewLocation(Location location) {
         currenLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
-        Log.d("personal", "lat is " + Double.toString(currenLatitude) + " and longitude is " + Double.toString(currentLongitude));
         if (currenLatitude != null && currentLongitude != null) {
             setUpGeoFire();
         }
@@ -340,10 +339,6 @@ public class MainActivity extends AppCompatActivity
                 clearCurrentUserNode(userId);
                 swarmReportIds = Utilities.removeItemFromArrayList(key, swarmReportIds);
                 Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
-//                ArrayList<String> children = new ArrayList<>();
-//                children.add(userId + "_current");
-//                setUpFirebaseAdapter(children);
-
             }
 
             @Override
@@ -392,14 +387,6 @@ public class MainActivity extends AppCompatActivity
         progressBarForRecyclerView.setVisibility(View.GONE);
     }
 
-    public static void removeValueEventListener(HashMap<Query, ValueEventListener> hashMap) {
-        for (Map.Entry<Query, ValueEventListener> entry : hashMap.entrySet()) {
-            Query databaseReference = entry.getKey();
-            ValueEventListener valueEventListener = entry.getValue();
-            databaseReference.removeEventListener(valueEventListener);
-        }
-    }
-
     private void setUpBlankAdapter() {
         claimRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
@@ -414,14 +401,11 @@ public class MainActivity extends AppCompatActivity
         if (mFirebaseAdapter != null) {
             mFirebaseAdapter.cleanup();
         }
-//        removeValueEventListener(hashMap);
-
     }
 
     @Override
     public void onConnectionSuspended(int i) {
         Log.d("personal", "Location services suspended. Please reconnect");
-
     }
 
     @Override
