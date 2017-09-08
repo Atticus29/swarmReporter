@@ -58,6 +58,11 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
         ButterKnife.bind(this);
+
+        passwordInputTextView.setTypeface(nameInputTextView.getTypeface());
+        passwordConfirmInputTextView.setTypeface(nameInputTextView.getTypeface());
+        phoneNumberTextView.setTypeface(nameInputTextView.getTypeface());
+
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mSharedPreferences.edit();
         phoneNumberTextView.setEnabled(false);
