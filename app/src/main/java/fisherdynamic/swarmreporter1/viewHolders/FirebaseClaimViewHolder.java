@@ -119,7 +119,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         dropImageIntoView(swarmReport.getImageString(), mContext, swarmImageMyReportedSwarms);
 
         TextView timeStampTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.timeStampTextViewMyReportedSwarms);
-        timeStampTextViewMyReportedSwarms.setText("Reported on: " + myReportedSwarmReport.getReportTimestamp());
+        timeStampTextViewMyReportedSwarms.setText("Reported: " + myReportedSwarmReport.getReportTimestamp());
 
         TextView claimantTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.claimantTextViewMyReportedSwarms);
         if(myReportedSwarmReport.isClaimed()){
@@ -134,7 +134,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         }
 
         TextView sizeTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.sizeTextViewMyReportedSwarms);
-        sizeTextViewMyReportedSwarms.setText("Size: The size of a " + myReportedSwarmReport.getSize());
+        sizeTextViewMyReportedSwarms.setText("Size: " + myReportedSwarmReport.getSize());
 
         TextView accessibilityTextViewMyReportedSwarms = (TextView) mView.findViewById(R.id.accessibilityTextViewMyReportedSwarms);
         accessibilityTextViewMyReportedSwarms.setText("Accessibility: " + myReportedSwarmReport.getAccessibility());
@@ -154,10 +154,10 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         accessibilityTextViewMyClaims.setText("Accessibility: " + swarmReport.getAccessibility());
 
         TextView sizeTextViewMyClaims = (TextView) mView.findViewById(R.id.sizeTextViewMyClaims);
-        sizeTextViewMyClaims.setText("The size of a: " + swarmReport.getSize());
+        sizeTextViewMyClaims.setText("Size: " + swarmReport.getSize());
 
         TextView reportedByTextViewMyClaims = (TextView) mView.findViewById(R.id.reportedByTextViewMyClaims);
-        reportedByTextViewMyClaims.setText("Reported by: " + swarmReport.getReporterName());
+        reportedByTextViewMyClaims.setText("By: " + swarmReport.getReporterName());
 
         TextView descriptionTextViewMyClaims = (TextView) mView.findViewById(R.id.descriptionTextViewMyClaims);
         descriptionTextViewMyClaims.setText("Description: " + swarmReport.getDescription());
@@ -190,7 +190,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
 
 
         TextView timeStampTextViewMyClaims = (TextView) mView.findViewById(R.id.timeStampTextViewMyClaims);
-        timeStampTextViewMyClaims.setText("Reported on: " + swarmReport.getReportTimestamp());
+        timeStampTextViewMyClaims.setText("Reported: " + swarmReport.getReportTimestamp());
 
         ImageView swarmImageMyClaims = (ImageView) mView.findViewById(R.id.swarmImageMyClaims);
         dropImageIntoView(swarmReport.getImageString(), mContext, swarmImageMyClaims);
@@ -208,12 +208,12 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         claimSwarmButton.setOnClickListener(this);
         mapImageView.setOnClickListener(this);
 
-        timeStampTextView.setText("Reported on: " + swarmReport.getReportTimestamp());
+        timeStampTextView.setText("Reported: " + swarmReport.getReportTimestamp());
 
         //TODO get current location lat and long and put here
 
-        distanceTextView.setText("Located " + calculateDistanceAsString(claimerLatitude, swarmReport.getLatitude(), claimerLongitude, swarmReport.getLongitude(),0.0, 0.0) + " miles away.");
-        sizeTextView.setText("Size: The size of a " + swarmReport.getSize());
+        distanceTextView.setText(calculateDistanceAsString(claimerLatitude, swarmReport.getLatitude(), claimerLongitude, swarmReport.getLongitude(),0.0, 0.0) + " mile(s) away.");
+        sizeTextView.setText("Size: " + swarmReport.getSize());
         accessibilityTextView.setText("Accessibility: " + swarmReport.getAccessibility());
         descriptionTextView.setText("Description: " + swarmReport.getDescription());
 

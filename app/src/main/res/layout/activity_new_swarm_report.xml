@@ -146,8 +146,6 @@
         <EditText
             android:id="@+id/descriptionTextView"
             android:layout_width="0dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"

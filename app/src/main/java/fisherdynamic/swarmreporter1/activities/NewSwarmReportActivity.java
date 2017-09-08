@@ -196,7 +196,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
-        String timeString = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(currentTimestamp);
+        String timeString = new SimpleDateFormat("MM/dd/yyyy h:mm a").format(currentTimestamp);
         size = getSize();
         accessibility = getAccessibility();
         try{
