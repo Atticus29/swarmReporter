@@ -56,6 +56,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mSharedPreferences.edit();
 
+        passwordTextView.setTypeface(emailTextView.getTypeface());
+
         //Disable google authentication for the time being because the phone number stuff is difficult to do when they log in through google
         signInButton.setVisibility(View.GONE);
         orText.setVisibility(View.GONE);

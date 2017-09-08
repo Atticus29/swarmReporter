@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import fisherdynamic.swarmreporter1.R;
 
@@ -21,8 +22,8 @@ public class LoginGateActivity extends AppCompatActivity implements View.OnClick
 
 
     @Bind(R.id.gateLoginButton) Button gateLoginButton;
-    @Bind(R.id.gateRegisterButton) Button gateRegisterButton;
-    @Bind(R.id.aboutButton) Button aboutButton;
+    @Bind(R.id.gateRegisterText) TextView gateRegisterText;
+    @Bind(R.id.aboutLink) TextView aboutLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,19 +42,19 @@ public class LoginGateActivity extends AppCompatActivity implements View.OnClick
         }
 
         gateLoginButton.setOnClickListener(this);
-        gateRegisterButton.setOnClickListener(this);
-        aboutButton.setOnClickListener(this);
+        gateRegisterText.setOnClickListener(this);
+        aboutLink.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if(v == gateRegisterButton){
+        if(v == gateRegisterText){
             Intent intent = new Intent(LoginGateActivity.this, CreateAccountActivity.class);
             startActivity(intent);
         } else if(v == gateLoginButton){
             Intent intent = new Intent(LoginGateActivity.this, LoginActivity.class);
             startActivity(intent);
-        } else if (v == aboutButton){
+        } else if (v == aboutLink){
             Intent intent = new Intent(LoginGateActivity.this, AboutActivity.class);
             startActivity(intent);
         }
