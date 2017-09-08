@@ -210,24 +210,26 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         size = getSize();
         if(size != null){
             newSwarmReport.setSize(size);
+            accessibility = getAccessibility();
+            if(accessibility != null){
+                newSwarmReport.setAccessibility(accessibility);
+                try{
+                    description = getDescription();
+                    newSwarmReport.setDescription(description);
+                } catch(Exception e){
+                    descriptionTextView.setError("Please add a detailed description");
+//                    Toast.makeText(NewSwarmReportActivity.this, "Please add a detailed description about the location", Toast.LENGTH_SHORT).show();
+                    Log.d("personal", "description is null");
+                }
+            } else{
+                Toast.makeText(NewSwarmReportActivity.this, "Please select accessibility", Toast.LENGTH_SHORT).show();
+            }
         } else{
-            //TODO toast
+            Toast.makeText(NewSwarmReportActivity.this, "Please select size", Toast.LENGTH_SHORT).show();
         }
 
-        accessibility = getAccessibility();
-        if(accessibility != null){
-            newSwarmReport.setAccessibility(accessibility);
-        } else{
-            //TODO toast
-        }
 
-        try{
-            description = getDescription();
-            newSwarmReport.setDescription(description);
-        } catch(Exception e){
-            descriptionTextView.setError("Please add a detailed description");
-            Log.d("personal", "description is null");
-        }
+
 
         if (size != null && accessibility != null && description != null) {
             database = FirebaseDatabase.getInstance();
@@ -249,14 +251,8 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                     Utilities.updateSwarmReportWithItsGeoFireCode(newSwarmReport, userId);
                 }
                 Intent intent = new Intent(NewSwarmReportActivity.this, MainActivity.class);
-                intent.putExtra("userName", userName); //TODO remove this?
+//                intent.putExtra("userName", userName); //TODO remove this?
                 startActivity(intent);
-            } else  if(newSwarmReport.getSize() == null){
-                Toast.makeText(NewSwarmReportActivity.this, "Please select size", Toast.LENGTH_SHORT).show();
-            } else if (newSwarmReport.getAccessibility() == null){
-                Toast.makeText(NewSwarmReportActivity.this, "Please select accessibility", Toast.LENGTH_SHORT).show();
-            } else if (newSwarmReport.getDescription() == null || newSwarmReport.getDescription().equals("")){
-                Toast.makeText(NewSwarmReportActivity.this, "Please add a detailed description about the location", Toast.LENGTH_SHORT).show();
             }
         }
     }
