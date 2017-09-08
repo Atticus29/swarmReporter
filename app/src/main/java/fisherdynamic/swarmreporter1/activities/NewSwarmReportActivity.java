@@ -251,7 +251,6 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                     Utilities.updateSwarmReportWithItsGeoFireCode(newSwarmReport, userId);
                 }
                 Intent intent = new Intent(NewSwarmReportActivity.this, MainActivity.class);
-//                intent.putExtra("userName", userName); //TODO remove this?
                 startActivity(intent);
             }
         }
