@@ -141,7 +141,7 @@
             android:textColor="@color/primary_text"
             android:gravity="center"
             android:textSize="18sp"
-            android:hint="Add a description (e.g., the maple tree in the front yard on the corner of Madison and Portsmouth"
+            android:hint="Add a detailed description of the location"
             android:textColorHint="@color/primary_text"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
