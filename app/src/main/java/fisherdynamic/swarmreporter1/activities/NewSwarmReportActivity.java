@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import fisherdynamic.swarmreporter1.R;
@@ -76,6 +78,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     @Bind(R.id.addImageButton) Button addImageButton;
     @Bind(R.id.progressBar) ProgressBar progressBar;
     @Bind(R.id.descriptionTextView) EditText descriptionTextView;
+    @Bind(R.id.sizeLabel) TextView sizeLabel;
 
 
     @Override
@@ -87,6 +90,8 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
 
         reportSwarmButton.setOnClickListener(this);
         addImageButton.setOnClickListener(this);
+
+        sizeLabel.requestFocus();
 
         auth = FirebaseAuth.getInstance();
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);

@@ -15,7 +15,8 @@
         android:layout_height="match_parent"
         tools:context="fisherdynamic.swarmreporter1.activities.NewSwarmReportActivity"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="81dp">
+        tools:layout_editor_absoluteY="81dp"
+        android:id="@+id/constraintLayoutNewSwarmReport">
 
 
         <RadioGroup
@@ -27,6 +28,8 @@
 
             <TextView
                 android:id="@+id/sizeLabel"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/primary_text"
@@ -143,6 +146,8 @@
         <EditText
             android:id="@+id/descriptionTextView"
             android:layout_width="0dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
