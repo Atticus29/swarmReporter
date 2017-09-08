@@ -406,6 +406,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnectionSuspended(int i) {
         Log.d("personal", "Location services suspended. Please reconnect");
+        Toast.makeText(MainActivity.this, "Location services suspended. Please reconnect", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -417,7 +418,7 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
         } else {
-            Log.d("personal", "Location services failed with code " + connectionResult.getErrorCode());
+            Toast.makeText(MainActivity.this, "Location services failed with code " + connectionResult.getErrorCode(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -440,8 +441,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d("personal", "location changed");
         handleNewLocation(location);
     }
-
 }
