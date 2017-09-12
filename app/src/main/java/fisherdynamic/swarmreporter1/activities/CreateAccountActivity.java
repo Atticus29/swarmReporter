@@ -51,7 +51,6 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     @Bind(R.id.passwordInputTextView) EditText passwordInputTextView;
     @Bind(R.id.passwordConfirmInputTextView) EditText passwordConfirmInputTextView;
     @Bind(R.id.phoneNumberTextView) EditText phoneNumberTextView;
-    @Bind(R.id.switch1) Switch switch1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -65,10 +64,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mSharedPreferences.edit();
-        phoneNumberTextView.setEnabled(false);
-
-        switch1.setChecked(false);
-        switch1.setOnClickListener(this);
+        phoneNumberTextView.setEnabled(true);
 
 
         createAuthStateListener();
@@ -92,25 +88,6 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         if (v == createInputButton) {
             createAccount();
         }
-        if (v == switch1){
-            if(switch1.isChecked()){
-                Log.d("personal", "switch1 is checked entered");
-                switch1.setChecked(false);
-                Log.d("personal", "switch1 actual status is " + Boolean.toString(switch1.isChecked()));
-                switch1.toggle();
-                contactOk = true;
-                phoneNumberTextView.setEnabled(true);
-                Log.d("personal", "got to the end of switch1 is checked");
-            } else{
-                Log.d("personal", "switch1 is not checked");
-                switch1.setChecked(true);
-                switch1.toggle();
-                Log.d("personal", "switch1 actual status is " + Boolean.toString(switch1.isChecked()));
-                contactOk = false;
-                phoneNumberTextView.setEnabled(false);
-                Log.d("personal", "got to the end of switch1 is not checked");
-            }
-        }
     }
 
     private void addToSharedPreferences(String key, String passedUserName) {
@@ -125,6 +102,11 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         email = emailInputTextView.getText().toString().trim();
         userName = nameInputTextView.getText().toString().trim();
         phoneNumber = phoneNumberTextView.getText().toString().trim();
+        if(phoneNumber == null || phoneNumber.equals("")){
+            contactOk = false;
+        } else{
+            contactOk = true;
+        }
 
         if (isValidEmail(email) && isValidName(userName) && isValidPassword(password, confirmPassword)) {
             mAuth.createUserWithEmailAndPassword(email, password)
