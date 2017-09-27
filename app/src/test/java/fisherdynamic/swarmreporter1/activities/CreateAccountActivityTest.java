@@ -23,8 +23,8 @@ public class CreateAccountActivityTest {
     public void isValidPhoneNumber_returnsTrueOnlyWhenValidPhoneNumber() throws Exception {
 //        assertTrue(CreateAccountActivity.isValidPhoneNumber("5556667777"));
 //        assertFalse(CreateAccountActivity.isValidPhoneNumber("55566j7777"));
-//        assertFalse(CreateAccountActivity.isValidPhoneNumber("55566677777"));
-//        assertFalse(CreateAccountActivity.isValidPhoneNumber("555666777"));
+//        assertFalse(CreateAccountActivity.isValidPhoneNumber("555666777888999"));
+//        assertFalse(CreateAccountActivity.isValidPhoneNumber("55566677"));
     }
 
 }
