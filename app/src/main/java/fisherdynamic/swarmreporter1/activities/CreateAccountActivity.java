@@ -223,8 +223,8 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
 
     public static boolean isValidPhoneNumber (String phoneNumber){
         boolean returnVal = false;
-        //Patterns.PHONE.matcher(phoneNumber).matches()
-        if(PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber) && phoneNumber.length() > 6 && phoneNumber.length() < 13 || phoneNumber == null || phoneNumber.equals("")){
+        //PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)
+        if(Patterns.PHONE.matcher(phoneNumber).matches() && phoneNumber.length() > 6 && phoneNumber.length() < 13 || phoneNumber == null || phoneNumber.equals("")){
             returnVal = true;
         }
         if(returnVal == false){
