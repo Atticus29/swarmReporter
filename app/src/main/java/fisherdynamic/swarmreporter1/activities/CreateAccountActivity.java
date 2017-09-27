@@ -7,11 +7,14 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.PhoneNumberUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import fisherdynamic.swarmreporter1.R;
@@ -30,7 +33,7 @@ import butterknife.ButterKnife;
 
 public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener {
     private FirebaseAuth mAuth;
-    private ProgressDialog mAuthProgressDialog;
+    private static ProgressDialog mAuthProgressDialog;
     private FirebaseAuth.AuthStateListener authStateListener;
 
     private String userName;
@@ -43,20 +46,26 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     private SharedPreferences.Editor mEditor;
     private String pushId;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private static EditText emailInputTextView;
+    private static TextView nameInputTextView;
+    private static TextView phoneNumberTextView;
 
 
     @Bind(R.id.createInputButton) Button createInputButton;
-    @Bind(R.id.nameInputTextView) EditText nameInputTextView;
-    @Bind(R.id.emailInputTextView) EditText emailInputTextView;
+//    @Bind(R.id.nameInputTextView) EditText nameInputTextView;
+//    @Bind(R.id.emailInputTextView) EditText emailInputTextView;
     @Bind(R.id.passwordInputTextView) EditText passwordInputTextView;
     @Bind(R.id.passwordConfirmInputTextView) EditText passwordConfirmInputTextView;
-    @Bind(R.id.phoneNumberTextView) EditText phoneNumberTextView;
+//    @Bind(R.id.phoneNumberTextView) EditText phoneNumberTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
         ButterKnife.bind(this);
+        emailInputTextView = (EditText) findViewById(R.id.emailInputTextView);
+        nameInputTextView = (TextView) findViewById(R.id.nameInputTextView);
+        phoneNumberTextView = (TextView) findViewById(R.id.phoneNumberTextView);
 
         passwordInputTextView.setTypeface(nameInputTextView.getTypeface());
         passwordConfirmInputTextView.setTypeface(nameInputTextView.getTypeface());
@@ -96,7 +105,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
 
     public void createAccount() {
 
-        mAuthProgressDialog.show();
+
         confirmPassword = passwordConfirmInputTextView.getText().toString().trim();
         password = passwordInputTextView.getText().toString().trim();
         email = emailInputTextView.getText().toString().trim();
@@ -108,7 +117,8 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
             contactOk = true;
         }
 
-        if (isValidEmail(email) && isValidName(userName) && isValidPassword(password, confirmPassword)) {
+        if (isValidName(userName) && isValidEmail(email) && isValidPhoneNumber(phoneNumber) && isValidPassword(password, confirmPassword)) {
+            mAuthProgressDialog.show();
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -160,7 +170,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                 });
     }
 
-    private boolean isValidEmail(String email) {
+    private static boolean isValidEmail(String email) {
         boolean isGoodEmail =
                 (email != null && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches());
         if (!isGoodEmail) {
@@ -171,7 +181,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         return isGoodEmail;
     }
 
-    private boolean isValidName(String name) {
+    private static boolean isValidName(String name) {
         if (name.equals("")) {
             nameInputTextView.setError("Please enter your name");
             mAuthProgressDialog.dismiss();
@@ -211,4 +221,16 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         };
     }
 
+    public static boolean isValidPhoneNumber (String phoneNumber){
+        boolean returnVal = false;
+        //Patterns.PHONE.matcher(phoneNumber).matches()
+        if(PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber) && phoneNumber.length() > 6 && phoneNumber.length() < 13 || phoneNumber == null || phoneNumber.equals("")){
+            returnVal = true;
+        }
+        if(returnVal == false){
+//            Toast.makeText(CreateAccountActivity.this, "Invalid phone number", Toast.LENGTH_SHORT).show();
+            phoneNumberTextView.setError("Invalid phone number");
+        }
+        return returnVal;
+    }
 }
