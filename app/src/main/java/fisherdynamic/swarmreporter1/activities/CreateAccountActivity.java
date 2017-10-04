@@ -117,6 +117,11 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
             contactOk = true;
         }
 
+        if(!isValidPhoneNumber(phoneNumber)){
+            //            Toast.makeText(CreateAccountActivity.this, "Invalid phone number", Toast.LENGTH_SHORT).show();
+            phoneNumberTextView.setError("Invalid phone number");
+        }
+
         if (isValidName(userName) && isValidEmail(email) && isValidPhoneNumber(phoneNumber) && isValidPassword(password, confirmPassword)) {
             mAuthProgressDialog.show();
             mAuth.createUserWithEmailAndPassword(email, password)
@@ -226,10 +231,6 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         //PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)
         if(Patterns.PHONE.matcher(phoneNumber).matches() && phoneNumber.length() > 6 && phoneNumber.length() < 13 || phoneNumber == null || phoneNumber.equals("")){
             returnVal = true;
-        }
-        if(returnVal == false){
-//            Toast.makeText(CreateAccountActivity.this, "Invalid phone number", Toast.LENGTH_SHORT).show();
-            phoneNumberTextView.setError("Invalid phone number");
         }
         return returnVal;
     }

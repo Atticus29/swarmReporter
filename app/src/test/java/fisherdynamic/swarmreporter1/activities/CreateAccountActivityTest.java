@@ -9,13 +9,10 @@ import static org.junit.Assert.*;
  * Created by mf on 9/11/17.
  */
 public class CreateAccountActivityTest {
+
+
     @Before
     public void setUp() throws Exception {
-
-    }
-
-    @After
-    public void tearDown() throws Exception {
 
     }
 
@@ -27,6 +24,11 @@ public class CreateAccountActivityTest {
 //        assertFalse(createAccountActivity.isValidPhoneNumber("55566j7777"));
 //        assertFalse(createAccountActivity.isValidPhoneNumber("555666777888999"));
 //        assertFalse(createAccountActivity.isValidPhoneNumber("55566677"));
+    }
+
+    @After
+    public void tearDown() throws Exception {
+
     }
 
 }
