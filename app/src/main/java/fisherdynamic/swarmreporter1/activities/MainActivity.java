@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import fisherdynamic.swarmreporter1.R;
 import fisherdynamic.swarmreporter1.SecretConstants;
+import fisherdynamic.swarmreporter1.models.SwarmNotification;
 import fisherdynamic.swarmreporter1.models.SwarmReport;
 import fisherdynamic.swarmreporter1.utilityClasses.Utilities;
 import fisherdynamic.swarmreporter1.viewHolders.FirebaseClaimViewHolder;
@@ -140,6 +141,8 @@ public class MainActivity extends AppCompatActivity
             Log.d("personal", "got into changing userName in textView");
             greetingNameTextView.setText(userName);
         }
+
+        SwarmNotification swarmNotification = new SwarmNotification("New swarm", "New swarm", "A new swarm has been reported in your area", claimRecyclerView);
 
         auth = FirebaseAuth.getInstance();
         Log.d("personal", "is auth null? " + Boolean.toString(auth == null));
