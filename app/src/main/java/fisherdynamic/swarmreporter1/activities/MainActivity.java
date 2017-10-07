@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity
             greetingNameTextView.setText(userName);
         }
 
-        SwarmNotification swarmNotification = new SwarmNotification("New swarm", "New swarm", "A new swarm has been reported in your area", claimRecyclerView);
+//        SwarmNotification swarmNotification = new SwarmNotification("New swarm", "New swarm", "A new swarm has been reported in your area", claimRecyclerView);
 
         auth = FirebaseAuth.getInstance();
         Log.d("personal", "is auth null? " + Boolean.toString(auth == null));
