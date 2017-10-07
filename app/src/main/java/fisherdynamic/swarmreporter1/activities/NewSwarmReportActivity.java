@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import fisherdynamic.swarmreporter1.R;
@@ -76,6 +78,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     @Bind(R.id.addImageButton) Button addImageButton;
     @Bind(R.id.progressBar) ProgressBar progressBar;
     @Bind(R.id.descriptionTextView) EditText descriptionTextView;
+    @Bind(R.id.sizeLabel) TextView sizeLabel;
 
 
     @Override
@@ -87,6 +90,8 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
 
         reportSwarmButton.setOnClickListener(this);
         addImageButton.setOnClickListener(this);
+
+        sizeLabel.requestFocus();
 
         auth = FirebaseAuth.getInstance();
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -191,32 +196,46 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         Calendar calendar = Calendar.getInstance();
         java.util.Date now = calendar.getTime();
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
-        String timeString = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(currentTimestamp);
-        size = getSize();
-        accessibility = getAccessibility();
-        try{
-            description = getDescription();
-        } catch(Exception e){
-            Log.d("personal", "description is null");
+        String timeString = new SimpleDateFormat("MM/dd/yyyy h:mm a").format(currentTimestamp);
+        newSwarmReport.setLatitude(currenLatitude);
+        newSwarmReport.setLongitude(currentLongitude);
+        newSwarmReport.setReporterName(userName);
+        newSwarmReport.setReporterId(userId);
+        newSwarmReport.setClaimed(false);
+        newSwarmReport.setReportTimestamp(timeString);
+        if (newSwarmReport.getImageString() == null) {
+            newSwarmReport.setImageString("https://coxshoney.com/wp-content/uploads/bee_swarm_man.jpg");
         }
-        if (size != null && accessibility != null) {
-            newSwarmReport.setLatitude(currenLatitude);
-            newSwarmReport.setLongitude(currentLongitude);
-            newSwarmReport.setReporterName(userName);
-            newSwarmReport.setReporterId(userId);
+
+        size = getSize();
+        if(size != null){
             newSwarmReport.setSize(size);
-            newSwarmReport.setDescription(description);
-            newSwarmReport.setClaimed(false);
-            newSwarmReport.setAccessibility(accessibility);
-            newSwarmReport.setReportTimestamp(timeString);
-            if (newSwarmReport.getImageString() == null) {
-                newSwarmReport.setImageString("https://coxshoney.com/wp-content/uploads/bee_swarm_man.jpg");
+            accessibility = getAccessibility();
+            if(accessibility != null){
+                newSwarmReport.setAccessibility(accessibility);
+                try{
+                    description = getDescription();
+                    newSwarmReport.setDescription(description);
+                } catch(Exception e){
+                    descriptionTextView.setError("Please add a detailed description");
+//                    Toast.makeText(NewSwarmReportActivity.this, "Please add a detailed description about the location", Toast.LENGTH_SHORT).show();
+                    Log.d("personal", "description is null");
+                }
+            } else{
+                Toast.makeText(NewSwarmReportActivity.this, "Please select accessibility", Toast.LENGTH_SHORT).show();
             }
+        } else{
+            Toast.makeText(NewSwarmReportActivity.this, "Please select size", Toast.LENGTH_SHORT).show();
+        }
+
+
+
+
+        if (size != null && accessibility != null && description != null) {
             database = FirebaseDatabase.getInstance();
             ref = database.getReference("all_unclaimed");
             pushRef = ref.push();
             String pushId = pushRef.getKey();
-            Log.d("personal", "pushId is " + pushId);
             newSwarmReport.setReportId(pushId);
         }
         if (v == addImageButton) {
@@ -225,23 +244,14 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                 startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
             }
         } else if (v == reportSwarmButton) {
-            if (newSwarmReport.getSize() != null && newSwarmReport.getAccessibility() != null) {
+            if (newSwarmReport.getSize() != null && newSwarmReport.getAccessibility() != null && newSwarmReport.getDescription() != null && !newSwarmReport.getDescription().equals("")) {
                 if (newSwarmReport.getReportId() != null) {
-                    Log.d("personal", "newSwarm inside reportSwarmButton userId is " + userId);
-                    //TODO maybe add Completion Listener if this gives you trouble
                     pushRef.setValue(newSwarmReport);
-
-
                     Utilities.establishSwarmReportInGeoFire(newSwarmReport);
-
                     Utilities.updateSwarmReportWithItsGeoFireCode(newSwarmReport, userId);
-
                 }
                 Intent intent = new Intent(NewSwarmReportActivity.this, MainActivity.class);
-                intent.putExtra("userName", userName);
                 startActivity(intent);
-            } else {
-                Toast.makeText(NewSwarmReportActivity.this, "Please select size and accessibility", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -279,7 +289,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     public String getDescription() throws Exception{
         String returnVal = null;
         returnVal = descriptionTextView.getText().toString().trim();
-        if(returnVal == null){
+        if(returnVal == null || returnVal.equals("")){
             throw new Exception("Description is null");
         }
         return returnVal;

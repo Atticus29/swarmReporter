@@ -19,47 +19,6 @@ import java.util.ArrayList;
 
 public class Utilities {
 
-    public static SwarmReport returnSwarm = null;
-
-    public static void printArrayListContents (ArrayList<String> aL){
-        for(int i=0; i<aL.size(); i++){
-            Log.d("personal", aL.get(i));
-        }
-    }
-
-    public static void addIdsToFirebase (String nodeName, ArrayList<String> ids){
-        Log.d("personal", "nodeName is " + nodeName);
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(nodeName);
-        String pushKey;
-        for(int i = 0; i<ids.size(); i++){
-            pushKey = ids.get(i);
-            DatabaseReference subRef = ref.child(pushKey);
-            subRef.setValue(true);
-        }
-    }
-
-    public static SwarmReport getUnclaimedSwarmObjectWithId (String id) throws Exception{
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("all_unclaimed");
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                returnSwarm = dataSnapshot.getValue(SwarmReport.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        if (returnSwarm == null){
-            throw new Exception("returnSwarm wasn't located in getUnclaimedSwarmObjectWithId");
-        } else{
-            return returnSwarm;
-        }
-
-    }
-
     public static void changeSwarmReportAtNodePathTo(ArrayList<String> nodes, SwarmReport newSwarmReport){
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(nodes.get(0));
         for (int i = 1; i < nodes.size(); i++) {

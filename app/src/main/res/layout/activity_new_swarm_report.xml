@@ -15,7 +15,8 @@
         android:layout_height="match_parent"
         tools:context="fisherdynamic.swarmreporter1.activities.NewSwarmReportActivity"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="81dp">
+        tools:layout_editor_absoluteY="81dp"
+        android:id="@+id/constraintLayoutNewSwarmReport">
 
 
         <RadioGroup
@@ -27,12 +28,15 @@
 
             <TextView
                 android:id="@+id/sizeLabel"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/primary_text"
                 android:text="About how big is the swarm?"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_marginLeft="10dp"/>
 
             <RadioButton
                 android:id="@+id/baseball"
@@ -41,7 +45,8 @@
                 android:checked="false"
                 android:textColor="@color/secondary_text"
                 android:text="Baseball"
-                android:theme="@style/MyRadioButton" />
+                android:theme="@style/MyRadioButton"
+                android:layout_marginLeft="12dp"/>
 
             <RadioButton
                 android:id="@+id/football"
@@ -50,7 +55,8 @@
                 android:checked="false"
                 android:textColor="@color/secondary_text"
                 android:text="Football"
-                android:theme="@style/MyRadioButton" />
+                android:theme="@style/MyRadioButton"
+                android:layout_marginLeft="12dp"/>
 
             <RadioButton
                 android:id="@+id/basketball"
@@ -59,7 +65,8 @@
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:text="Basketball"
-                android:theme="@style/MyRadioButton" />
+                android:theme="@style/MyRadioButton"
+                android:layout_marginLeft="12dp"/>
 
             <RadioButton
                 android:id="@+id/beachball"
@@ -68,7 +75,8 @@
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:text="Beachball"
-                android:theme="@style/MyRadioButton" />
+                android:theme="@style/MyRadioButton"
+                android:layout_marginLeft="12dp"/>
         </RadioGroup>
 
         <RadioGroup
@@ -85,7 +93,8 @@
                 android:text="How accessible is the swarm?"
                 android:textSize="20sp"
                 android:textColor="@color/primary_text"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_marginLeft="10dp"/>
 
             <RadioButton
                 android:id="@+id/reach"
@@ -95,7 +104,8 @@
                 android:layout_weight="1"
                 android:checked="false"
                 android:text="Within unassisted reach"
-                android:theme="@style/MyRadioButton" />
+                android:theme="@style/MyRadioButton"
+                android:layout_marginLeft="12dp"/>
 
             <RadioButton
                 android:id="@+id/hasLadder"
@@ -105,7 +115,8 @@
                 android:textColor="@color/secondary_text"
                 android:checked="false"
                 android:text="Will require a small ladder, which I can provide"
-                android:theme="@style/MyRadioButton" />
+                android:theme="@style/MyRadioButton"
+                android:layout_marginLeft="12dp"/>
 
             <RadioButton
                 android:id="@+id/ladder"
@@ -115,7 +126,8 @@
                 android:textColor="@color/secondary_text"
                 android:checked="false"
                 android:text="Will require a small ladder"
-                android:theme="@style/MyRadioButton" />
+                android:theme="@style/MyRadioButton"
+                android:layout_marginLeft="12dp"/>
 
             <RadioButton
                 android:id="@+id/tallLadder"
@@ -126,7 +138,8 @@
                 android:textColor="@color/secondary_text"
                 android:checked="false"
                 android:text="Will require a large ladder"
-                android:theme="@style/MyRadioButton" />
+                android:theme="@style/MyRadioButton"
+                android:layout_marginLeft="12dp"/>
 
         </RadioGroup>
 
@@ -141,7 +154,7 @@
             android:textColor="@color/primary_text"
             android:gravity="center"
             android:textSize="18sp"
-            android:hint="Add a description (e.g., the maple tree in the front yard on the corner of Madison and Portsmouth"
+            android:hint="Add a detailed description of the location"
             android:textColorHint="@color/primary_text"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
