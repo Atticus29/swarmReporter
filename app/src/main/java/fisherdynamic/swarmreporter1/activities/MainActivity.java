@@ -63,12 +63,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
-    private GoogleApiClient mGoogleApiClient;
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private LocationRequest mLocationRequest;
-    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
+
     private Query swarmReportQuery;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
     private Double currenLatitude;
@@ -82,12 +79,10 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
-    private GeoFire geoFire;
-    private GeoQuery geoQuery;
-    private ArrayList<String> swarmReportIds = new ArrayList<>();
     private ArrayList<SwarmReport> swarmReports = new ArrayList<>();
     private String claimCheckKey;
     private FirebaseAuth.AuthStateListener authListener;
+    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111; //TODO also in location service. DRY
 
     @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
     @Bind(R.id.greetingTextView) TextView greetingTextView;
@@ -146,6 +141,10 @@ public class MainActivity extends AppCompatActivity
 //        SwarmNotification swarmNotification = new SwarmNotification("New swarm", "New swarm", "A new swarm has been reported in your area", claimRecyclerView);
 
         //Start location service
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
+            return;
+        }
         startLocationService();
 
         auth = FirebaseAuth.getInstance();
@@ -176,15 +175,27 @@ public class MainActivity extends AppCompatActivity
             }
         };
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10 * 1000)
-                .setFastestInterval(1 * 1000);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        Log.d("personal", "got into permissionResults");
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("personal", "permission was granted");
+                    startLocationService(); //TODO I think necessary? replacing:
+//                    Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+//                    if (location == null) {
+//                        Log.d("personal", "location is null inside permission");
+//                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+//                    } else {
+//                        Log.d("personal", "about to call new location");
+//                        handleNewLocation(location);
+//                    }
+                }
+            }
+        }
     }
 
     public void clearCurrentUserNode(String userId){
@@ -269,102 +280,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Log.d("personal", "got into onConnected");
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
-            return;
-        }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location == null) {
-            Log.d("personal", "location null");
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        } else {
-            Log.d("personal", "location not null");
-            handleNewLocation(location);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        Log.d("personal", "got into permissionResults");
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("personal", "permission was granted");
-                    Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                    if (location == null) {
-                        Log.d("personal", "location is null inside permission");
-                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-                    } else {
-                        Log.d("personal", "about to call new location");
-                        handleNewLocation(location);
-                    }
-                }
-            }
-        }
-    }
-
-    private void handleNewLocation(Location location) {
-        currenLatitude = location.getLatitude();
-        currentLongitude = location.getLongitude();
-        if (currenLatitude != null && currentLongitude != null) {
-            setUpGeoFire();
-        }
-    }
-
-    private void setUpGeoFire() {
-        DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference("geofire");
-        geoFire = new GeoFire(geoFireRef);
-        geoQuery = geoFire.queryAtLocation(new GeoLocation(currenLatitude, currentLongitude), SecretConstants.QUERY_RADIUS);
-        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-            @Override
-            public void onKeyEntered(String key, GeoLocation location) {
-                Log.d("personal", "all of the onKeyEntered entered");
-                Log.d("personal", String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
-                claimCheckKey = key;
-                swarmReportIds.add(claimCheckKey);
-                clearCurrentUserNode(userId);
-                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
-                Log.d("personal", "all of the onKeyEntered stuff happened");
-            }
-
-            @Override
-            public void onKeyExited(String key) {
-                Log.d("personal", "onKeyExited entered");
-                Log.d("personal", String.format("Key %s is no longer in the search area", key));
-                Utilities.removeItemFromArrayList(key, swarmReportIds);
-                clearCurrentUserNode(userId);
-                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
-                Log.d("personal", "onKeyExited stuff all happened");
-            }
-
-
-            @Override
-            public void onKeyMoved(String key, GeoLocation location) {
-                clearCurrentUserNode(userId);
-                swarmReportIds = Utilities.removeItemFromArrayList(key, swarmReportIds);
-                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
-            }
-
-            @Override
-            public void onGeoQueryReady() {
-                Log.d("personal", "All initial data has been loaded and events have been fired!");
-                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
-                ArrayList<String> children = new ArrayList<>();
-                children.add(userId + "_current");
-                setUpFirebaseAdapter(children);
-                //TODO check for asynchronicity issues when the swarm count is very high
-            }
-
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-                System.err.println("There was an error with this query: " + error);
-            }
-        });
-    }
-
     private void setUpFirebaseAdapter(final ArrayList<String> children) {
         Log.d("personal", "first child is " + children.get(0));
 
@@ -410,45 +325,21 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.d("personal", "Location services suspended. Please reconnect");
-        Toast.makeText(MainActivity.this, "Location services suspended. Please reconnect", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        if (connectionResult.hasResolution()) {
-            try {
-                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-            } catch (IntentSender.SendIntentException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Toast.makeText(MainActivity.this, "Location services failed with code " + connectionResult.getErrorCode(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
 
     @Override
     public void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+//        mGoogleApiClient.connect();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
-        }
-        this.geoQuery.removeAllListeners();
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        handleNewLocation(location);
+//        if (mGoogleApiClient.isConnected()) {
+//            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+//            mGoogleApiClient.disconnect();
+//        }
+//        this.geoQuery.removeAllListeners();
     }
 
     public void startLocationService(){
