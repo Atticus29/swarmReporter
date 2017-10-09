@@ -1,7 +1,10 @@
 package fisherdynamic.swarmreporter1.activities;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -11,6 +14,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -140,12 +144,28 @@ public class MainActivity extends AppCompatActivity
 
 //        SwarmNotification swarmNotification = new SwarmNotification("New swarm", "New swarm", "A new swarm has been reported in your area", claimRecyclerView);
 
-        //Start location service
+        //Start location service//
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
             return;
         }
         startLocationService();
+        BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // Get extra data included in the Intent
+                currenLatitude = Double.parseDouble(intent.getStringExtra("ServiceLatitudeUpdate"));
+                currentLongitude = Double.parseDouble(intent.getStringExtra("ServiceLongitudeUpdate"));
+                Log.d("personal", "onReceive of broadcast receiver reached");
+                Log.d("personal", "onReceive lat is " + currenLatitude.toString());
+                Log.d("personal", "onReceive long is " + currentLongitude.toString());
+
+            }
+        };
+
+        IntentFilter intentFilter = new IntentFilter("locationServiceUpdates");
+        LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(mMessageReceiver, intentFilter);
+
 
         auth = FirebaseAuth.getInstance();
         Log.d("personal", "is auth null? " + Boolean.toString(auth == null));

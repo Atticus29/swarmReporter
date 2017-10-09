@@ -14,6 +14,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
@@ -49,7 +50,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     private GoogleApiClient mGoogleApiClient;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
-    private Double currenLatitude;
+    private Double currentLatitude;
     private Double currentLongitude;
     private GeoFire geoFire;
     private GeoQuery geoQuery;
@@ -78,17 +79,21 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     }
 
     private void handleNewLocation(Location location) {
-        currenLatitude = location.getLatitude();
+        Log.d("personal", "got to handleNewLocation");
+        currentLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
-        if (currenLatitude != null && currentLongitude != null) {
+        Log.d("personal", "lat from handleNewLocation is " + currentLatitude.toString());
+        Log.d("personal", "long from handleNewLocation is " + currentLongitude.toString());
+        if (currentLatitude != null && currentLongitude != null) {
             setUpGeoFire();
+            sendToActivity(currentLatitude, currentLongitude);
         }
     }
 
     private void setUpGeoFire() {
         DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference("geofire");
         geoFire = new GeoFire(geoFireRef);
-        geoQuery = geoFire.queryAtLocation(new GeoLocation(currenLatitude, currentLongitude), SecretConstants.QUERY_RADIUS);
+        geoQuery = geoFire.queryAtLocation(new GeoLocation(currentLatitude, currentLongitude), SecretConstants.QUERY_RADIUS);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
@@ -142,6 +147,22 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         });
     }
 
+    public void sendToActivity(Double currentLatitude, Double currentLongitude){
+        Log.d("personal", "got to sendToActivity");
+        Intent intent = new Intent("locationServiceUpdates");
+//        Bundle bundle = new Bundle();
+        intent.putExtra("ServiceLatitudeUpdate", currentLatitude.toString());
+        intent.putExtra("ServiceLongitudeUpdate", currentLongitude.toString());
+//        bundle.putParcelable("ServiceLatitudeUpdate", currentLatitude);
+//        bundle.putParcelable("ServiceLongitudeUpdate", currentLongitude);
+//        intent.putExtra("locationUpdate", bundle);
+        if(serviceContext != null){
+            LocalBroadcastManager.getInstance(serviceContext).sendBroadcast(intent);
+        } else{
+            Log.d("personal", "didn't broadcast the location updates because serviceContext is null");
+        }
+    }
+
     public void clearCurrentUserNode(String userId){
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(userId + "_current");
         ref.removeValue();
@@ -169,6 +190,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.d("personal", "onLocationChanged entered");
         handleNewLocation(location);
     }
 
