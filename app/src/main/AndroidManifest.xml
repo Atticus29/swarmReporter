@@ -56,31 +56,39 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fisherdynamic.swarmreporter1.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.MapActivity"
+        <activity
+            android:name=".activities.MapActivity"
             android:label="Detailed Map View">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fisherdynamic.swarmreporter1.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.MyClaimedSwarmsActivity"
+        <activity
+            android:name=".activities.MyClaimedSwarmsActivity"
             android:label="My Claimed Swarms">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fisherdynamic.swarmreporter1.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.MyReportedSwarmsActivity"
+        <activity
+            android:name=".activities.MyReportedSwarmsActivity"
             android:label="My Reported Swarms">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fisherdynamic.swarmreporter1.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.AboutActivity"
+        <activity
+            android:name=".activities.AboutActivity"
             android:label="About SwarmReporter">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="fisherdynamic.swarmreporter1.activities.LoginGateActivity">
-            </meta-data>
+                android:value="fisherdynamic.swarmreporter1.activities.LoginGateActivity"></meta-data>
         </activity>
+
+        <service
+            android:name=".services.LocationService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

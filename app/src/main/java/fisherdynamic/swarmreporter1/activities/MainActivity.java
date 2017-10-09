@@ -32,6 +32,7 @@ import fisherdynamic.swarmreporter1.R;
 import fisherdynamic.swarmreporter1.SecretConstants;
 import fisherdynamic.swarmreporter1.models.SwarmNotification;
 import fisherdynamic.swarmreporter1.models.SwarmReport;
+import fisherdynamic.swarmreporter1.services.LocationService;
 import fisherdynamic.swarmreporter1.utilityClasses.Utilities;
 import fisherdynamic.swarmreporter1.viewHolders.FirebaseClaimViewHolder;
 import com.firebase.geofire.GeoFire;
@@ -143,6 +144,9 @@ public class MainActivity extends AppCompatActivity
         }
 
 //        SwarmNotification swarmNotification = new SwarmNotification("New swarm", "New swarm", "A new swarm has been reported in your area", claimRecyclerView);
+
+        //Start location service
+        startLocationService();
 
         auth = FirebaseAuth.getInstance();
         Log.d("personal", "is auth null? " + Boolean.toString(auth == null));
@@ -445,5 +449,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
         handleNewLocation(location);
+    }
+
+    public void startLocationService(){
+        Intent intent = new Intent(this, LocationService.class);
+        startService(intent);
+    }
+
+    public void stopLocationService(){
+        Intent intent = new Intent(this, LocationService.class);
+        stopService(intent);
     }
 }

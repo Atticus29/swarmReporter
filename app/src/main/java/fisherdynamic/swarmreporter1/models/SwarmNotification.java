@@ -14,8 +14,7 @@ import fisherdynamic.swarmreporter1.R;
  */
 
 public class SwarmNotification {
-    public SwarmNotification(String ticker,String title, String message, View view) {
-        Context context = view.getContext();
+    public SwarmNotification(String ticker,String title, String message, Context context) {
         Intent intent = new Intent();
         PendingIntent pendingIntent = PendingIntent.getActivity(context,0, intent,0);
         Notification notification = new Notification.Builder(context)
