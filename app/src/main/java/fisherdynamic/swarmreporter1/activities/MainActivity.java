@@ -142,8 +142,6 @@ public class MainActivity extends AppCompatActivity
             greetingNameTextView.setText(userName);
         }
 
-//        SwarmNotification swarmNotification = new SwarmNotification("New swarm", "New swarm", "A new swarm has been reported in your area", claimRecyclerView);
-
         //Start location service//
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
@@ -159,13 +157,13 @@ public class MainActivity extends AppCompatActivity
                 Log.d("personal", "onReceive of broadcast receiver reached");
                 Log.d("personal", "onReceive lat is " + currenLatitude.toString());
                 Log.d("personal", "onReceive long is " + currentLongitude.toString());
-
+                ArrayList<String> children = new ArrayList<>();
+                children.add(userId + "_current");
+                setUpFirebaseAdapter(children);
             }
         };
-
         IntentFilter intentFilter = new IntentFilter("locationServiceUpdates");
         LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(mMessageReceiver, intentFilter);
-
 
         auth = FirebaseAuth.getInstance();
         Log.d("personal", "is auth null? " + Boolean.toString(auth == null));

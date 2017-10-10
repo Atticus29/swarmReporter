@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -61,7 +62,8 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     private SharedPreferences.Editor mEditor;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
     private Context serviceContext = null;
-    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111; //TODO also in MainActivity. DRY
+    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
+    //TODO also in MainActivity. DRY
 
 
     @Override
@@ -133,10 +135,10 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
             public void onGeoQueryReady() {
                 Log.d("personal", "All initial data has been loaded and events have been fired!");
                 Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
-                ArrayList<String> children = new ArrayList<>();
-                children.add(userId + "_current");
+
                 //setUpFirebaseAdapter equivalent
-//                setUpFirebaseAdapter(children);
+                //TODO send the children to setUpFirebaseAdapter in main activity
+
                 //TODO check for asynchronicity issues when the swarm count is very high
             }
 
@@ -206,6 +208,8 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     public void onCreate() {
         super.onCreate();
         serviceContext = this;
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        userId = mSharedPreferences.getString("userId", null);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
