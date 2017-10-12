@@ -32,11 +32,6 @@
                 android:value="fisherdynamic.swarmreporter1.activities.LoginGateActivity" />
         </activity>
         <activity android:name=".activities.LoginGateActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".activities.MainActivity"
@@ -90,7 +85,13 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activities.ResolverActivity"></activity>
+        <activity android:name=".activities.ResolverActivity" />
+        <activity android:name=".activities.SwarmPopulationActvitiy">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

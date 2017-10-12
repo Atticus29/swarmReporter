@@ -347,6 +347,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
+        startLocationService(); //TODO necessary??
 //        mGoogleApiClient.connect();
     }
 
