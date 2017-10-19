@@ -1,10 +1,19 @@
 package fisherdynamic.swarmreporter1.utilityClasses;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.Patterns;
+import android.widget.Toast;
 
+import fisherdynamic.swarmreporter1.activities.CreateAccountActivity;
 import fisherdynamic.swarmreporter1.models.SwarmReport;
+import fisherdynamic.swarmreporter1.models.User;
+
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -109,5 +118,60 @@ public class Utilities {
 
             }
         });
+    }
+
+    public static void installUserInDatabase(String confirmPassword, String password, String email, String userName, String phoneNumber, String pushId, Boolean contactOk) {
+        //usage: installUserInFireBase(passwordConfirmInputTextView.getText().toString().trim(),passwordInputTextView.getText().toString().trim(),  emailInputTextView.getText().toString().trim(), nameInputTextView.getText().toString().trim(), phoneNumberTextView.getText().toString().trim(), //ATTN pushId, //ATTN contactOk);
+        if (contactOk == null) {
+            contactOk = false;
+        }
+        User currentUser = new User(email, userName, phoneNumber, contactOk);
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference ref = db
+                .getReference("users")
+                .child(pushId);
+        ref.setValue(currentUser);
+    }
+
+    public static boolean isValidPhoneNumber (String phoneNumber){
+        boolean returnVal = false;
+        //PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)
+        if(Patterns.PHONE.matcher(phoneNumber).matches() && phoneNumber.length() > 6 && phoneNumber.length() < 13 || phoneNumber == null || phoneNumber.equals("")){
+            returnVal = true;
+        }
+        return returnVal;
+    }
+
+    private static boolean isValidName(String name) {
+        if (name.equals("")) {
+            //TODO nameInputTextView.setError("Please enter your name");
+            //TODO mAuthProgressDialog.dismiss();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isValidPassword(String password, String confirmPassword) {
+        if (password.length() < 6) {
+            //TODO passwordInputTextView.setError("Please create a password containing at least 6 characters");
+            //TODO mAuthProgressDialog.dismiss();
+            return false;
+        } else if (!password.equals(confirmPassword)) {
+            //TODO passwordInputTextView.setError("Passwords do not match");
+            //TODO mAuthProgressDialog.dismiss();
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean isValidEmail(String email) {
+        boolean isGoodEmail =
+                (email != null && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches());
+        if (!isGoodEmail) {
+            //TODO emailInputTextView.setError("Please enter a valid email address");
+            //TODO mAuthProgressDialog.dismiss();
+            return false;
+        }
+        return isGoodEmail;
     }
 }
