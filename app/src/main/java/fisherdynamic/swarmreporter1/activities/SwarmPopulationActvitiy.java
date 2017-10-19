@@ -50,6 +50,8 @@ public class SwarmPopulationActvitiy extends AppCompatActivity implements View.O
 
         mainLink.setOnClickListener(this);
 
+        Utilities.installUserInDatabase("password","password",  "testUser@testUser.com", userName, "5555555555", userId, true);
+
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("all_unclaimed");
         String pushId = null;
