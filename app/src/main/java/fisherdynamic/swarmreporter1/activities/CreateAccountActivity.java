@@ -30,6 +30,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import fisherdynamic.swarmreporter1.utilityClasses.Utilities;
 
 public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener {
     private FirebaseAuth mAuth;
@@ -137,16 +138,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                                 if (contactOk == null) {
                                     contactOk = false;
                                 }
-                                Log.d("personal", "contactOk is " + Boolean.toString(contactOk));
-                                User currentUser = new User(email, userName, phoneNumber, contactOk);
-                                FirebaseDatabase db = FirebaseDatabase.getInstance();
-                                DatabaseReference ref = db
-                                        .getReference("users")
-                                        .child(pushId);
-                                ref.setValue(currentUser);
-                                addToSharedPreferences("userName", userName);
-                                addToSharedPreferences("userId", pushId);
-
+                                Utilities.installUserInDatabase(passwordConfirmInputTextView.getText().toString().trim(),passwordInputTextView.getText().toString().trim(),  emailInputTextView.getText().toString().trim(), nameInputTextView.getText().toString().trim(), phoneNumberTextView.getText().toString().trim(), pushId, contactOk);
                             }
                         }
                     });
