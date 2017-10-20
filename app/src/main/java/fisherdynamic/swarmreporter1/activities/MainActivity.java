@@ -341,24 +341,29 @@ public class MainActivity extends AppCompatActivity
         if (mFirebaseAdapter != null) {
             mFirebaseAdapter.cleanup();
         }
+        stopLocationService();
     }
 
 
     @Override
     public void onStart() {
         super.onStart();
+        startLocationService();
 //        mGoogleApiClient.connect();
     }
 
     @Override
     public void onStop() {
         super.onStop();
+//        stopLocationService();
 //        if (mGoogleApiClient.isConnected()) {
 //            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 //            mGoogleApiClient.disconnect();
 //        }
 //        this.geoQuery.removeAllListeners();
     }
+
+
 
     public void startLocationService(){
         Intent intent = new Intent(this, LocationService.class);

@@ -139,10 +139,19 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                                     contactOk = false;
                                 }
                                 Utilities.installUserInDatabase(passwordConfirmInputTextView.getText().toString().trim(),passwordInputTextView.getText().toString().trim(),  emailInputTextView.getText().toString().trim(), nameInputTextView.getText().toString().trim(), phoneNumberTextView.getText().toString().trim(), pushId, contactOk);
+                                saveUserNameAndIdToSharedPreferences(pushId, nameInputTextView.getText().toString().trim());
                             }
                         }
                     });
         }
+    }
+
+    private void saveUserNameAndIdToSharedPreferences(String pushId, String userName){
+        mEditor = mSharedPreferences.edit();
+        mEditor.putString("userId", pushId);
+        mEditor.putString("userName", userName);
+        mEditor.apply();
+
     }
 
 

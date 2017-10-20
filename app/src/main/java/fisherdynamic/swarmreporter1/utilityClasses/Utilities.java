@@ -121,7 +121,7 @@ public class Utilities {
     }
 
     public static void installUserInDatabase(String confirmPassword, String password, String email, String userName, String phoneNumber, String pushId, Boolean contactOk) {
-        //usage: installUserInFireBase(passwordConfirmInputTextView.getText().toString().trim(),passwordInputTextView.getText().toString().trim(),  emailInputTextView.getText().toString().trim(), nameInputTextView.getText().toString().trim(), phoneNumberTextView.getText().toString().trim(), //ATTN pushId, //ATTN contactOk);
+        //usage: installUserInFireBase(passwordConfirmInputTextView.getText().toString().trim(),passwordInputTextView.getText().toString().trim(),  emailInputTextView.getText().toString().trim(), nameInputTextView.getText().toString().trim(), phoneNumberTextView.getText().toString().trim(), pushId, contactOk);
         if (contactOk == null) {
             contactOk = false;
         }

@@ -93,6 +93,14 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     }
 
     private void setUpGeoFire() {
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        userId = mSharedPreferences.getString("userId", null);
+        Boolean userIdNull = userId == null;
+        Log.d("personal", "is userID null in setUpGeoFire in location service? " + userIdNull.toString());
+        if(!userIdNull){
+            Log.d("personal", "no! It's " + userId);
+        }
+
         DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference("geofire");
         geoFire = new GeoFire(geoFireRef);
         geoQuery = geoFire.queryAtLocation(new GeoLocation(currentLatitude, currentLongitude), SecretConstants.QUERY_RADIUS);
@@ -236,6 +244,6 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
-        Toast.makeText(this, "Location service destroyed", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Location service destroyed", Toast.LENGTH_SHORT).show();
     }
 }
