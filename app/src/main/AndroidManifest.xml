@@ -88,7 +88,8 @@
         <service
             android:name=".services.LocationService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true">
+        </service>
 
         <activity android:name=".activities.ResolverActivity"></activity>
     </application>

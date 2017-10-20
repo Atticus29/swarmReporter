@@ -319,11 +319,13 @@ public class MainActivity extends AppCompatActivity
                 viewHolder.bindSwarmReport(model);
             }
         };
+        Log.d("personal", "got past setting up the firebaserecycler adapter in setUpFirebaseAdapter method of main activity");
         setUpBlankAdapter(); //TODO check whether necessary
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(claimRecyclerView.getContext(),
                 new LinearLayoutManager(MainActivity.this).getOrientation());
         dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
         claimRecyclerView.addItemDecoration(dividerItemDecoration);
+        Log.d("personal", "got right up to making the progressBar invisible setUpFirebaseAdapter method of main activity");
         progressBarForRecyclerView.setVisibility(View.GONE);
     }
 
