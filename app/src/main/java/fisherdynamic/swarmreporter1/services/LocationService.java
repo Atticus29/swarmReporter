@@ -143,7 +143,6 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
             public void onGeoQueryReady() {
                 Log.d("personal", "All initial data has been loaded and events have been fired!");
                 Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
-
                 //setUpFirebaseAdapter equivalent
                 //TODO send the children to setUpFirebaseAdapter in main activity
 
@@ -160,12 +159,8 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     public void sendToActivity(Double currentLatitude, Double currentLongitude){
         Log.d("personal", "got to sendToActivity");
         Intent intent = new Intent("locationServiceUpdates");
-//        Bundle bundle = new Bundle();
         intent.putExtra("ServiceLatitudeUpdate", currentLatitude.toString());
         intent.putExtra("ServiceLongitudeUpdate", currentLongitude.toString());
-//        bundle.putParcelable("ServiceLatitudeUpdate", currentLatitude);
-//        bundle.putParcelable("ServiceLongitudeUpdate", currentLongitude);
-//        intent.putExtra("locationUpdate", bundle);
         if(serviceContext != null){
             LocalBroadcastManager.getInstance(serviceContext).sendBroadcast(intent);
         } else{

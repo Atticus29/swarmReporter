@@ -54,6 +54,7 @@ import java.util.Calendar;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import fisherdynamic.swarmreporter1.viewHolders.FirebaseClaimViewHolder;
+import io.reactivex.Observable;
 
 public class NewSwarmReportActivity extends AppCompatActivity implements View.OnClickListener{
     private String TAG = NewSwarmReportActivity.class.getSimpleName();
@@ -105,34 +106,38 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         sizeLabel.requestFocus();
 
         auth = FirebaseAuth.getInstance();
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        userName = mSharedPreferences.getString("userName", null);
-        userId = mSharedPreferences.getString("userId", null);
-        Log.d("personal", "newSwarm userName is " + userName);
-        Log.d("personal", "newSwarm userId is " + userId);
 
-        startLocationService();
-        BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                // Get extra data included in the Intent
-                currenLatitude = Double.parseDouble(intent.getStringExtra("ServiceLatitudeUpdate"));
-                currentLongitude = Double.parseDouble(intent.getStringExtra("ServiceLongitudeUpdate"));
-                Log.d("personal", "onReceive in NewSwarmReportActivity of broadcast receiver reached");
-                Log.d("personal", "onReceive in NewSwarmReportActivity lat is " + currenLatitude.toString());
-                Log.d("personal", "onReceive in NewSwarmReportActivity long is " + currentLongitude.toString());
-                if(userId != null && userName != null && currenLatitude != 0.0 && currentLongitude != 0.0) {
-            progressBar.setVisibility(View.GONE);
-            reportSwarmButton.setVisibility(View.VISIBLE);
-            addImageButton.setVisibility(View.VISIBLE);
-        } else {
-            Log.d("newSwarm", "either location or user info is null!");
-        }
 
-            }
-        };
-        IntentFilter intentFilter = new IntentFilter("locationServiceUpdates");
-        LocalBroadcastManager.getInstance(NewSwarmReportActivity.this).registerReceiver(mMessageReceiver, intentFilter);
+
+        //Test RxJava
+        Observable.just(getSharedPreferences())
+                .subscribe(results -> {
+                    Log.d("personal", "got into subscription stuff");
+                    Log.d("personal", "newSwarm userName is " + userName);
+                    Log.d("personal", "newSwarm userId is " + userId);
+                    BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+                        @Override
+                        public void onReceive(Context context, Intent intent) {
+                            // Get extra data included in the Intent
+                            currenLatitude = Double.parseDouble(intent.getStringExtra("ServiceLatitudeUpdate"));
+                            currentLongitude = Double.parseDouble(intent.getStringExtra("ServiceLongitudeUpdate"));
+                            Log.d("personal", "onReceive in NewSwarmReportActivity of broadcast receiver reached");
+                            Log.d("personal", "onReceive in NewSwarmReportActivity lat is " + currenLatitude.toString());
+                            Log.d("personal", "onReceive in NewSwarmReportActivity long is " + currentLongitude.toString());
+                            if(userId != null && userName != null && currenLatitude != 0.0 && currentLongitude != 0.0) {
+                                progressBar.setVisibility(View.GONE);
+                                reportSwarmButton.setVisibility(View.VISIBLE);
+                                addImageButton.setVisibility(View.VISIBLE);
+                            } else {
+                                Log.d("newSwarm", "either location or user info is null!");
+                            }
+
+                        }
+                    };
+                    IntentFilter intentFilter = new IntentFilter("locationServiceUpdates");
+                    LocalBroadcastManager.getInstance(NewSwarmReportActivity.this).registerReceiver(mMessageReceiver, intentFilter);
+
+                });
 
 //        mGoogleApiClient = new GoogleApiClient.Builder(this)
 //                .addConnectionCallbacks(this)
@@ -252,7 +257,6 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
                     newSwarmReport.setDescription(description);
                 } catch(Exception e){
                     descriptionTextView.setError("Please add a detailed description");
-//                    Toast.makeText(NewSwarmReportActivity.this, "Please add a detailed description about the location", Toast.LENGTH_SHORT).show();
                     Log.d("personal", "description is null");
                 }
             } else{
@@ -383,4 +387,11 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
 //        Log.d("personal", "got right up to making the progressBar invisible setUpFirebaseAdapter method of main activity");
 //        progressBarForRecyclerView.setVisibility(View.GONE);
 //    }
+
+    public String getSharedPreferences(){
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        userName = mSharedPreferences.getString("userName", null);
+        userId = mSharedPreferences.getString("userId", null);
+        return "yay! You did the thing";
+    }
 }
