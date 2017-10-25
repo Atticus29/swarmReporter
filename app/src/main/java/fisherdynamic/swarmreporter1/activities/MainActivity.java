@@ -299,6 +299,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setUpFirebaseAdapter(final ArrayList<String> children) {
+        Log.d("personal", "setUpFirebaseAdapter method entered");
         Log.d("personal", "first child is " + children.get(0));
 
         DatabaseReference keyRef = FirebaseDatabase.getInstance().getReference(children.get(0)); //TODO edit here
@@ -351,6 +352,22 @@ public class MainActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
         startLocationService();
+//        BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                // Get extra data included in the Intent
+//                currenLatitude = Double.parseDouble(intent.getStringExtra("ServiceLatitudeUpdate"));
+//                currentLongitude = Double.parseDouble(intent.getStringExtra("ServiceLongitudeUpdate"));
+//                Log.d("personal", "onReceive of broadcast receiver reached");
+//                Log.d("personal", "onReceive lat is " + currenLatitude.toString());
+//                Log.d("personal", "onReceive long is " + currentLongitude.toString());
+//                ArrayList<String> children = new ArrayList<>();
+//                children.add(userId + "_current");
+//                setUpFirebaseAdapter(children);
+//            }
+//        };
+//        IntentFilter intentFilter = new IntentFilter("locationServiceUpdates");
+//        LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(mMessageReceiver, intentFilter);
 //        mGoogleApiClient.connect();
     }
 

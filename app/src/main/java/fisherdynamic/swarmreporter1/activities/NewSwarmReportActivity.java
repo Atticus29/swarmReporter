@@ -1,7 +1,10 @@
 package fisherdynamic.swarmreporter1.activities;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -13,8 +16,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -27,7 +33,10 @@ import android.widget.Toast;
 
 import fisherdynamic.swarmreporter1.R;
 import fisherdynamic.swarmreporter1.models.SwarmReport;
+import fisherdynamic.swarmreporter1.services.LocationService;
 import fisherdynamic.swarmreporter1.utilityClasses.Utilities;
+
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -39,12 +48,14 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import fisherdynamic.swarmreporter1.viewHolders.FirebaseClaimViewHolder;
 
-public class NewSwarmReportActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class NewSwarmReportActivity extends AppCompatActivity implements View.OnClickListener{
     private String TAG = NewSwarmReportActivity.class.getSimpleName();
     private FirebaseDatabase database;
     private DatabaseReference ref;
@@ -53,10 +64,10 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private String description;
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
-    private GoogleApiClient mGoogleApiClient;
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private LocationRequest mLocationRequest;
-    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
+//    private GoogleApiClient mGoogleApiClient;
+//    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+//    private LocationRequest mLocationRequest;
+//    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
     private String userName;
     private String userId;
     private Double currenLatitude;
@@ -100,95 +111,118 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         Log.d("personal", "newSwarm userName is " + userName);
         Log.d("personal", "newSwarm userId is " + userId);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(30 * 1000)
-                .setFastestInterval(1 * 1000);
-
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
-            return;
-        }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location == null) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        } else {
-            handleNewLocation(location);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                    if (location == null) {
-                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-                    } else {
-                        handleNewLocation(location);
-                    }
-                }
-            }
-        }
-    }
-
-    private void handleNewLocation(Location location) {
-        currenLatitude = location.getLatitude();
-        currentLongitude = location.getLongitude();
-        Log.d("personal", "newSwarm lat is " + currenLatitude);
-        Log.d("personal", "newSwarm lon is " + currentLongitude);
-        if(userId != null && userName != null && currenLatitude != 0.0 && currentLongitude != 0.0) {
+        startLocationService();
+        BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // Get extra data included in the Intent
+                currenLatitude = Double.parseDouble(intent.getStringExtra("ServiceLatitudeUpdate"));
+                currentLongitude = Double.parseDouble(intent.getStringExtra("ServiceLongitudeUpdate"));
+                Log.d("personal", "onReceive in NewSwarmReportActivity of broadcast receiver reached");
+                Log.d("personal", "onReceive in NewSwarmReportActivity lat is " + currenLatitude.toString());
+                Log.d("personal", "onReceive in NewSwarmReportActivity long is " + currentLongitude.toString());
+                if(userId != null && userName != null && currenLatitude != 0.0 && currentLongitude != 0.0) {
             progressBar.setVisibility(View.GONE);
             reportSwarmButton.setVisibility(View.VISIBLE);
             addImageButton.setVisibility(View.VISIBLE);
         } else {
             Log.d("newSwarm", "either location or user info is null!");
         }
-    }
 
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.d("newSwarm", "Location services suspended. Please reconnect");
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        if (connectionResult.hasResolution()) {
-            try {
-                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-            } catch (IntentSender.SendIntentException e) {
-                e.printStackTrace();
             }
-        } else {
-            Log.d("newSwarm", "Location services failed with code " + connectionResult.getErrorCode());
-        }
+        };
+        IntentFilter intentFilter = new IntentFilter("locationServiceUpdates");
+        LocalBroadcastManager.getInstance(NewSwarmReportActivity.this).registerReceiver(mMessageReceiver, intentFilter);
+
+//        mGoogleApiClient = new GoogleApiClient.Builder(this)
+//                .addConnectionCallbacks(this)
+//                .addOnConnectionFailedListener(this)
+//                .addApi(LocationServices.API)
+//                .build();
+//        mLocationRequest = LocationRequest.create()
+//                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+//                .setInterval(30 * 1000)
+//                .setFastestInterval(1 * 1000);
+
     }
+
+//    @Override
+//    public void onConnected(@Nullable Bundle bundle) {
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
+//            return;
+//        }
+//        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+//        if (location == null) {
+//            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+//        } else {
+//            handleNewLocation(location);
+//        }
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+//        switch (requestCode) {
+//            case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+//                    if (location == null) {
+//                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+//                    } else {
+//                        handleNewLocation(location);
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+//    private void handleNewLocation(Location location) {
+//        currenLatitude = location.getLatitude();
+//        currentLongitude = location.getLongitude();
+//        Log.d("personal", "newSwarm lat is " + currenLatitude);
+//        Log.d("personal", "newSwarm lon is " + currentLongitude);
+//        if(userId != null && userName != null && currenLatitude != 0.0 && currentLongitude != 0.0) {
+//            progressBar.setVisibility(View.GONE);
+//            reportSwarmButton.setVisibility(View.VISIBLE);
+//            addImageButton.setVisibility(View.VISIBLE);
+//        } else {
+//            Log.d("newSwarm", "either location or user info is null!");
+//        }
+//    }
+
+//    @Override
+//    public void onConnectionSuspended(int i) {
+//        Log.d("newSwarm", "Location services suspended. Please reconnect");
+//
+//    }
+
+//    @Override
+//    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+//        if (connectionResult.hasResolution()) {
+//            try {
+//                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+//            } catch (IntentSender.SendIntentException e) {
+//                e.printStackTrace();
+//            }
+//        } else {
+//            Log.d("newSwarm", "Location services failed with code " + connectionResult.getErrorCode());
+//        }
+//    }
 
 
     @Override
     public void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+//        mGoogleApiClient.connect();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
-        }
+//        if (mGoogleApiClient.isConnected()) {
+//            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+//            mGoogleApiClient.disconnect();
+//        }
     }
 
     @Override
@@ -227,8 +261,6 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         } else{
             Toast.makeText(NewSwarmReportActivity.this, "Please select size", Toast.LENGTH_SHORT).show();
         }
-
-
 
 
         if (size != null && accessibility != null && description != null) {
@@ -310,8 +342,45 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         return accessibility;
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        handleNewLocation(location);
+//    @Override
+//    public void onLocationChanged(Location location) {
+//        handleNewLocation(location);
+//    }
+
+    public void startLocationService(){
+        Intent intent = new Intent(this, LocationService.class);
+        startService(intent);
     }
+
+//    private void setUpFirebaseAdapter(final ArrayList<String> children) {
+//        Log.d("personal", "setUpFirebaseAdapter method entered");
+//        Log.d("personal", "first child is " + children.get(0));
+//
+//        DatabaseReference keyRef = FirebaseDatabase.getInstance().getReference(children.get(0)); //TODO edit here
+//
+//        for (int i = 1; i < children.size(); i++) {
+//            keyRef = keyRef.getRef().child(children.get(i));
+//        }
+//
+//        mFirebaseAdapter = new FirebaseRecyclerAdapter<SwarmReport, FirebaseClaimViewHolder>
+//                (SwarmReport.class, R.layout.claim_item, FirebaseClaimViewHolder.class,
+//                        keyRef) {
+//
+//            @Override
+//            protected void populateViewHolder(final FirebaseClaimViewHolder viewHolder,
+//                                              SwarmReport model, int position) {
+//                viewHolder.bindClaimerLatLong(currenLatitude, currentLongitude);
+//                viewHolder.bindCurrentUserNameAndId(userName, userId);
+//                viewHolder.bindSwarmReport(model);
+//            }
+//        };
+//        Log.d("personal", "got past setting up the firebaserecycler adapter in setUpFirebaseAdapter method of main activity");
+////        setUpBlankAdapter(); //TODO check whether necessary
+//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(claimRecyclerView.getContext(),
+//                new LinearLayoutManager(MainActivity.this).getOrientation());
+//        dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
+//        claimRecyclerView.addItemDecoration(dividerItemDecoration);
+//        Log.d("personal", "got right up to making the progressBar invisible setUpFirebaseAdapter method of main activity");
+//        progressBarForRecyclerView.setVisibility(View.GONE);
+//    }
 }
