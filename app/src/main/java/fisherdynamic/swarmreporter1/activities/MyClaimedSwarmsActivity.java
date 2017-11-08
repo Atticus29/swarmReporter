@@ -29,11 +29,13 @@ public class MyClaimedSwarmsActivity extends AppCompatActivity {
     private SharedPreferences.Editor mEditor;
     private String userName;
     private String userId;
+    private String TAG = MyClaimedSwarmsActivity.class.getSimpleName();
 
     @Bind(R.id.myClaimedSwarmsRecyclerView) RecyclerView myClaimedSwarmsRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, ">>>>onCreate called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_claimed_swarms);
         ButterKnife.bind(this);
@@ -71,7 +73,7 @@ public class MyClaimedSwarmsActivity extends AppCompatActivity {
                     }
                 };
                 setUpBlankAdapter();
-                Log.d("personal", "got past setUpBlankAdapter myClaimed");
+                Log.d(TAG, "got past setUpBlankAdapter myClaimed");
                 DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(myClaimedSwarmsRecyclerView.getContext(),
                         new LinearLayoutManager(MyClaimedSwarmsActivity.this).getOrientation());
                 dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
@@ -79,13 +81,13 @@ public class MyClaimedSwarmsActivity extends AppCompatActivity {
     }
 
     private void setUpBlankAdapter(){
-        Log.d("personal", "got here setUpBlankAdapater");
+        Log.d(TAG, "got here setUpBlankAdapater");
         myClaimedSwarmsRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MyClaimedSwarmsActivity.this);
         myClaimedSwarmsRecyclerView.setLayoutManager(linearLayoutManager);
         myClaimedSwarmsRecyclerView.setAdapter(mFirebaseAdapter);
         myClaimedSwarmsRecyclerView.setVisibility(View.VISIBLE);
-        Log.d("personal", "setUpBlankAdapter done with function");
+        Log.d(TAG, "setUpBlankAdapter done with function");
     }
 
 }

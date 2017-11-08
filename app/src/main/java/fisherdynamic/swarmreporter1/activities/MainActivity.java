@@ -73,8 +73,6 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-
     private Query swarmReportQuery;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
     private Double currentLatitude;
@@ -91,7 +89,8 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<SwarmReport> swarmReports = new ArrayList<>();
     private String claimCheckKey;
     private FirebaseAuth.AuthStateListener authListener;
-    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111; //TODO also in location service. DRY
+    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111; //TODO also in location// service. DRY
+    private String TAG = MainActivity.class.getSimpleName();
 
     @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
     @Bind(R.id.greetingTextView) TextView greetingTextView;
@@ -100,6 +99,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, ">>>>onCreate called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
         ButterKnife.bind(this);
@@ -153,26 +153,6 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-
-
-//        startLocationService();
-//        BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                // Get extra data included in the Intent
-//                currentLatitude = Double.parseDouble(intent.getStringExtra("ServiceLatitudeUpdate"));
-//                currentLongitude = Double.parseDouble(intent.getStringExtra("ServiceLongitudeUpdate"));
-//                Log.d("personal", "onReceive of broadcast receiver reached");
-//                Log.d("personal", "onReceive lat is " + currentLatitude.toString());
-//                Log.d("personal", "onReceive long is " + currentLongitude.toString());
-//                ArrayList<String> children = new ArrayList<>();
-//                children.add(userId + "_current");
-//                setUpFirebaseAdapter(children);
-//            }
-//        };
-//        IntentFilter intentFilter = new IntentFilter("locationServiceUpdates");
-//        LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(mMessageReceiver, intentFilter);
-
         auth = FirebaseAuth.getInstance();
         Log.d("personal", "is auth null? " + Boolean.toString(auth == null));
 
@@ -205,8 +185,6 @@ public class MainActivity extends AppCompatActivity
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
-//        double lat = event.lat;
-//        double lng = event.lng;
         currentLatitude = event.lat;
         currentLongitude = event.lng;
         ArrayList<String> children = new ArrayList<>();
@@ -215,26 +193,18 @@ public class MainActivity extends AppCompatActivity
     };
 
 
-        @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        Log.d("personal", "got into permissionResults");
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("personal", "permission was granted");
-                    startLocationService(); //TODO I think necessary? replacing:
-//                    Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//                    if (location == null) {
-//                        Log.d("personal", "location is null inside permission");
-//                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-//                    } else {
-//                        Log.d("personal", "about to call new location");
-//                        handleNewLocation(location);
-//                    }
-                }
-            }
-        }
-    }
+//        @Override
+//    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+//        Log.d("personal", "got into permissionResults");
+//        switch (requestCode) {
+//            case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    Log.d("personal", "permission was granted");
+//                    startLocationService(); //TODO I think necessary? replacing:
+//                }
+//            }
+//        }
+//    }
 
     public void clearCurrentUserNode(String userId){
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(userId + "_current");
@@ -360,16 +330,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, ">>>>onDestroy called");
         super.onDestroy();
         if (mFirebaseAdapter != null) {
             mFirebaseAdapter.cleanup();
         }
-//        stopLocationService();
     }
 
 
     @Override
     public void onStart() {
+        Log.d(TAG, ">>>>onStart called");
         super.onStart();
         startLocationService();
         EventBus.getDefault().register(this);
@@ -377,29 +348,26 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onStop() {
+        Log.d(TAG, ">>>>onStop called");
         super.onStop();
         EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onPause() {
+        Log.d(TAG, ">>>>onPause called");
         super.onPause();
     }
 
     @Override
     public void onResume() {
+        Log.d(TAG, ">>>>onResume called");
         super.onResume();
     }
-
-
 
     public void startLocationService(){
         Intent intent = new Intent(this, LocationService.class);
         startService(intent);
     }
 
-    public void stopLocationService(){
-        Intent intent = new Intent(this, LocationService.class);
-        stopService(intent);
-    }
 }
