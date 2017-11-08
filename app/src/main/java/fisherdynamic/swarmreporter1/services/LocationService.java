@@ -65,8 +65,9 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     private SharedPreferences.Editor mEditor;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
     private Context serviceContext = null;
-    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
-    //TODO also in MainActivity. DRY
+    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111; //TODO also in MainActivity. DRY
+    private String TAG = LocationService.class.getSimpleName();
+
 
     @Override
     public void onCreate() {
@@ -91,11 +92,11 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
 
     private void handleNewLocation(Location location) {
-        Log.d("personal", "got to handleNewLocation");
+        Log.d(TAG, "got to handleNewLocation");
         currentLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
-        Log.d("personal", "lat from handleNewLocation is " + currentLatitude.toString());
-        Log.d("personal", "long from handleNewLocation is " + currentLongitude.toString());
+        Log.d(TAG, "lat from handleNewLocation is " + currentLatitude.toString());
+        Log.d(TAG, "long from handleNewLocation is " + currentLongitude.toString());
         if (currentLatitude != null && currentLongitude != null) {
             EventBus.getDefault().postSticky(new MessageEvent(currentLatitude,currentLongitude));
             setUpGeoFire();
@@ -105,14 +106,14 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.d("personal", "got into onConnected");
+        Log.d(TAG, "got into onConnected");
 
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null) {
-            Log.d("personal", "location null");
+            Log.d(TAG, "location null");
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         } else {
-            Log.d("personal", "location not null");
+            Log.d(TAG, "location not null");
             handleNewLocation(location);
         }
     }
@@ -121,9 +122,9 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         userId = mSharedPreferences.getString("userId", null);
         Boolean userIdNull = userId == null;
-        Log.d("personal", "is userID null in setUpGeoFire in location service? " + userIdNull.toString());
+        Log.d(TAG, "is userID null in setUpGeoFire in location service? " + userIdNull.toString());
         if(!userIdNull){
-            Log.d("personal", "no! It's " + userId);
+            Log.d(TAG, "no! It's " + userId);
         }
 
         DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference("geofire");
@@ -132,28 +133,28 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                Log.d("personal", "all of the onKeyEntered entered");
-                Log.d("personal", String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
+                Log.d(TAG, "all of the onKeyEntered entered");
+                Log.d(TAG, String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
                 claimCheckKey = key;
                 swarmReportIds.add(claimCheckKey);
                 clearCurrentUserNode(userId);
                 Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
-                Log.d("personal", "all of the onKeyEntered stuff happened");
+                Log.d(TAG, "all of the onKeyEntered stuff happened");
                 if(serviceContext != null){
                     SwarmNotification swarmNotification = new SwarmNotification("New swarm", "New swarm", "A new swarm has been reported in your area", serviceContext);
                 } else {
-                    Log.d("personal", "serviceContext was null. Bummer!");
+                    Log.d(TAG, "serviceContext was null. Bummer!");
                 }
             }
 
             @Override
             public void onKeyExited(String key) {
-                Log.d("personal", "onKeyExited entered");
-                Log.d("personal", String.format("Key %s is no longer in the search area", key));
+                Log.d(TAG, "onKeyExited entered");
+                Log.d(TAG, String.format("Key %s is no longer in the search area", key));
                 Utilities.removeItemFromArrayList(key, swarmReportIds);
                 clearCurrentUserNode(userId);
                 Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
-                Log.d("personal", "onKeyExited stuff all happened");
+                Log.d(TAG, "onKeyExited stuff all happened");
             }
 
 
@@ -166,7 +167,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
             @Override
             public void onGeoQueryReady() {
-                Log.d("personal", "All initial data has been loaded and events have been fired!");
+                Log.d(TAG, "All initial data has been loaded and events have been fired!");
                 Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
                 //setUpFirebaseAdapter equivalent
                 //TODO send the children to setUpFirebaseAdapter in main activity
@@ -182,23 +183,23 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     }
 
     public void sendToActivity(Double currentLatitude, Double currentLongitude){
-        Log.d("personal", "got to sendToActivity");
+        Log.d(TAG, "got to sendToActivity");
         Intent intent = new Intent("locationServiceUpdates");
         intent.putExtra("ServiceLatitudeUpdate", currentLatitude.toString());
         intent.putExtra("ServiceLongitudeUpdate", currentLongitude.toString());
         if(serviceContext != null){
             LocalBroadcastManager.getInstance(serviceContext).sendBroadcast(intent);
-            Log.d("personal", "broadcast launched from the location service");
+            Log.d(TAG, "broadcast launched from the location service");
             Toast.makeText(this, "broadcast launched from the location service", Toast.LENGTH_SHORT).show();
         } else{
-            Log.d("personal", "didn't broadcast the location updates because serviceContext is null");
+            Log.d(TAG, "didn't broadcast the location updates because serviceContext is null");
         }
     }
 
     public void clearCurrentUserNode(String userId){
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(userId + "_current");
         ref.removeValue();
-        Log.d("personal", "removed references in userName_current");
+        Log.d(TAG, "removed references in userName_current");
     }
 
     @Override
@@ -206,14 +207,14 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         if(serviceContext != null){
             Toast.makeText(serviceContext, "Location services suspended. Please reconnect", Toast.LENGTH_LONG).show();
         } else {
-            Log.d("personal", "connection suspended, but serviceContext was null");
+            Log.d(TAG, "connection suspended, but serviceContext was null");
         }
 
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d("personal", "connection failed");
+        Log.d(TAG, "connection failed");
         //TODO flesh this out!
         Intent i = new Intent(this, ResolverActivity.class);
         i.putExtra(ResolverActivity.CONNECT_RESULT_KEY, connectionResult);
@@ -223,7 +224,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d("personal", "LocationService onLocationChanged entered");
+        Log.d(TAG, "LocationService onLocationChanged entered");
         handleNewLocation(location);
     }
 

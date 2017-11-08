@@ -17,6 +17,7 @@ import fisherdynamic.swarmreporter1.R;
 import fisherdynamic.swarmreporter1.SecretConstants;
 import fisherdynamic.swarmreporter1.activities.MapActivity;
 import fisherdynamic.swarmreporter1.activities.MyClaimedSwarmsActivity;
+import fisherdynamic.swarmreporter1.activities.NewSwarmReportActivity;
 import fisherdynamic.swarmreporter1.models.SwarmReport;
 import fisherdynamic.swarmreporter1.models.User;
 import fisherdynamic.swarmreporter1.utilityClasses.Utilities;
@@ -51,6 +52,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
     private User currentClaimant;
     private SwarmReport myClaimSwarmReport;
     private SwarmReport myReportedSwarmReport;
+    private String TAG = FirebaseClaimViewHolder.class.getSimpleName();
 
     View mView;
     Context mContext;
@@ -98,8 +100,8 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     currentClaimant = dataSnapshot.getValue(User.class);
-                    Log.d("personal", "currentReporter contactOk is " + Boolean.toString(currentClaimant.getContactOk()));
-                    Log.d("personal", "myReportedSwarmReport is claimed?: " + Boolean.toString(myReportedSwarmReport.isClaimed()));
+                    Log.d(TAG, "currentReporter contactOk is " + Boolean.toString(currentClaimant.getContactOk()));
+                    Log.d(TAG, "myReportedSwarmReport is claimed?: " + Boolean.toString(myReportedSwarmReport.isClaimed()));
                     if(currentClaimant.getContactOk() && myReportedSwarmReport.isClaimed()){
 //                    contactTextViewMyReportedSwarms.setVisibility(View.VISIBLE);
                         contactTextViewMyReportedSwarms.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_phone_black_24dp,0,0,0);
@@ -175,7 +177,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 currentReporter = dataSnapshot.getValue(User.class);
-                Log.d("personal", "contactOk is " + Boolean.toString(currentReporter.getContactOk()));
+                Log.d(TAG, "contactOk is " + Boolean.toString(currentReporter.getContactOk()));
                 if(currentReporter.getContactOk()){
                     contactReporterTextViewMyClaims.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_phone_black_24dp,0,0,0);
                     contactReporterTextViewMyClaims.setText("Contact " + currentReporter.getUserName());
@@ -266,7 +268,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
         if(v == claimButton){
             currentSwarmReport.setClaimed(true);
             currentSwarmReport.setClaimantId(userId);
-            Log.d("personal", "userName upon claimButton click is " + userName);
+            Log.d(TAG, "userName upon claimButton click is " + userName);
             currentSwarmReport.setClaimantName(userName);
 
             ArrayList<String> path = new ArrayList<>();
@@ -339,7 +341,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
 
         }
         if(v == cancelMyClaimButton){
-            Log.d("personal", "myClaim cancelMyClaimButton clicked");
+            Log.d(TAG, "myClaim cancelMyClaimButton clicked");
             SwarmReport tempSwarmReport = myClaimSwarmReport;
             String claimantIdTemp = myClaimSwarmReport.getClaimantId();
             myClaimSwarmReport.setClaimantName(null);
@@ -423,7 +425,7 @@ public class FirebaseClaimViewHolder  extends RecyclerView.ViewHolder implements
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Log.d("personal", "contact number event listener got cancelled");
+                    Log.d(TAG, "contact number event listener got cancelled");
                 }
             });
         }

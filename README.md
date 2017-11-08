@@ -14,7 +14,8 @@ The problem is that currently, swarm lists are not decentralized and are quite c
 Bivuoac is like Uber for swarms: it matches swarm reporters with available beekeepers nearby.
 
 ## Known issues:
-- [ ] After hitting back in myClaims activity, the main activity doesn't show anything because userID_current node in the db was removed.
+- [ ] After hitting back (not the system back) in myClaims activity, the main activity doesn't show anything because userID_current node in the db was removed.
+- [ ] Dismissal of progress bar is followed by 20 seconds before the firebaseRecyclerView is loaded.
 
 ## What users of the app can do:
 - [x] A user can log in/authenticate

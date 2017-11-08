@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity
         ImageView profileImageView = (ImageView) hView.findViewById(R.id.profileImageView);
         photoUrl = mSharedPreferences.getString("photoUrl", null);
         if(photoUrl != null && !photoUrl.equals("")){
-            Log.d("personal", "photoUrl inside picasso is " + photoUrl);
+            Log.d(TAG, "photoUrl inside picasso is " + photoUrl);
             Picasso.with(this)
                     .load(photoUrl)
                     .resize(500,500)
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity
 
         TextView greetingNameTextView = (TextView) hView.findViewById(R.id.greetingNameTextView);
         if(userName != null){
-            Log.d("personal", "got into changing userName in textView");
+            Log.d(TAG, "got into changing userName in textView");
             greetingNameTextView.setText(userName);
         }
 
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         auth = FirebaseAuth.getInstance();
-        Log.d("personal", "is auth null? " + Boolean.toString(auth == null));
+        Log.d(TAG, "is auth null? " + Boolean.toString(auth == null));
 
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -195,11 +195,11 @@ public class MainActivity extends AppCompatActivity
 
 //        @Override
 //    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-//        Log.d("personal", "got into permissionResults");
+//        Log.d(TAG, "got into permissionResults");
 //        switch (requestCode) {
 //            case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
 //                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    Log.d("personal", "permission was granted");
+//                    Log.d(TAG, "permission was granted");
 //                    startLocationService(); //TODO I think necessary? replacing:
 //                }
 //            }
@@ -207,9 +207,10 @@ public class MainActivity extends AppCompatActivity
 //    }
 
     public void clearCurrentUserNode(String userId){
+        Log.d(TAG, "clearCurrentUserNode called");
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(userId + "_current");
         ref.removeValue();
-        Log.d("personal", "removed references in userName_current");
+        Log.d(TAG, "removed references in userName_current");
     }
 
     @Override
@@ -289,8 +290,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setUpFirebaseAdapter(final ArrayList<String> children) {
-        Log.d("personal", "setUpFirebaseAdapter method entered");
-        Log.d("personal", "first child is " + children.get(0));
+        Log.d(TAG, "setUpFirebaseAdapter method entered");
+        Log.d(TAG, "first child is " + children.get(0));
 
         DatabaseReference keyRef = FirebaseDatabase.getInstance().getReference(children.get(0)); //TODO edit here
 
@@ -310,13 +311,13 @@ public class MainActivity extends AppCompatActivity
                 viewHolder.bindSwarmReport(model);
             }
         };
-        Log.d("personal", "got past setting up the firebaserecycler adapter in setUpFirebaseAdapter method of main activity");
+        Log.d(TAG, "got past setting up the firebaserecycler adapter in setUpFirebaseAdapter method of main activity");
         setUpBlankAdapter(); //TODO check whether necessary
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(claimRecyclerView.getContext(),
                 new LinearLayoutManager(MainActivity.this).getOrientation());
         dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
         claimRecyclerView.addItemDecoration(dividerItemDecoration);
-        Log.d("personal", "got right up to making the progressBar invisible setUpFirebaseAdapter method of main activity");
+        Log.d(TAG, "got right up to making the progressBar invisible setUpFirebaseAdapter method of main activity");
         progressBarForRecyclerView.setVisibility(View.GONE);
     }
 
@@ -362,6 +363,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume() {
         Log.d(TAG, ">>>>onResume called");
+        Log.d(TAG, "userId is: " + userId);
+        Log.d(TAG, "userName is: " + userName);
         super.onResume();
     }
 
