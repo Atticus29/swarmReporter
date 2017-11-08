@@ -125,9 +125,6 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         Log.d(TAG, "newSwarm userName is " + userName);
         Log.d(TAG, "newSwarm userId is " + userId);
 
-//        IntentFilter intentFilter = new IntentFilter("locationServiceUpdates");
-//        mMessageReceiver = createBroadcastReceiver();
-//        registerReceiver(mMessageReceiver, intentFilter);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
             return;
@@ -148,23 +145,16 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     @Override
     public void onPause() {
         super.onPause();
-        // This line will unregister your Activity.
-        // It's a good practice to put this on the onPause() method
-        // to make your event handling system tied to the Activity lifecycle.
         EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // This line will register your Activity to the EventBus
-        // making sure that all the methods annotated with @Subscribe
-        // will be called if their specific Events are posted.
         EventBus.getDefault().register(this);
     }
 
-    // The threadMode MAIN makes sure this method is called on the main Thread.
-    // But you could also set it up to be called on other threads if needed. Check the docs for more info.
+
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
         currenLatitude = event.lat;
@@ -177,31 +167,6 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
             Log.d("newSwarm", "either location or user info is null!");
         }
     };
-
-//    private BroadcastReceiver createBroadcastReceiver(){
-//
-//        return new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                if(intent.hasExtra("ServiceLatitudeUpdate") && intent.hasExtra("ServiceLongitudeUpdate")){
-//                    // Get extra data included in the Intent
-//                    currenLatitude = Double.parseDouble(intent.getStringExtra("ServiceLatitudeUpdate"));
-//                    currentLongitude = Double.parseDouble(intent.getStringExtra("ServiceLongitudeUpdate"));
-//                    Log.d(TAG, "onReceive in NewSwarmReportActivity of broadcast receiver reached");
-//                    Log.d(TAG, "onReceive in NewSwarmReportActivity lat is " + currenLatitude.toString());
-//                    Log.d(TAG, "onReceive in NewSwarmReportActivity long is " + currentLongitude.toString());
-//                    if (userId != null && userName != null && currenLatitude != 0.0 && currentLongitude != 0.0) {
-//                        progressBar.setVisibility(View.GONE);
-//                        reportSwarmButton.setVisibility(View.VISIBLE);
-//                        addImageButton.setVisibility(View.VISIBLE);
-//                    } else {
-//                        Log.d("newSwarm", "either location or user info is null!");
-//                    }
-//                }
-//
-//            }
-//        };
-//    }
 
     @Override
     public void onClick(View v) {
@@ -319,52 +284,11 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         return accessibility;
     }
 
-//    @Override
-//    public void onLocationChanged(Location location) {
-//        handleNewLocation(location);
-//    }
 
-    public void startLocationService() {
-        Intent intent = new Intent(this, LocationService.class);
-        startService(intent);
-    }
-
-//    private void setUpFirebaseAdapter(final ArrayList<String> children) {
-//        Log.d(TAG, "setUpFirebaseAdapter method entered");
-//        Log.d(TAG, "first child is " + children.get(0));
-//
-//        DatabaseReference keyRef = FirebaseDatabase.getInstance().getReference(children.get(0)); //TODO edit here
-//
-//        for (int i = 1; i < children.size(); i++) {
-//            keyRef = keyRef.getRef().child(children.get(i));
-//        }
-//
-//        mFirebaseAdapter = new FirebaseRecyclerAdapter<SwarmReport, FirebaseClaimViewHolder>
-//                (SwarmReport.class, R.layout.claim_item, FirebaseClaimViewHolder.class,
-//                        keyRef) {
-//
-//            @Override
-//            protected void populateViewHolder(final FirebaseClaimViewHolder viewHolder,
-//                                              SwarmReport model, int position) {
-//                viewHolder.bindClaimerLatLong(currenLatitude, currentLongitude);
-//                viewHolder.bindCurrentUserNameAndId(userName, userId);
-//                viewHolder.bindSwarmReport(model);
-//            }
-//        };
-//        Log.d(TAG, "got past setting up the firebaserecycler adapter in setUpFirebaseAdapter method of main activity");
-////        setUpBlankAdapter(); //TODO check whether necessary
-//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(claimRecyclerView.getContext(),
-//                new LinearLayoutManager(MainActivity.this).getOrientation());
-//        dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
-//        claimRecyclerView.addItemDecoration(dividerItemDecoration);
-//        Log.d(TAG, "got right up to making the progressBar invisible setUpFirebaseAdapter method of main activity");
-//        progressBarForRecyclerView.setVisibility(View.GONE);
-//    }
-
-    public String getSharedPreferences() {
+    public boolean getSharedPreferences() {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         userName = mSharedPreferences.getString("userName", null);
         userId = mSharedPreferences.getString("userId", null);
-        return "yay! You did the thing";
+        return true;
     }
 }
