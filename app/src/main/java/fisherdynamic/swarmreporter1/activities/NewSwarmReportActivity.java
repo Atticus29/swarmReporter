@@ -119,7 +119,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         reportSwarmButton.setOnClickListener(this);
         addImageButton.setOnClickListener(this);
         sizeLabel.requestFocus();
-        auth = FirebaseAuth.getInstance();
+//        auth = FirebaseAuth.getInstance();
 
         getSharedPreferences();
         Log.d(TAG, "newSwarm userName is " + userName);
@@ -135,23 +135,25 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     @Override
     public void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
     }
 
 

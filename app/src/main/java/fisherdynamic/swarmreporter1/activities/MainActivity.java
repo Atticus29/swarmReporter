@@ -209,7 +209,6 @@ public class MainActivity extends AppCompatActivity
 //        double lng = event.lng;
         currentLatitude = event.lat;
         currentLongitude = event.lng;
-
         ArrayList<String> children = new ArrayList<>();
         children.add(userId + "_current");
         setUpFirebaseAdapter(children);
@@ -373,23 +372,23 @@ public class MainActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
         startLocationService();
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
     }
 
 
