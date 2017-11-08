@@ -36,12 +36,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 
 import fisherdynamic.swarmreporter1.R;
 import fisherdynamic.swarmreporter1.SecretConstants;
 import fisherdynamic.swarmreporter1.activities.MainActivity;
 import fisherdynamic.swarmreporter1.activities.ResolverActivity;
+import fisherdynamic.swarmreporter1.models.MessageEvent;
 import fisherdynamic.swarmreporter1.models.SwarmNotification;
 import fisherdynamic.swarmreporter1.models.SwarmReport;
 import fisherdynamic.swarmreporter1.utilityClasses.Utilities;
@@ -65,6 +68,40 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
     //TODO also in MainActivity. DRY
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        serviceContext = this;
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        userId = mSharedPreferences.getString("userId", null);
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(10 * 1000)
+                .setFastestInterval(1 * 1000);
+        mGoogleApiClient.connect();
+    }
+
+    public LocationService() {
+    }
+
+
+    private void handleNewLocation(Location location) {
+        Log.d("personal", "got to handleNewLocation");
+        currentLatitude = location.getLatitude();
+        currentLongitude = location.getLongitude();
+        Log.d("personal", "lat from handleNewLocation is " + currentLatitude.toString());
+        Log.d("personal", "long from handleNewLocation is " + currentLongitude.toString());
+        if (currentLatitude != null && currentLongitude != null) {
+            EventBus.getDefault().postSticky(new MessageEvent(currentLatitude,currentLongitude));
+            setUpGeoFire();
+            sendToActivity(currentLatitude, currentLongitude); //TODO can I remove this?
+        }
+    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -77,18 +114,6 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         } else {
             Log.d("personal", "location not null");
             handleNewLocation(location);
-        }
-    }
-
-    private void handleNewLocation(Location location) {
-        Log.d("personal", "got to handleNewLocation");
-        currentLatitude = location.getLatitude();
-        currentLongitude = location.getLongitude();
-        Log.d("personal", "lat from handleNewLocation is " + currentLatitude.toString());
-        Log.d("personal", "long from handleNewLocation is " + currentLongitude.toString());
-        if (currentLatitude != null && currentLongitude != null) {
-            setUpGeoFire();
-            sendToActivity(currentLatitude, currentLongitude);
         }
     }
 
@@ -143,7 +168,6 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
             public void onGeoQueryReady() {
                 Log.d("personal", "All initial data has been loaded and events have been fired!");
                 Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
-
                 //setUpFirebaseAdapter equivalent
                 //TODO send the children to setUpFirebaseAdapter in main activity
 
@@ -160,14 +184,12 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     public void sendToActivity(Double currentLatitude, Double currentLongitude){
         Log.d("personal", "got to sendToActivity");
         Intent intent = new Intent("locationServiceUpdates");
-//        Bundle bundle = new Bundle();
         intent.putExtra("ServiceLatitudeUpdate", currentLatitude.toString());
         intent.putExtra("ServiceLongitudeUpdate", currentLongitude.toString());
-//        bundle.putParcelable("ServiceLatitudeUpdate", currentLatitude);
-//        bundle.putParcelable("ServiceLongitudeUpdate", currentLongitude);
-//        intent.putExtra("locationUpdate", bundle);
         if(serviceContext != null){
             LocalBroadcastManager.getInstance(serviceContext).sendBroadcast(intent);
+            Log.d("personal", "broadcast launched from the location service");
+            Toast.makeText(this, "broadcast launched from the location service", Toast.LENGTH_SHORT).show();
         } else{
             Log.d("personal", "didn't broadcast the location updates because serviceContext is null");
         }
@@ -182,7 +204,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     @Override
     public void onConnectionSuspended(int i) {
         if(serviceContext != null){
-            Toast.makeText(serviceContext, "Location services suspended. Please reconnect", Toast.LENGTH_SHORT).show();
+            Toast.makeText(serviceContext, "Location services suspended. Please reconnect", Toast.LENGTH_LONG).show();
         } else {
             Log.d("personal", "connection suspended, but serviceContext was null");
         }
@@ -192,6 +214,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d("personal", "connection failed");
+        //TODO flesh this out!
         Intent i = new Intent(this, ResolverActivity.class);
         i.putExtra(ResolverActivity.CONNECT_RESULT_KEY, connectionResult);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -200,11 +223,8 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d("personal", "onLocationChanged entered");
+        Log.d("personal", "LocationService onLocationChanged entered");
         handleNewLocation(location);
-    }
-
-    public LocationService() {
     }
 
     @Override
@@ -212,24 +232,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         return null;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        serviceContext = this;
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        userId = mSharedPreferences.getString("userId", null);
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10 * 1000)
-                .setFastestInterval(1 * 1000);
 
-        mGoogleApiClient.connect();
-    }
 
 //    @Override
 //    public int onStartCommand(Intent intent, @IntDef(value = {Service.START_FLAG_REDELIVERY, Service.START_FLAG_RETRY}, flag = true) int flags, int startId) {
@@ -244,6 +247,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
-//        Toast.makeText(this, "Location service destroyed", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Location service destroyed", Toast.LENGTH_SHORT).show();
+        EventBus.getDefault().removeAllStickyEvents();
     }
 }

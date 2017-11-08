@@ -1,17 +1,20 @@
 # SwarmReporter
 An Android app. for connecting bee swarms to beekeepers.
 
-## 19 June - 23 August, 2017
+## 19 June - 8 November, 2017
 
 ## By: Mark Fisher
 
 ## Description
 
-In the late spring/early summer, honey bee hives sometimes get so large that they need to divide, a process called swarming. During swarming, a new queen is made at the original hive, and the old queen leaves with about half of the workers. They form a temporary hive-less structure (called a Bivuoac) while they conduct a search for a permanent home. Unfortunately, these swarms/bivouacs are often formed on low-hanging branches of trees, in people’s chimneys, etc., and they creep people out. So people call the fire department, etc., who in turn contact local beekeeping organizations which keep what are called swarm lists. Swarm lists are lists of eager beekeepers in the area who will gladly take a new hive of bees off of somebody’s property.
+In the late spring/early summer, honey bee hives sometimes get so large that they need to divide, a process called swarming. During swarming, a new queen is made at the original hive, and the old queen leaves with about half of the workers. They form a temporary hive-less structure (called a swarm or bivuoac) while they conduct a search for a permanent home. Unfortunately, these swarms are often formed on low-hanging branches of trees, in people’s chimneys, etc., and they creep people out. So people call the fire department, etc., who in turn contact local beekeeping organizations which keep what are called swarm lists. Swarm lists are lists of eager beekeepers in the area who will gladly take a new hive of bees off of somebody’s property.
 
 The problem is that currently, swarm lists are not decentralized and are quite clunky (essentially glorified phone trees). Beekeepers have to pay membership fees to join the swarm lists.
 
-Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers nearby.
+Bivuoac is like Uber for swarms: it matches swarm reporters with available beekeepers nearby.
+
+## Known issues:
+- [ ] After hitting back in myClaims activity, the main activity doesn't show anything because userID_current node in the db was removed.
 
 ## What users of the app can do:
 - [x] A user can log in/authenticate
@@ -34,15 +37,19 @@ Bivuoac is Uber for swarms: it matches swarm reporters with available beekeepers
 - [x] Reporters can add a description of the hive
 
 ## Planned features in a future version:
+- [ ] A responding user can see the report and find out how far away it is from their location/address, updated in real time
+- [ ] Users are notified when a new swarm is reported in their area, even if the app is not running
 - [ ] Users are prevented from retrieving more than one swarm per some designated unit time
 - [ ] A claimed swarm re-appears as available if it is not physically retrieved in 6 hours
-- [ ] A responding user can see the report and find out how far away it is from their location/address, updated in real time
-- [ ] Users are notified when a new swarm is reported in their area
 - [ ] A claimed swarm re-appears as available if it is not physically retrieved by a certain amount of time
 - [ ] Swarm responders can pay for first dibs/early access
+- [ ] Users can report abuse
 
 ## Distant future features:
+- [ ] Unit and UI tests are fleshed out to prevent additional troubleshooting from breaking things
 - [ ] Reporters can see responder’s geographical progress towards them on a map
+- [ ] Reporters and responders can correspond in a chat feature
+- [ ] Reporters can tip responders to timely and successful pickup
 - [ ] Ratings/feedback for the responders is recorded and visualized
 - [ ] Ratings/feedback for the reporters is recorded and visualized
 - [ ] Ratings can influence e.g. the radius or frequency with which swarms are reported to a particular user
