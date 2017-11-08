@@ -94,14 +94,4 @@
         <activity android:name=".activities.ResolverActivity"></activity>
     </application>
 
-    <receiver
-        android:name="fisherdynamic.swarmreporter1.SensorRestarterBroadcastReceiver"
-        android:enabled="true"
-        android:exported="true"
-        android:label="RestartServiceWhenStopped">
-        <intent-filter>
-            <action android:name="fisherdynamic.swarmreporter1.ActivityRecognition.RestartSensor"/>
-        </intent-filter>
-    </receiver>
-
 </manifest>

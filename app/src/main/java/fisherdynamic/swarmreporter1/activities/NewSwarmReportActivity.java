@@ -56,7 +56,7 @@ import butterknife.ButterKnife;
 import fisherdynamic.swarmreporter1.viewHolders.FirebaseClaimViewHolder;
 import io.reactivex.Observable;
 
-public class NewSwarmReportActivity extends AppCompatActivity implements View.OnClickListener{
+public class NewSwarmReportActivity extends AppCompatActivity implements View.OnClickListener {
     private String TAG = NewSwarmReportActivity.class.getSimpleName();
     private FirebaseDatabase database;
     private DatabaseReference ref;
@@ -65,7 +65,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private String description;
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
-//    private GoogleApiClient mGoogleApiClient;
+    //    private GoogleApiClient mGoogleApiClient;
 //    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 //    private LocationRequest mLocationRequest;
 //    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
@@ -77,20 +77,34 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private SwarmReport newSwarmReport = new SwarmReport();
     private DatabaseReference pushRef;
     private SharedPreferences mSharedPreferences;
+    private BroadcastReceiver mMessageReceiver;
 
-    @Bind(R.id.reportSwarmButton) Button reportSwarmButton;
-    @Bind(R.id.baseball) RadioButton baseball;
-    @Bind(R.id.football) RadioButton football;
-    @Bind(R.id.basketball) RadioButton basketball;
-    @Bind(R.id.beachball) RadioButton beachball;
-    @Bind(R.id.tallLadder) RadioButton tallLadder;
-    @Bind(R.id.ladder) RadioButton ladder;
-    @Bind(R.id.reach) RadioButton reach;
-    @Bind(R.id.hasLadder) RadioButton hasLadder;
-    @Bind(R.id.addImageButton) Button addImageButton;
-    @Bind(R.id.progressBar) ProgressBar progressBar;
-    @Bind(R.id.descriptionTextView) EditText descriptionTextView;
-    @Bind(R.id.sizeLabel) TextView sizeLabel;
+    @Bind(R.id.reportSwarmButton)
+    Button reportSwarmButton;
+    @Bind(R.id.baseball)
+    RadioButton baseball;
+    @Bind(R.id.football)
+    RadioButton football;
+    @Bind(R.id.basketball)
+    RadioButton basketball;
+    @Bind(R.id.beachball)
+    RadioButton beachball;
+    @Bind(R.id.tallLadder)
+    RadioButton tallLadder;
+    @Bind(R.id.ladder)
+    RadioButton ladder;
+    @Bind(R.id.reach)
+    RadioButton reach;
+    @Bind(R.id.hasLadder)
+    RadioButton hasLadder;
+    @Bind(R.id.addImageButton)
+    Button addImageButton;
+    @Bind(R.id.progressBar)
+    ProgressBar progressBar;
+    @Bind(R.id.descriptionTextView)
+    EditText descriptionTextView;
+    @Bind(R.id.sizeLabel)
+    TextView sizeLabel;
 
 
     @Override
@@ -107,37 +121,18 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
 
         auth = FirebaseAuth.getInstance();
 
+        getSharedPreferences();
+        Log.d("personal", "newSwarm userName is " + userName);
+        Log.d("personal", "newSwarm userId is " + userId);
 
+//        startLocationService();
+        IntentFilter intentFilter = new IntentFilter("locationServiceUpdates");
 
-        //Test RxJava
-        Observable.just(getSharedPreferences())
-                .subscribe(results -> {
-                    Log.d("personal", "got into subscription stuff");
-                    Log.d("personal", "newSwarm userName is " + userName);
-                    Log.d("personal", "newSwarm userId is " + userId);
-                    BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-                        @Override
-                        public void onReceive(Context context, Intent intent) {
-                            // Get extra data included in the Intent
-                            currenLatitude = Double.parseDouble(intent.getStringExtra("ServiceLatitudeUpdate"));
-                            currentLongitude = Double.parseDouble(intent.getStringExtra("ServiceLongitudeUpdate"));
-                            Log.d("personal", "onReceive in NewSwarmReportActivity of broadcast receiver reached");
-                            Log.d("personal", "onReceive in NewSwarmReportActivity lat is " + currenLatitude.toString());
-                            Log.d("personal", "onReceive in NewSwarmReportActivity long is " + currentLongitude.toString());
-                            if(userId != null && userName != null && currenLatitude != 0.0 && currentLongitude != 0.0) {
-                                progressBar.setVisibility(View.GONE);
-                                reportSwarmButton.setVisibility(View.VISIBLE);
-                                addImageButton.setVisibility(View.VISIBLE);
-                            } else {
-                                Log.d("newSwarm", "either location or user info is null!");
-                            }
+        mMessageReceiver = createBroadcastReceiver();
 
-                        }
-                    };
-                    IntentFilter intentFilter = new IntentFilter("locationServiceUpdates");
-                    LocalBroadcastManager.getInstance(NewSwarmReportActivity.this).registerReceiver(mMessageReceiver, intentFilter);
+        //LocalBroadcastManager.getInstance(NewSwarmReportActivity.this).
+        registerReceiver(mMessageReceiver, intentFilter);
 
-                });
 
 //        mGoogleApiClient = new GoogleApiClient.Builder(this)
 //                .addConnectionCallbacks(this)
@@ -230,6 +225,31 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
 //        }
     }
 
+    private BroadcastReceiver createBroadcastReceiver(){
+
+        return new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(intent.hasExtra("ServiceLatitudeUpdate") && intent.hasExtra("ServiceLongitudeUpdate")){
+                    // Get extra data included in the Intent
+                    currenLatitude = Double.parseDouble(intent.getStringExtra("ServiceLatitudeUpdate"));
+                    currentLongitude = Double.parseDouble(intent.getStringExtra("ServiceLongitudeUpdate"));
+                    Log.d("personal", "onReceive in NewSwarmReportActivity of broadcast receiver reached");
+                    Log.d("personal", "onReceive in NewSwarmReportActivity lat is " + currenLatitude.toString());
+                    Log.d("personal", "onReceive in NewSwarmReportActivity long is " + currentLongitude.toString());
+                    if (userId != null && userName != null && currenLatitude != 0.0 && currentLongitude != 0.0) {
+                        progressBar.setVisibility(View.GONE);
+                        reportSwarmButton.setVisibility(View.VISIBLE);
+                        addImageButton.setVisibility(View.VISIBLE);
+                    } else {
+                        Log.d("newSwarm", "either location or user info is null!");
+                    }
+                }
+
+            }
+        };
+    }
+
     @Override
     public void onClick(View v) {
         Calendar calendar = Calendar.getInstance();
@@ -247,22 +267,22 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         }
 
         size = getSize();
-        if(size != null){
+        if (size != null) {
             newSwarmReport.setSize(size);
             accessibility = getAccessibility();
-            if(accessibility != null){
+            if (accessibility != null) {
                 newSwarmReport.setAccessibility(accessibility);
-                try{
+                try {
                     description = getDescription();
                     newSwarmReport.setDescription(description);
-                } catch(Exception e){
+                } catch (Exception e) {
                     descriptionTextView.setError("Please add a detailed description");
                     Log.d("personal", "description is null");
                 }
-            } else{
+            } else {
                 Toast.makeText(NewSwarmReportActivity.this, "Please select accessibility", Toast.LENGTH_SHORT).show();
             }
-        } else{
+        } else {
             Toast.makeText(NewSwarmReportActivity.this, "Please select size", Toast.LENGTH_SHORT).show();
         }
 
@@ -322,10 +342,10 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         return size;
     }
 
-    public String getDescription() throws Exception{
+    public String getDescription() throws Exception {
         String returnVal = null;
         returnVal = descriptionTextView.getText().toString().trim();
-        if(returnVal == null || returnVal.equals("")){
+        if (returnVal == null || returnVal.equals("")) {
             throw new Exception("Description is null");
         }
         return returnVal;
@@ -351,7 +371,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
 //        handleNewLocation(location);
 //    }
 
-    public void startLocationService(){
+    public void startLocationService() {
         Intent intent = new Intent(this, LocationService.class);
         startService(intent);
     }
@@ -388,7 +408,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
 //        progressBarForRecyclerView.setVisibility(View.GONE);
 //    }
 
-    public String getSharedPreferences(){
+    public String getSharedPreferences() {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         userName = mSharedPreferences.getString("userName", null);
         userId = mSharedPreferences.getString("userId", null);

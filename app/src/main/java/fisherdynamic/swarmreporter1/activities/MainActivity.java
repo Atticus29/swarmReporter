@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import fisherdynamic.swarmreporter1.R;
 import fisherdynamic.swarmreporter1.SecretConstants;
+import fisherdynamic.swarmreporter1.models.MessageEvent;
 import fisherdynamic.swarmreporter1.models.SwarmNotification;
 import fisherdynamic.swarmreporter1.models.SwarmReport;
 import fisherdynamic.swarmreporter1.services.LocationService;
@@ -59,6 +60,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -72,7 +77,7 @@ public class MainActivity extends AppCompatActivity
 
     private Query swarmReportQuery;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
-    private Double currenLatitude;
+    private Double currentLatitude;
     private Double currentLongitude;
     private String userName;
     private String userId;
@@ -147,23 +152,26 @@ public class MainActivity extends AppCompatActivity
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
             return;
         }
-        startLocationService();
-        BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                // Get extra data included in the Intent
-                currenLatitude = Double.parseDouble(intent.getStringExtra("ServiceLatitudeUpdate"));
-                currentLongitude = Double.parseDouble(intent.getStringExtra("ServiceLongitudeUpdate"));
-                Log.d("personal", "onReceive of broadcast receiver reached");
-                Log.d("personal", "onReceive lat is " + currenLatitude.toString());
-                Log.d("personal", "onReceive long is " + currentLongitude.toString());
-                ArrayList<String> children = new ArrayList<>();
-                children.add(userId + "_current");
-                setUpFirebaseAdapter(children);
-            }
-        };
-        IntentFilter intentFilter = new IntentFilter("locationServiceUpdates");
-        LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(mMessageReceiver, intentFilter);
+
+
+
+//        startLocationService();
+//        BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                // Get extra data included in the Intent
+//                currentLatitude = Double.parseDouble(intent.getStringExtra("ServiceLatitudeUpdate"));
+//                currentLongitude = Double.parseDouble(intent.getStringExtra("ServiceLongitudeUpdate"));
+//                Log.d("personal", "onReceive of broadcast receiver reached");
+//                Log.d("personal", "onReceive lat is " + currentLatitude.toString());
+//                Log.d("personal", "onReceive long is " + currentLongitude.toString());
+//                ArrayList<String> children = new ArrayList<>();
+//                children.add(userId + "_current");
+//                setUpFirebaseAdapter(children);
+//            }
+//        };
+//        IntentFilter intentFilter = new IntentFilter("locationServiceUpdates");
+//        LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(mMessageReceiver, intentFilter);
 
         auth = FirebaseAuth.getInstance();
         Log.d("personal", "is auth null? " + Boolean.toString(auth == null));
@@ -195,7 +203,20 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+//        double lat = event.lat;
+//        double lng = event.lng;
+        currentLatitude = event.lat;
+        currentLongitude = event.lng;
+
+        ArrayList<String> children = new ArrayList<>();
+        children.add(userId + "_current");
+        setUpFirebaseAdapter(children);
+    };
+
+
+        @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         Log.d("personal", "got into permissionResults");
         switch (requestCode) {
@@ -315,7 +336,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             protected void populateViewHolder(final FirebaseClaimViewHolder viewHolder,
                                               SwarmReport model, int position) {
-                viewHolder.bindClaimerLatLong(currenLatitude, currentLongitude);
+                viewHolder.bindClaimerLatLong(currentLatitude, currentLongitude);
                 viewHolder.bindCurrentUserNameAndId(userName, userId);
                 viewHolder.bindSwarmReport(model);
             }
@@ -344,7 +365,7 @@ public class MainActivity extends AppCompatActivity
         if (mFirebaseAdapter != null) {
             mFirebaseAdapter.cleanup();
         }
-        stopLocationService();
+//        stopLocationService();
     }
 
 
@@ -352,34 +373,23 @@ public class MainActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
         startLocationService();
-//        BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                // Get extra data included in the Intent
-//                currenLatitude = Double.parseDouble(intent.getStringExtra("ServiceLatitudeUpdate"));
-//                currentLongitude = Double.parseDouble(intent.getStringExtra("ServiceLongitudeUpdate"));
-//                Log.d("personal", "onReceive of broadcast receiver reached");
-//                Log.d("personal", "onReceive lat is " + currenLatitude.toString());
-//                Log.d("personal", "onReceive long is " + currentLongitude.toString());
-//                ArrayList<String> children = new ArrayList<>();
-//                children.add(userId + "_current");
-//                setUpFirebaseAdapter(children);
-//            }
-//        };
-//        IntentFilter intentFilter = new IntentFilter("locationServiceUpdates");
-//        LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(mMessageReceiver, intentFilter);
-//        mGoogleApiClient.connect();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-//        stopLocationService();
-//        if (mGoogleApiClient.isConnected()) {
-//            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-//            mGoogleApiClient.disconnect();
-//        }
-//        this.geoQuery.removeAllListeners();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
     }
 
 
