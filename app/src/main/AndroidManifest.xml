@@ -45,7 +45,8 @@
         <activity
             android:name=".activities.NewSwarmReportActivity"
             android:label="Report A New Swarm"
-            android:value="fisherdynamic.swarmreporter1.activities.MainActivity">
+            android:value="fisherdynamic.swarmreporter1.activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="com.google.firebase.messaging.default_notification_icon"
                 android:resource="@drawable/ic_priority_high_black_24dp" />
@@ -73,7 +74,8 @@
         </activity>
         <activity
             android:name=".activities.MyReportedSwarmsActivity"
-            android:label="My Reported Swarms">
+            android:label="My Reported Swarms"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fisherdynamic.swarmreporter1.activities.MainActivity" />
