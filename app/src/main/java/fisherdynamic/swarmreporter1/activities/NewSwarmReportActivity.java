@@ -15,14 +15,20 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -61,7 +67,7 @@ import butterknife.ButterKnife;
 import fisherdynamic.swarmreporter1.viewHolders.FirebaseClaimViewHolder;
 import io.reactivex.Observable;
 
-public class NewSwarmReportActivity extends AppCompatActivity implements View.OnClickListener {
+public class NewSwarmReportActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
     private String TAG = NewSwarmReportActivity.class.getSimpleName();
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
     private FirebaseDatabase database;
@@ -80,6 +86,10 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private DatabaseReference pushRef;
     private SharedPreferences mSharedPreferences;
     private BroadcastReceiver mMessageReceiver;
+
+    private View hView;
+    private NavigationView navigationView;
+    private SharedPreferences.Editor mEditor;
 
     @Bind(R.id.reportSwarmButton)
     Button reportSwarmButton;
@@ -112,7 +122,7 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_swarm_report);
+        setContentView(R.layout.activity_new_swarm_report_drawer);
 
         ButterKnife.bind(this);
 
@@ -122,6 +132,19 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
 //        auth = FirebaseAuth.getInstance();
 
         getSharedPreferences();
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        hView = navigationView.getHeaderView(0);
+        navigationView.setNavigationItemSelectedListener(this);
+
         Log.d(TAG, "newSwarm userName is " + userName);
         Log.d(TAG, "newSwarm userId is " + userId);
 
@@ -291,6 +314,42 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         userName = mSharedPreferences.getString("userName", null);
         userId = mSharedPreferences.getString("userId", null);
+        return true;
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_logout) {
+            Utilities.logoutWithContextAndSharedPreferences(this, mEditor);
+            finish();
+            return true;
+        }
+
+        if (id == R.id.action_viewAvailableReports){ //&& !TAG.equals("MainActivity")
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
+
+        if (id == R.id.action_newReport) { //  && !TAG.equals("NewSwarmReportActivity")
+            Intent intent = new Intent(this, NewSwarmReportActivity.class);
+            startActivity(intent);
+        }
+
+        if (id == R.id.action_myClaims) { //  && !TAG.equals("MyClaimedSwarmsActivity")
+            Intent intent = new Intent(this, MyClaimedSwarmsActivity.class);
+            startActivity(intent);
+        }
+
+        if (id == R.id.action_myReportedSwarms) { //  && !TAG.equals("MyReportedSwarmsActivity")
+            Intent intent = new Intent(this, MyReportedSwarmsActivity.class);
+            startActivity(intent);
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 }

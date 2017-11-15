@@ -21,125 +21,130 @@
 
         <RadioGroup
             android:id="@+id/radioGroupSize"
-            android:layout_width="368dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="0dp">
+            android:layout_marginTop="64dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/sizeLabel"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/primary_text"
+                android:layout_marginLeft="10dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:text="About how big is the swarm?"
+                android:textColor="@color/primary_text"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginLeft="10dp"/>
+                android:textStyle="bold" />
 
             <RadioButton
                 android:id="@+id/baseball"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
                 android:checked="false"
-                android:textColor="@color/secondary_text"
                 android:text="Baseball"
-                android:theme="@style/MyRadioButton"
-                android:layout_marginLeft="12dp"/>
+                android:textColor="@color/secondary_text"
+                android:theme="@style/MyRadioButton" />
 
             <RadioButton
                 android:id="@+id/football"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
                 android:checked="false"
-                android:textColor="@color/secondary_text"
                 android:text="Football"
-                android:theme="@style/MyRadioButton"
-                android:layout_marginLeft="12dp"/>
+                android:textColor="@color/secondary_text"
+                android:theme="@style/MyRadioButton" />
 
             <RadioButton
                 android:id="@+id/basketball"
-                android:textColor="@color/secondary_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
                 android:checked="false"
                 android:text="Basketball"
-                android:theme="@style/MyRadioButton"
-                android:layout_marginLeft="12dp"/>
+                android:textColor="@color/secondary_text"
+                android:theme="@style/MyRadioButton" />
 
             <RadioButton
                 android:id="@+id/beachball"
-                android:textColor="@color/secondary_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
                 android:checked="false"
                 android:text="Beachball"
-                android:theme="@style/MyRadioButton"
-                android:layout_marginLeft="12dp"/>
+                android:textColor="@color/secondary_text"
+                android:theme="@style/MyRadioButton" />
         </RadioGroup>
 
         <RadioGroup
             android:id="@+id/radioGroupAccessibility"
-            android:layout_width="368dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/radioGroupSize"
-            tools:layout_editor_absoluteX="8dp">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroupSize">
 
             <TextView
                 android:id="@+id/accessibilityLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
                 android:text="How accessible is the swarm?"
-                android:textSize="20sp"
                 android:textColor="@color/primary_text"
-                android:textStyle="bold"
-                android:layout_marginLeft="10dp"/>
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <RadioButton
                 android:id="@+id/reach"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/secondary_text"
+                android:layout_marginLeft="12dp"
                 android:layout_weight="1"
                 android:checked="false"
                 android:text="Within unassisted reach"
-                android:theme="@style/MyRadioButton"
-                android:layout_marginLeft="12dp"/>
+                android:textColor="@color/secondary_text"
+                android:theme="@style/MyRadioButton" />
 
             <RadioButton
                 android:id="@+id/hasLadder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
                 android:layout_weight="1"
-                android:textColor="@color/secondary_text"
                 android:checked="false"
                 android:text="Will require a small ladder, which I can provide"
-                android:theme="@style/MyRadioButton"
-                android:layout_marginLeft="12dp"/>
+                android:textColor="@color/secondary_text"
+                android:theme="@style/MyRadioButton" />
 
             <RadioButton
                 android:id="@+id/ladder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
                 android:layout_weight="1"
-                android:textColor="@color/secondary_text"
                 android:checked="false"
                 android:text="Will require a small ladder"
-                android:theme="@style/MyRadioButton"
-                android:layout_marginLeft="12dp"/>
+                android:textColor="@color/secondary_text"
+                android:theme="@style/MyRadioButton" />
 
             <RadioButton
                 android:id="@+id/tallLadder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="18dp"
+                android:layout_marginLeft="12dp"
                 android:layout_weight="1"
-                android:textColor="@color/secondary_text"
                 android:checked="false"
                 android:text="Will require a large ladder"
-                android:theme="@style/MyRadioButton"
-                android:layout_marginLeft="12dp"/>
+                android:textColor="@color/secondary_text"
+                android:theme="@style/MyRadioButton" />
 
         </RadioGroup>
 

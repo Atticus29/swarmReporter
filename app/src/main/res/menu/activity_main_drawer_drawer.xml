@@ -4,8 +4,8 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/action_logout"
-            android:title="Logout"
+            android:id="@+id/action_viewAvailableReports"
+            android:title="View Available Swarm Reports"
             />
         <item
             android:id="@+id/action_newReport"
@@ -18,6 +18,10 @@
         <item
             android:id="@+id/action_myReportedSwarms"
             android:title="View My Reported Swarms"
+            />
+        <item
+            android:id="@+id/action_logout"
+            android:title="Logout"
             />
     </group>
 

@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -103,6 +104,10 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
         ButterKnife.bind(this);
+
+//        View swarmReportMenuItem = findViewById(R.id.action_viewAvailableReports);
+//        swarmReportMenuItem.setVisibility(View.GONE); //TODO try to make this work
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -223,18 +228,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
-    private void logout() {
-        FirebaseAuth.getInstance().signOut();
-        addToSharedPreferences("userName", "");
-        addToSharedPreferences("userId", "");
-        addToSharedPreferences("photoUrl", "");
-        Intent intent = new Intent(fisherdynamic.swarmreporter1.activities.MainActivity.this, LoginGateActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
-
     private void addToSharedPreferences(String key, String passedUserName) {
         mEditor.putString(key, passedUserName).apply();
     }
@@ -245,43 +238,29 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_logout) {
-            logout();
+            Utilities.logoutWithContextAndSharedPreferences(this, mEditor);
+            finish();
             return true;
         }
 
-        if (id == R.id.action_newReport) {
-            Intent intent = new Intent(MainActivity.this, NewSwarmReportActivity.class);
-            if (userName != null && userId != null) {
-                intent.putExtra("userName", userName);
-                intent.putExtra("userId", userId);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Unable to retrieve username and id", Toast.LENGTH_SHORT).show();
-            }
-
+        if (id == R.id.action_viewAvailableReports){ //&& !TAG.equals("MainActivity")
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
         }
 
-        if (id == R.id.action_myClaims) {
-            Intent intent = new Intent(MainActivity.this, MyClaimedSwarmsActivity.class);
-            if (userName != null && userId != null) {
-                intent.putExtra("userName", userName);
-                intent.putExtra("userId", userId);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Unable to retrieve username and id", Toast.LENGTH_SHORT).show();
-            }
+        if (id == R.id.action_newReport) { //  && !TAG.equals("NewSwarmReportActivity")
+            Intent intent = new Intent(this, NewSwarmReportActivity.class);
+            startActivity(intent);
         }
 
-        if (id == R.id.action_myReportedSwarms) {
-            Intent intent = new Intent(MainActivity.this, MyReportedSwarmsActivity.class);
-            if (userName != null && userId != null) {
-                intent.putExtra("userName", userName);
-                intent.putExtra("userId", userId);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Unable to retrieve username and id", Toast.LENGTH_SHORT).show();
-            }
+        if (id == R.id.action_myClaims) { //  && !TAG.equals("MyClaimedSwarmsActivity")
+            Intent intent = new Intent(this, MyClaimedSwarmsActivity.class);
+            startActivity(intent);
+        }
 
+        if (id == R.id.action_myReportedSwarms) { //  && !TAG.equals("MyReportedSwarmsActivity")
+            Intent intent = new Intent(this, MyReportedSwarmsActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
