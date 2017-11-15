@@ -223,18 +223,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
-    private void logout() {
-        FirebaseAuth.getInstance().signOut();
-        addToSharedPreferences("userName", "");
-        addToSharedPreferences("userId", "");
-        addToSharedPreferences("photoUrl", "");
-        Intent intent = new Intent(fisherdynamic.swarmreporter1.activities.MainActivity.this, LoginGateActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
-
     private void addToSharedPreferences(String key, String passedUserName) {
         mEditor.putString(key, passedUserName).apply();
     }
@@ -245,7 +233,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_logout) {
-            logout();
+            Utilities.logoutWithContextAndSharedPreferences(this, mEditor);
+            finish();
             return true;
         }
 
