@@ -2,11 +2,15 @@ package fisherdynamic.swarmreporter1.activities;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
@@ -30,6 +34,8 @@ public class MyClaimedSwarmsActivity extends AppCompatActivity {
     private String userName;
     private String userId;
     private String TAG = MyClaimedSwarmsActivity.class.getSimpleName();
+    private View hView;
+    private NavigationView navigationView;
 
     @Bind(R.id.myClaimedSwarmsRecyclerView) RecyclerView myClaimedSwarmsRecyclerView;
 
@@ -37,7 +43,7 @@ public class MyClaimedSwarmsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, ">>>>onCreate called");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_claimed_swarms);
+        setContentView(R.layout.activity_my_claim_drawer);
         ButterKnife.bind(this);
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -45,6 +51,19 @@ public class MyClaimedSwarmsActivity extends AppCompatActivity {
 
         userName = mSharedPreferences.getString("userName", null);
         userId = mSharedPreferences.getString("userId", null);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        hView = navigationView.getHeaderView(0);
+
+        navigationView.setNavigationItemSelectedListener((NavigationView.OnNavigationItemSelectedListener) this);
 
         ArrayList<String> children = new ArrayList<>();
         children.add("users");

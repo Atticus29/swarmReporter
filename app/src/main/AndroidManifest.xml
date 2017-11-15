@@ -65,7 +65,8 @@
         </activity>
         <activity
             android:name=".activities.MyClaimedSwarmsActivity"
-            android:label="My Claimed Swarms">
+            android:label="My Claimed Swarms"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fisherdynamic.swarmreporter1.activities.MainActivity" />
