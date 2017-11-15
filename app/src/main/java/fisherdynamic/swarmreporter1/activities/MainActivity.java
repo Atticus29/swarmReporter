@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,6 +35,7 @@ import android.widget.Toast;
 
 import fisherdynamic.swarmreporter1.R;
 import fisherdynamic.swarmreporter1.SecretConstants;
+import fisherdynamic.swarmreporter1.models.MessageEvent;
 import fisherdynamic.swarmreporter1.models.SwarmNotification;
 import fisherdynamic.swarmreporter1.models.SwarmReport;
 import fisherdynamic.swarmreporter1.services.LocationService;
@@ -59,6 +61,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,11 +74,9 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-
     private Query swarmReportQuery;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
-    private Double currenLatitude;
+    private Double currentLatitude;
     private Double currentLongitude;
     private String userName;
     private String userId;
@@ -86,7 +90,8 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<SwarmReport> swarmReports = new ArrayList<>();
     private String claimCheckKey;
     private FirebaseAuth.AuthStateListener authListener;
-    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111; //TODO also in location service. DRY
+    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111; //TODO also in location// service. DRY
+    private String TAG = MainActivity.class.getSimpleName();
 
     @Bind(R.id.claimRecyclerView) RecyclerView claimRecyclerView;
     @Bind(R.id.greetingTextView) TextView greetingTextView;
@@ -95,9 +100,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, ">>>>onCreate called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
         ButterKnife.bind(this);
+
+//        View swarmReportMenuItem = findViewById(R.id.action_viewAvailableReports);
+//        swarmReportMenuItem.setVisibility(View.GONE); //TODO try to make this work
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -128,7 +138,7 @@ public class MainActivity extends AppCompatActivity
         ImageView profileImageView = (ImageView) hView.findViewById(R.id.profileImageView);
         photoUrl = mSharedPreferences.getString("photoUrl", null);
         if(photoUrl != null && !photoUrl.equals("")){
-            Log.d("personal", "photoUrl inside picasso is " + photoUrl);
+            Log.d(TAG, "photoUrl inside picasso is " + photoUrl);
             Picasso.with(this)
                     .load(photoUrl)
                     .resize(500,500)
@@ -138,7 +148,7 @@ public class MainActivity extends AppCompatActivity
 
         TextView greetingNameTextView = (TextView) hView.findViewById(R.id.greetingNameTextView);
         if(userName != null){
-            Log.d("personal", "got into changing userName in textView");
+            Log.d(TAG, "got into changing userName in textView");
             greetingNameTextView.setText(userName);
         }
 
@@ -147,26 +157,9 @@ public class MainActivity extends AppCompatActivity
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
             return;
         }
-        startLocationService();
-        BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                // Get extra data included in the Intent
-                currenLatitude = Double.parseDouble(intent.getStringExtra("ServiceLatitudeUpdate"));
-                currentLongitude = Double.parseDouble(intent.getStringExtra("ServiceLongitudeUpdate"));
-                Log.d("personal", "onReceive of broadcast receiver reached");
-                Log.d("personal", "onReceive lat is " + currenLatitude.toString());
-                Log.d("personal", "onReceive long is " + currentLongitude.toString());
-                ArrayList<String> children = new ArrayList<>();
-                children.add(userId + "_current");
-                setUpFirebaseAdapter(children);
-            }
-        };
-        IntentFilter intentFilter = new IntentFilter("locationServiceUpdates");
-        LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(mMessageReceiver, intentFilter);
 
         auth = FirebaseAuth.getInstance();
-        Log.d("personal", "is auth null? " + Boolean.toString(auth == null));
+        Log.d(TAG, "is auth null? " + Boolean.toString(auth == null));
 
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -195,31 +188,34 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        Log.d("personal", "got into permissionResults");
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("personal", "permission was granted");
-                    startLocationService(); //TODO I think necessary? replacing:
-//                    Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//                    if (location == null) {
-//                        Log.d("personal", "location is null inside permission");
-//                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-//                    } else {
-//                        Log.d("personal", "about to call new location");
-//                        handleNewLocation(location);
-//                    }
-                }
-            }
-        }
-    }
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        currentLatitude = event.lat;
+        currentLongitude = event.lng;
+        ArrayList<String> children = new ArrayList<>();
+        children.add(userId + "_current");
+        setUpFirebaseAdapter(children);
+    };
+
+
+//        @Override
+//    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+//        Log.d(TAG, "got into permissionResults");
+//        switch (requestCode) {
+//            case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    Log.d(TAG, "permission was granted");
+//                    startLocationService(); //TODO I think necessary? replacing:
+//                }
+//            }
+//        }
+//    }
 
     public void clearCurrentUserNode(String userId){
+        Log.d(TAG, "clearCurrentUserNode called");
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(userId + "_current");
         ref.removeValue();
-        Log.d("personal", "removed references in userName_current");
+        Log.d(TAG, "removed references in userName_current");
     }
 
     @Override
@@ -232,18 +228,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
-    private void logout() {
-        FirebaseAuth.getInstance().signOut();
-        addToSharedPreferences("userName", "");
-        addToSharedPreferences("userId", "");
-        addToSharedPreferences("photoUrl", "");
-        Intent intent = new Intent(fisherdynamic.swarmreporter1.activities.MainActivity.this, LoginGateActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
-
     private void addToSharedPreferences(String key, String passedUserName) {
         mEditor.putString(key, passedUserName).apply();
     }
@@ -254,43 +238,29 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_logout) {
-            logout();
+            Utilities.logoutWithContextAndSharedPreferences(this, mEditor);
+            finish();
             return true;
         }
 
-        if (id == R.id.action_newReport) {
-            Intent intent = new Intent(MainActivity.this, NewSwarmReportActivity.class);
-            if (userName != null && userId != null) {
-                intent.putExtra("userName", userName);
-                intent.putExtra("userId", userId);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Unable to retrieve username and id", Toast.LENGTH_SHORT).show();
-            }
-
+        if (id == R.id.action_viewAvailableReports){ //&& !TAG.equals("MainActivity")
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
         }
 
-        if (id == R.id.action_myClaims) {
-            Intent intent = new Intent(MainActivity.this, MyClaimedSwarmsActivity.class);
-            if (userName != null && userId != null) {
-                intent.putExtra("userName", userName);
-                intent.putExtra("userId", userId);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Unable to retrieve username and id", Toast.LENGTH_SHORT).show();
-            }
+        if (id == R.id.action_newReport) { //  && !TAG.equals("NewSwarmReportActivity")
+            Intent intent = new Intent(this, NewSwarmReportActivity.class);
+            startActivity(intent);
         }
 
-        if (id == R.id.action_myReportedSwarms) {
-            Intent intent = new Intent(MainActivity.this, MyReportedSwarmsActivity.class);
-            if (userName != null && userId != null) {
-                intent.putExtra("userName", userName);
-                intent.putExtra("userId", userId);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Unable to retrieve username and id", Toast.LENGTH_SHORT).show();
-            }
+        if (id == R.id.action_myClaims) { //  && !TAG.equals("MyClaimedSwarmsActivity")
+            Intent intent = new Intent(this, MyClaimedSwarmsActivity.class);
+            startActivity(intent);
+        }
 
+        if (id == R.id.action_myReportedSwarms) { //  && !TAG.equals("MyReportedSwarmsActivity")
+            Intent intent = new Intent(this, MyReportedSwarmsActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -299,7 +269,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setUpFirebaseAdapter(final ArrayList<String> children) {
-        Log.d("personal", "first child is " + children.get(0));
+        Log.d(TAG, "setUpFirebaseAdapter method entered");
+        Log.d(TAG, "first child is " + children.get(0));
 
         DatabaseReference keyRef = FirebaseDatabase.getInstance().getReference(children.get(0)); //TODO edit here
 
@@ -314,16 +285,18 @@ public class MainActivity extends AppCompatActivity
             @Override
             protected void populateViewHolder(final FirebaseClaimViewHolder viewHolder,
                                               SwarmReport model, int position) {
-                viewHolder.bindClaimerLatLong(currenLatitude, currentLongitude);
+                viewHolder.bindClaimerLatLong(currentLatitude, currentLongitude);
                 viewHolder.bindCurrentUserNameAndId(userName, userId);
                 viewHolder.bindSwarmReport(model);
             }
         };
+        Log.d(TAG, "got past setting up the firebaserecycler adapter in setUpFirebaseAdapter method of main activity");
         setUpBlankAdapter(); //TODO check whether necessary
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(claimRecyclerView.getContext(),
                 new LinearLayoutManager(MainActivity.this).getOrientation());
         dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
         claimRecyclerView.addItemDecoration(dividerItemDecoration);
+        Log.d(TAG, "got right up to making the progressBar invisible setUpFirebaseAdapter method of main activity");
         progressBarForRecyclerView.setVisibility(View.GONE);
     }
 
@@ -337,6 +310,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, ">>>>onDestroy called");
         super.onDestroy();
         if (mFirebaseAdapter != null) {
             mFirebaseAdapter.cleanup();
@@ -346,19 +320,32 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onStart() {
+        Log.d(TAG, ">>>>onStart called");
         super.onStart();
-        startLocationService(); //TODO necessary??
-//        mGoogleApiClient.connect();
+        startLocationService();
+        EventBus.getDefault().register(this);
+
     }
 
     @Override
     public void onStop() {
+        Log.d(TAG, ">>>>onStop called");
         super.onStop();
-//        if (mGoogleApiClient.isConnected()) {
-//            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-//            mGoogleApiClient.disconnect();
-//        }
-//        this.geoQuery.removeAllListeners();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onPause() {
+        Log.d(TAG, ">>>>onPause called");
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(TAG, ">>>>onResume called");
+        Log.d(TAG, "userId is: " + userId);
+        Log.d(TAG, "userName is: " + userName);
+        super.onResume();
     }
 
     public void startLocationService(){
@@ -366,8 +353,4 @@ public class MainActivity extends AppCompatActivity
         startService(intent);
     }
 
-    public void stopLocationService(){
-        Intent intent = new Intent(this, LocationService.class);
-        stopService(intent);
-    }
 }

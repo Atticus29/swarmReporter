@@ -36,12 +36,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 
 import fisherdynamic.swarmreporter1.R;
 import fisherdynamic.swarmreporter1.SecretConstants;
 import fisherdynamic.swarmreporter1.activities.MainActivity;
 import fisherdynamic.swarmreporter1.activities.ResolverActivity;
+import fisherdynamic.swarmreporter1.models.MessageEvent;
 import fisherdynamic.swarmreporter1.models.SwarmNotification;
 import fisherdynamic.swarmreporter1.models.SwarmReport;
 import fisherdynamic.swarmreporter1.utilityClasses.Utilities;
@@ -62,147 +65,9 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     private SharedPreferences.Editor mEditor;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
     private Context serviceContext = null;
-    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
-    //TODO also in MainActivity. DRY
+    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111; //TODO also in MainActivity. DRY
+    private String TAG = LocationService.class.getSimpleName();
 
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Log.d("personal", "got into onConnected");
-
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location == null) {
-            Log.d("personal", "location null");
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        } else {
-            Log.d("personal", "location not null");
-            handleNewLocation(location);
-        }
-    }
-
-    private void handleNewLocation(Location location) {
-        Log.d("personal", "got to handleNewLocation");
-        currentLatitude = location.getLatitude();
-        currentLongitude = location.getLongitude();
-        Log.d("personal", "lat from handleNewLocation is " + currentLatitude.toString());
-        Log.d("personal", "long from handleNewLocation is " + currentLongitude.toString());
-        if (currentLatitude != null && currentLongitude != null) {
-            setUpGeoFire();
-            sendToActivity(currentLatitude, currentLongitude);
-        }
-    }
-
-    private void setUpGeoFire() {
-        DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference("geofire");
-        geoFire = new GeoFire(geoFireRef);
-        geoQuery = geoFire.queryAtLocation(new GeoLocation(currentLatitude, currentLongitude), SecretConstants.QUERY_RADIUS);
-        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-            @Override
-            public void onKeyEntered(String key, GeoLocation location) {
-                Log.d("personal", "all of the onKeyEntered entered");
-                Log.d("personal", String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
-                claimCheckKey = key;
-                swarmReportIds.add(claimCheckKey);
-                clearCurrentUserNode(userId);
-                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
-                Log.d("personal", "all of the onKeyEntered stuff happened");
-                if(serviceContext != null){
-                    SwarmNotification swarmNotification = new SwarmNotification("New swarm", "New swarm", "A new swarm has been reported in your area", serviceContext);
-                } else {
-                    Log.d("personal", "serviceContext was null. Bummer!");
-                }
-            }
-
-            @Override
-            public void onKeyExited(String key) {
-                Log.d("personal", "onKeyExited entered");
-                Log.d("personal", String.format("Key %s is no longer in the search area", key));
-                Utilities.removeItemFromArrayList(key, swarmReportIds);
-                clearCurrentUserNode(userId);
-                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
-                Log.d("personal", "onKeyExited stuff all happened");
-            }
-
-
-            @Override
-            public void onKeyMoved(String key, GeoLocation location) {
-                clearCurrentUserNode(userId);
-                swarmReportIds = Utilities.removeItemFromArrayList(key, swarmReportIds);
-                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
-            }
-
-            @Override
-            public void onGeoQueryReady() {
-                Log.d("personal", "All initial data has been loaded and events have been fired!");
-                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
-
-                //setUpFirebaseAdapter equivalent
-                //TODO send the children to setUpFirebaseAdapter in main activity
-
-                //TODO check for asynchronicity issues when the swarm count is very high
-            }
-
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-                System.err.println("There was an error with this query: " + error);
-            }
-        });
-    }
-
-    public void sendToActivity(Double currentLatitude, Double currentLongitude){
-        Log.d("personal", "got to sendToActivity");
-        Intent intent = new Intent("locationServiceUpdates");
-//        Bundle bundle = new Bundle();
-        intent.putExtra("ServiceLatitudeUpdate", currentLatitude.toString());
-        intent.putExtra("ServiceLongitudeUpdate", currentLongitude.toString());
-//        bundle.putParcelable("ServiceLatitudeUpdate", currentLatitude);
-//        bundle.putParcelable("ServiceLongitudeUpdate", currentLongitude);
-//        intent.putExtra("locationUpdate", bundle);
-        if(serviceContext != null){
-            LocalBroadcastManager.getInstance(serviceContext).sendBroadcast(intent);
-        } else{
-            Log.d("personal", "didn't broadcast the location updates because serviceContext is null");
-        }
-    }
-
-    public void clearCurrentUserNode(String userId){
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(userId + "_current");
-        ref.removeValue();
-        Log.d("personal", "removed references in userName_current");
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        if(serviceContext != null){
-            Toast.makeText(serviceContext, "Location services suspended. Please reconnect", Toast.LENGTH_SHORT).show();
-        } else {
-            Log.d("personal", "connection suspended, but serviceContext was null");
-        }
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d("personal", "connection failed");
-        Intent i = new Intent(this, ResolverActivity.class);
-        i.putExtra(ResolverActivity.CONNECT_RESULT_KEY, connectionResult);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i);
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.d("personal", "onLocationChanged entered");
-        handleNewLocation(location);
-    }
-
-    public LocationService() {
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
 
     @Override
     public void onCreate() {
@@ -219,9 +84,156 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)
                 .setFastestInterval(1 * 1000);
-
         mGoogleApiClient.connect();
     }
+
+    public LocationService() {
+    }
+
+
+    private void handleNewLocation(Location location) {
+        Log.d(TAG, "got to handleNewLocation");
+        currentLatitude = location.getLatitude();
+        currentLongitude = location.getLongitude();
+        Log.d(TAG, "lat from handleNewLocation is " + currentLatitude.toString());
+        Log.d(TAG, "long from handleNewLocation is " + currentLongitude.toString());
+        if (currentLatitude != null && currentLongitude != null) {
+            EventBus.getDefault().postSticky(new MessageEvent(currentLatitude,currentLongitude));
+            setUpGeoFire();
+            sendToActivity(currentLatitude, currentLongitude); //TODO can I remove this?
+        }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.d(TAG, "got into onConnected");
+
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (location == null) {
+            Log.d(TAG, "location null");
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        } else {
+            Log.d(TAG, "location not null");
+            handleNewLocation(location);
+        }
+    }
+
+    private void setUpGeoFire() {
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        userId = mSharedPreferences.getString("userId", null);
+        Boolean userIdNull = userId == null;
+        Log.d(TAG, "is userID null in setUpGeoFire in location service? " + userIdNull.toString());
+        if(!userIdNull){
+            Log.d(TAG, "no! It's " + userId);
+        }
+
+        DatabaseReference geoFireRef = FirebaseDatabase.getInstance().getReference("geofire");
+        geoFire = new GeoFire(geoFireRef);
+        geoQuery = geoFire.queryAtLocation(new GeoLocation(currentLatitude, currentLongitude), SecretConstants.QUERY_RADIUS);
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                Log.d(TAG, "all of the onKeyEntered entered");
+                Log.d(TAG, String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
+                claimCheckKey = key;
+                swarmReportIds.add(claimCheckKey);
+                clearCurrentUserNode(userId);
+                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
+                Log.d(TAG, "all of the onKeyEntered stuff happened");
+                if(serviceContext != null){
+                    SwarmNotification swarmNotification = new SwarmNotification("New swarm", "New swarm", "A new swarm has been reported in your area", serviceContext);
+                } else {
+                    Log.d(TAG, "serviceContext was null. Bummer!");
+                }
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+                Log.d(TAG, "onKeyExited entered");
+                Log.d(TAG, String.format("Key %s is no longer in the search area", key));
+                Utilities.removeItemFromArrayList(key, swarmReportIds);
+                clearCurrentUserNode(userId);
+                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
+                Log.d(TAG, "onKeyExited stuff all happened");
+            }
+
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+                clearCurrentUserNode(userId);
+                swarmReportIds = Utilities.removeItemFromArrayList(key, swarmReportIds);
+                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+                Log.d(TAG, "All initial data has been loaded and events have been fired!");
+                Utilities.transferSwarmReportsFromAllToNewNode(userId + "_current", swarmReportIds);
+                //setUpFirebaseAdapter equivalent
+                //TODO send the children to setUpFirebaseAdapter in main activity
+
+                //TODO check for asynchronicity issues when the swarm count is very high
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+                System.err.println("There was an error with this query: " + error);
+            }
+        });
+    }
+
+    public void sendToActivity(Double currentLatitude, Double currentLongitude){
+        Log.d(TAG, "got to sendToActivity");
+        Intent intent = new Intent("locationServiceUpdates");
+        intent.putExtra("ServiceLatitudeUpdate", currentLatitude.toString());
+        intent.putExtra("ServiceLongitudeUpdate", currentLongitude.toString());
+        if(serviceContext != null){
+            LocalBroadcastManager.getInstance(serviceContext).sendBroadcast(intent);
+            Log.d(TAG, "broadcast launched from the location service");
+            Toast.makeText(this, "broadcast launched from the location service", Toast.LENGTH_SHORT).show();
+        } else{
+            Log.d(TAG, "didn't broadcast the location updates because serviceContext is null");
+        }
+    }
+
+    public void clearCurrentUserNode(String userId){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(userId + "_current");
+        ref.removeValue();
+        Log.d(TAG, "removed references in userName_current");
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        if(serviceContext != null){
+            Toast.makeText(serviceContext, "Location services suspended. Please reconnect", Toast.LENGTH_LONG).show();
+        } else {
+            Log.d(TAG, "connection suspended, but serviceContext was null");
+        }
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d(TAG, "connection failed");
+        //TODO flesh this out!
+        Intent i = new Intent(this, ResolverActivity.class);
+        i.putExtra(ResolverActivity.CONNECT_RESULT_KEY, connectionResult);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(TAG, "LocationService onLocationChanged entered");
+        handleNewLocation(location);
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+
 
 //    @Override
 //    public int onStartCommand(Intent intent, @IntDef(value = {Service.START_FLAG_REDELIVERY, Service.START_FLAG_RETRY}, flag = true) int flags, int startId) {
@@ -237,5 +249,6 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
             mGoogleApiClient.disconnect();
         }
         Toast.makeText(this, "Location service destroyed", Toast.LENGTH_SHORT).show();
+        EventBus.getDefault().removeAllStickyEvents();
     }
 }

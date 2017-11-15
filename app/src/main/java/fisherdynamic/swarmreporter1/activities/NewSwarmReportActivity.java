@@ -1,7 +1,10 @@
 package fisherdynamic.swarmreporter1.activities;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -12,11 +15,20 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,8 +38,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import fisherdynamic.swarmreporter1.R;
+import fisherdynamic.swarmreporter1.models.MessageEvent;
 import fisherdynamic.swarmreporter1.models.SwarmReport;
+import fisherdynamic.swarmreporter1.services.LocationService;
 import fisherdynamic.swarmreporter1.utilityClasses.Utilities;
+
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -37,15 +53,23 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import fisherdynamic.swarmreporter1.viewHolders.FirebaseClaimViewHolder;
+import io.reactivex.Observable;
 
-public class NewSwarmReportActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class NewSwarmReportActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
     private String TAG = NewSwarmReportActivity.class.getSimpleName();
+    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
     private FirebaseDatabase database;
     private DatabaseReference ref;
     private String size;
@@ -53,10 +77,6 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private String description;
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
-    private GoogleApiClient mGoogleApiClient;
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private LocationRequest mLocationRequest;
-    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 111;
     private String userName;
     private String userId;
     private Double currenLatitude;
@@ -65,131 +85,113 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
     private SwarmReport newSwarmReport = new SwarmReport();
     private DatabaseReference pushRef;
     private SharedPreferences mSharedPreferences;
+    private BroadcastReceiver mMessageReceiver;
 
-    @Bind(R.id.reportSwarmButton) Button reportSwarmButton;
-    @Bind(R.id.baseball) RadioButton baseball;
-    @Bind(R.id.football) RadioButton football;
-    @Bind(R.id.basketball) RadioButton basketball;
-    @Bind(R.id.beachball) RadioButton beachball;
-    @Bind(R.id.tallLadder) RadioButton tallLadder;
-    @Bind(R.id.ladder) RadioButton ladder;
-    @Bind(R.id.reach) RadioButton reach;
-    @Bind(R.id.hasLadder) RadioButton hasLadder;
-    @Bind(R.id.addImageButton) Button addImageButton;
-    @Bind(R.id.progressBar) ProgressBar progressBar;
-    @Bind(R.id.descriptionTextView) EditText descriptionTextView;
-    @Bind(R.id.sizeLabel) TextView sizeLabel;
+    private View hView;
+    private NavigationView navigationView;
+    private SharedPreferences.Editor mEditor;
+
+    @Bind(R.id.reportSwarmButton)
+    Button reportSwarmButton;
+    @Bind(R.id.baseball)
+    RadioButton baseball;
+    @Bind(R.id.football)
+    RadioButton football;
+    @Bind(R.id.basketball)
+    RadioButton basketball;
+    @Bind(R.id.beachball)
+    RadioButton beachball;
+    @Bind(R.id.tallLadder)
+    RadioButton tallLadder;
+    @Bind(R.id.ladder)
+    RadioButton ladder;
+    @Bind(R.id.reach)
+    RadioButton reach;
+    @Bind(R.id.hasLadder)
+    RadioButton hasLadder;
+    @Bind(R.id.addImageButton)
+    Button addImageButton;
+    @Bind(R.id.progressBar)
+    ProgressBar progressBar;
+    @Bind(R.id.descriptionTextView)
+    EditText descriptionTextView;
+    @Bind(R.id.sizeLabel)
+    TextView sizeLabel;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_swarm_report);
+        setContentView(R.layout.activity_new_swarm_report_drawer);
 
         ButterKnife.bind(this);
 
         reportSwarmButton.setOnClickListener(this);
         addImageButton.setOnClickListener(this);
-
         sizeLabel.requestFocus();
+//        auth = FirebaseAuth.getInstance();
 
-        auth = FirebaseAuth.getInstance();
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        userName = mSharedPreferences.getString("userName", null);
-        userId = mSharedPreferences.getString("userId", null);
-        Log.d("personal", "newSwarm userName is " + userName);
-        Log.d("personal", "newSwarm userId is " + userId);
+        getSharedPreferences();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(30 * 1000)
-                .setFastestInterval(1 * 1000);
 
-    }
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        hView = navigationView.getHeaderView(0);
+        navigationView.setNavigationItemSelectedListener(this);
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
+        Log.d(TAG, "newSwarm userName is " + userName);
+        Log.d(TAG, "newSwarm userId is " + userId);
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_FINE_LOCATION);
             return;
         }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location == null) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        } else {
-            handleNewLocation(location);
-        }
+
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                    if (location == null) {
-                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-                    } else {
-                        handleNewLocation(location);
-                    }
-                }
-            }
-        }
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
     }
 
-    private void handleNewLocation(Location location) {
-        currenLatitude = location.getLatitude();
-        currentLongitude = location.getLongitude();
-        Log.d("personal", "newSwarm lat is " + currenLatitude);
-        Log.d("personal", "newSwarm lon is " + currentLongitude);
-        if(userId != null && userName != null && currenLatitude != 0.0 && currentLongitude != 0.0) {
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        EventBus.getDefault().register(this);
+    }
+
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        currenLatitude = event.lat;
+        currentLongitude = event.lng;
+        if (userId != null && userName != null && currenLatitude != 0.0 && currentLongitude != 0.0) {
             progressBar.setVisibility(View.GONE);
             reportSwarmButton.setVisibility(View.VISIBLE);
             addImageButton.setVisibility(View.VISIBLE);
         } else {
             Log.d("newSwarm", "either location or user info is null!");
         }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.d("newSwarm", "Location services suspended. Please reconnect");
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        if (connectionResult.hasResolution()) {
-            try {
-                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-            } catch (IntentSender.SendIntentException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Log.d("newSwarm", "Location services failed with code " + connectionResult.getErrorCode());
-        }
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
-        }
-    }
+    };
 
     @Override
     public void onClick(View v) {
@@ -208,27 +210,24 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         }
 
         size = getSize();
-        if(size != null){
+        if (size != null) {
             newSwarmReport.setSize(size);
             accessibility = getAccessibility();
-            if(accessibility != null){
+            if (accessibility != null) {
                 newSwarmReport.setAccessibility(accessibility);
-                try{
+                try {
                     description = getDescription();
                     newSwarmReport.setDescription(description);
-                } catch(Exception e){
+                } catch (Exception e) {
                     descriptionTextView.setError("Please add a detailed description");
-//                    Toast.makeText(NewSwarmReportActivity.this, "Please add a detailed description about the location", Toast.LENGTH_SHORT).show();
-                    Log.d("personal", "description is null");
+                    Log.d(TAG, "description is null");
                 }
-            } else{
+            } else {
                 Toast.makeText(NewSwarmReportActivity.this, "Please select accessibility", Toast.LENGTH_SHORT).show();
             }
-        } else{
+        } else {
             Toast.makeText(NewSwarmReportActivity.this, "Please select size", Toast.LENGTH_SHORT).show();
         }
-
-
 
 
         if (size != null && accessibility != null && description != null) {
@@ -286,10 +285,10 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         return size;
     }
 
-    public String getDescription() throws Exception{
+    public String getDescription() throws Exception {
         String returnVal = null;
         returnVal = descriptionTextView.getText().toString().trim();
-        if(returnVal == null || returnVal.equals("")){
+        if (returnVal == null || returnVal.equals("")) {
             throw new Exception("Description is null");
         }
         return returnVal;
@@ -310,8 +309,47 @@ public class NewSwarmReportActivity extends AppCompatActivity implements View.On
         return accessibility;
     }
 
+
+    public boolean getSharedPreferences() {
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        userName = mSharedPreferences.getString("userName", null);
+        userId = mSharedPreferences.getString("userId", null);
+        return true;
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public void onLocationChanged(Location location) {
-        handleNewLocation(location);
+    public boolean onNavigationItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_logout) {
+            Utilities.logoutWithContextAndSharedPreferences(this, mEditor);
+            finish();
+            return true;
+        }
+
+        if (id == R.id.action_viewAvailableReports){ //&& !TAG.equals("MainActivity")
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
+
+        if (id == R.id.action_newReport) { //  && !TAG.equals("NewSwarmReportActivity")
+            Intent intent = new Intent(this, NewSwarmReportActivity.class);
+            startActivity(intent);
+        }
+
+        if (id == R.id.action_myClaims) { //  && !TAG.equals("MyClaimedSwarmsActivity")
+            Intent intent = new Intent(this, MyClaimedSwarmsActivity.class);
+            startActivity(intent);
+        }
+
+        if (id == R.id.action_myReportedSwarms) { //  && !TAG.equals("MyReportedSwarmsActivity")
+            Intent intent = new Intent(this, MyReportedSwarmsActivity.class);
+            startActivity(intent);
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }
