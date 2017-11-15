@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import fisherdynamic.swarmreporter1.R;
 import fisherdynamic.swarmreporter1.models.SwarmReport;
+import fisherdynamic.swarmreporter1.utilityClasses.Utilities;
 import fisherdynamic.swarmreporter1.viewHolders.FirebaseClaimViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -120,43 +121,29 @@ public class MyClaimedSwarmsActivity extends AppCompatActivity implements Naviga
         int id = item.getItemId();
 
         if (id == R.id.action_logout) {
-            logout();
+            Utilities.logoutWithContextAndSharedPreferences(this, mEditor);
+            finish();
             return true;
         }
 
-        if (id == R.id.action_newReport) {
-            Intent intent = new Intent(MyClaimedSwarmsActivity.this, NewSwarmReportActivity.class);
-            if (userName != null && userId != null) {
-                intent.putExtra("userName", userName);
-                intent.putExtra("userId", userId);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Unable to retrieve username and id", Toast.LENGTH_SHORT).show();
-            }
-
+        if (id == R.id.action_viewAvailableReports){ //&& !TAG.equals("MainActivity")
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
         }
 
-        if (id == R.id.action_myClaims) {
-            Intent intent = new Intent(MyClaimedSwarmsActivity.this, MyClaimedSwarmsActivity.class);
-            if (userName != null && userId != null) {
-                intent.putExtra("userName", userName);
-                intent.putExtra("userId", userId);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Unable to retrieve username and id", Toast.LENGTH_SHORT).show();
-            }
+        if (id == R.id.action_newReport) { //  && !TAG.equals("NewSwarmReportActivity")
+            Intent intent = new Intent(this, NewSwarmReportActivity.class);
+            startActivity(intent);
         }
 
-        if (id == R.id.action_myReportedSwarms) {
-            Intent intent = new Intent(MyClaimedSwarmsActivity.this, MyReportedSwarmsActivity.class);
-            if (userName != null && userId != null) {
-                intent.putExtra("userName", userName);
-                intent.putExtra("userId", userId);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Unable to retrieve username and id", Toast.LENGTH_SHORT).show();
-            }
+        if (id == R.id.action_myClaims) { //  && !TAG.equals("MyClaimedSwarmsActivity")
+            Intent intent = new Intent(this, MyClaimedSwarmsActivity.class);
+            startActivity(intent);
+        }
 
+        if (id == R.id.action_myReportedSwarms) { //  && !TAG.equals("MyReportedSwarmsActivity")
+            Intent intent = new Intent(this, MyReportedSwarmsActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

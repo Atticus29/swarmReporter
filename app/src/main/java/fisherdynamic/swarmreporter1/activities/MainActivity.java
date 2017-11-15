@@ -243,22 +243,22 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
-        if (id == R.id.action_viewAvailableReports  && !TAG.equals("MainActivity")){
+        if (id == R.id.action_viewAvailableReports){ //&& !TAG.equals("MainActivity")
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
 
-        if (id == R.id.action_newReport  && !TAG.equals("NewSwarmReportActivity")) {
+        if (id == R.id.action_newReport) { //  && !TAG.equals("NewSwarmReportActivity")
             Intent intent = new Intent(this, NewSwarmReportActivity.class);
             startActivity(intent);
         }
 
-        if (id == R.id.action_myClaims  && !TAG.equals("MyClaimedSwarmsActivity")) {
+        if (id == R.id.action_myClaims) { //  && !TAG.equals("MyClaimedSwarmsActivity")
             Intent intent = new Intent(this, MyClaimedSwarmsActivity.class);
             startActivity(intent);
         }
 
-        if (id == R.id.action_myReportedSwarms  && !TAG.equals("MyReportedSwarmsActivity")) {
+        if (id == R.id.action_myReportedSwarms) { //  && !TAG.equals("MyReportedSwarmsActivity")
             Intent intent = new Intent(this, MyReportedSwarmsActivity.class);
             startActivity(intent);
         }
