@@ -8,6 +8,10 @@
             android:title="Logout"
             />
         <item
+            android:id="@+id/action_viewAvailableReports"
+            android:title="View Available Swarm Reports"
+            />
+        <item
             android:id="@+id/action_newReport"
             android:title="Report A Swarm"
             />
@@ -19,6 +23,7 @@
             android:id="@+id/action_myReportedSwarms"
             android:title="View My Reported Swarms"
             />
+
     </group>
 
 </menu>
