@@ -190,7 +190,6 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         if(serviceContext != null){
             LocalBroadcastManager.getInstance(serviceContext).sendBroadcast(intent);
             Log.d(TAG, "broadcast launched from the location service");
-            Toast.makeText(this, "broadcast launched from the location service", Toast.LENGTH_SHORT).show();
         } else{
             Log.d(TAG, "didn't broadcast the location updates because serviceContext is null");
         }

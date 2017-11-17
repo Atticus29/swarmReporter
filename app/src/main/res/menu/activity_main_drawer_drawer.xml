@@ -5,7 +5,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/action_viewAvailableReports"
-            android:title="View Available Swarm Reports"
+            android:title="View Unclaimed Swarm Reports"
             />
         <item
             android:id="@+id/action_newReport"
