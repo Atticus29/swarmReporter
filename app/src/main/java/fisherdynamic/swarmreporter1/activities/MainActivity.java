@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity
         userId = mSharedPreferences.getString("userId", null);
         if (userName != null && userId != null && !userName.equals("") && !userId.equals("")) {
             greetingTextView.setText("Unclaimed swarms near " + userName + ":");
-            clearCurrentUserNode(userId);
+//            clearCurrentUserNode(userId);
         }
 
         setUpBlankAdapter(); //TODO check whether this is necessary
@@ -192,6 +192,8 @@ public class MainActivity extends AppCompatActivity
     public void onMessageEvent(MessageEvent event) {
         currentLatitude = event.lat;
         currentLongitude = event.lng;
+        //TODO dismiss here
+        progressBarForRecyclerView.setVisibility(View.GONE);
         ArrayList<String> children = new ArrayList<>();
         children.add(userId + "_current");
         setUpFirebaseAdapter(children);
@@ -297,7 +299,6 @@ public class MainActivity extends AppCompatActivity
         dividerItemDecoration.setDrawable(getDrawable(R.drawable.recycler_view_divider));
         claimRecyclerView.addItemDecoration(dividerItemDecoration);
         Log.d(TAG, "got right up to making the progressBar invisible setUpFirebaseAdapter method of main activity");
-        progressBarForRecyclerView.setVisibility(View.GONE);
     }
 
     private void setUpBlankAdapter() {
@@ -351,5 +352,4 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, LocationService.class);
         startService(intent);
     }
-
 }
