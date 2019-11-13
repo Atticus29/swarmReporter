@@ -275,9 +275,11 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "first child is " + children.get(0));
 
         DatabaseReference keyRef = FirebaseDatabase.getInstance().getReference(children.get(0)); //TODO edit here
+        Log.d(TAG, "is keyRef null?" + Boolean.toString(keyRef == null));
 
         for (int i = 1; i < children.size(); i++) {
             keyRef = keyRef.getRef().child(children.get(i));
+            Log.d(TAG, "is keyRef null?" + Boolean.toString(keyRef == null));
         }
 
         mFirebaseAdapter = new FirebaseRecyclerAdapter<SwarmReport, FirebaseClaimViewHolder>
@@ -287,6 +289,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             protected void populateViewHolder(final FirebaseClaimViewHolder viewHolder,
                                               SwarmReport model, int position) {
+                Log.d(TAG, "populateViewHolder called");
                 viewHolder.bindClaimerLatLong(currentLatitude, currentLongitude);
                 viewHolder.bindCurrentUserNameAndId(userName, userId);
                 viewHolder.bindSwarmReport(model);
@@ -323,7 +326,9 @@ public class MainActivity extends AppCompatActivity
     public void onStart() {
         Log.d(TAG, ">>>>onStart called");
         super.onStart();
-        startLocationService();
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            startLocationService();
+        }
         EventBus.getDefault().register(this);
     }
 
